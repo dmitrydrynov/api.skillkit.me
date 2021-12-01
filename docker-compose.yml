@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  db:
+    build: ./docker/postgres
+    container_name: gamelab_db
+    env_file: .env
+    environment:
+      POSTGRES_DB: ${DB_NAME:-postgres}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASS:-password}
+    ports:
+      - '${DB_PORT:-8000}:${DB_PORT:-8000}'
+    restart: unless-stopped
+    volumes:
+      - ./docker/postgres/data:/var/lib/postgresql/data
