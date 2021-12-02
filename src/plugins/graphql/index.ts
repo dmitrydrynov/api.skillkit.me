@@ -14,7 +14,7 @@ export default fp(
   async (fastify) => {
     const queriesType = new GraphQLObjectType({
       fields: {
-        add: {
+        plus: {
           args: {
             x: { type: GraphQLInt },
             y: { type: GraphQLInt },

@@ -2,7 +2,7 @@
   "license": "MIT",
   "scripts": {
     "start": "ts-node src/server.ts",
-    "dev": "tsnd -r tsconfig-paths/register --respawn src/server.ts",
+    "dev": "tsnd -r tsconfig-paths/register --respawn --debug src/server.ts",
     "migrate:up": "ts-node src/migrate.ts up",
     "migrate:down": "ts-node src/migrate.ts down"
   },
