@@ -2,7 +2,8 @@
   "license": "MIT",
   "scripts": {
     "start": "ts-node src/server.ts",
-    "dev": "tsnd -r tsconfig-paths/register --respawn --debug src/server.ts",
+    "dev": "tsnd -r tsconfig-paths/register --poll --respawn src/server.ts",
+    "docker": "docker-compose up -d",
     "migrate:up": "ts-node src/migrate.ts up",
     "migrate:down": "ts-node src/migrate.ts down"
   },
