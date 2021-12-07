@@ -9,11 +9,8 @@ FROM node:16-alpine AS dev
 
 WORKDIR /app
 
-VOLUME [ "/node_modules" ]
-
-COPY package.json package.json
-COPY tsconfig.json tsconfig.json
-COPY --from=dependencies /app/node_modules node_modules
+# COPY package.json package.json
+# COPY --from=dependencies /app/node_modules node_modules
 CMD yarn dev
 
 FROM node:16-alpine AS prod

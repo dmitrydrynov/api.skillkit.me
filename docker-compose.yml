@@ -24,7 +24,7 @@ services:
     ports:
       - '${PORT:-3000}:${PORT:-3000}'
     volumes:
-      - ./src:/app/src
+      - .:/app
     depends_on:
       - db
     restart: on-failure
