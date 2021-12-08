@@ -14,7 +14,7 @@ type Env = {
   NODE_ENV: string;
   PORT: number;
   HOST: string;
-  PRETTY_PRINT: boolean;
+  LOG_PRETTY_PRINT: boolean;
   LOG_LEVEL: string;
   DB_HOST: string;
   DB_PORT: number;

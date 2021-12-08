@@ -181,6 +181,14 @@
   dependencies:
     "@types/ms" "*"
 
+"@types/glob@^7.1.3":
+  version "7.2.0"
+  resolved "https://registry.yarnpkg.com/@types/glob/-/glob-7.2.0.tgz#bc1b5bf3aa92f25bd5dd39f35c57361bdce5b2eb"
+  integrity sha512-ZUxbzKl0IfJILTS6t7ip5fQQM/J3TJYubDm3nMbgubNNYS62eXeUpoLUC8/7fJNiFYHTrGPQn7hspDUzIHX3UA==
+  dependencies:
+    "@types/minimatch" "*"
+    "@types/node" "*"
+
 "@types/isomorphic-form-data@^2.0.0":
   version "2.0.0"
   resolved "https://registry.npmjs.org/@types/isomorphic-form-data/-/isomorphic-form-data-2.0.0.tgz"
@@ -198,6 +206,11 @@
   resolved "https://registry.npmjs.org/@types/json5/-/json5-0.0.29.tgz"
   integrity sha1-7ihweulOEdK4J7y+UnC86n8+ce4=
 
+"@types/minimatch@*":
+  version "3.0.5"
+  resolved "https://registry.yarnpkg.com/@types/minimatch/-/minimatch-3.0.5.tgz#1001cc5e6a3704b83c236027e77f2f58ea010f40"
+  integrity sha512-Klz949h02Gz2uZCMGwDUSDS1YBlTdDDgbWHi+81l29tQALUtvz4rAYi5uoVhE5Lagoq6DeqAUlbrHvW/mXDgdQ==
+
 "@types/ms@*":
   version "0.7.31"
   resolved "https://registry.npmjs.org/@types/ms/-/ms-0.7.31.tgz"
@@ -207,6 +220,16 @@
   version "16.11.11"
   resolved "https://registry.npmjs.org/@types/node/-/node-16.11.11.tgz"
   integrity sha512-KB0sixD67CeecHC33MYn+eYARkqTheIRNuu97y2XMjR7Wu3XibO1vaY6VBV6O/a89SPI81cEUIYT87UqUWlZNw==
+
+"@types/node@^14.11.2":
+  version "14.18.0"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.18.0.tgz#98df2397f6936bfbff4f089e40e06fa5dd88d32a"
+  integrity sha512-0GeIl2kmVMXEnx8tg1SlG6Gg8vkqirrW752KqolYo1PHevhhZN3bhJ67qHj+bQaINhX0Ra3TlWwRvMCd9iEfNQ==
+
+"@types/semver@^7.3.3":
+  version "7.3.9"
+  resolved "https://registry.yarnpkg.com/@types/semver/-/semver-7.3.9.tgz#152c6c20a7688c30b967ec1841d31ace569863fc"
+  integrity sha512-L/TMpyURfBkf+o/526Zb6kd/tchUP3iBDEPjqjb+U2MAJhVRxxrmr2fwpe08E7QsV7YLcpq0tUaQ9O9x97ZIxQ==
 
 "@types/strip-bom@^3.0.0":
   version "3.0.0"
@@ -677,9 +700,9 @@ cli-table3@^0.6.0:
   optionalDependencies:
     colors "^1.1.2"
 
-close-with-grace@^1.0.0:
+close-with-grace@^1.0.0, close-with-grace@^1.1.0:
   version "1.1.0"
-  resolved "https://registry.npmjs.org/close-with-grace/-/close-with-grace-1.1.0.tgz"
+  resolved "https://registry.yarnpkg.com/close-with-grace/-/close-with-grace-1.1.0.tgz#91a48cf2019b5ae6e67b0255a32abcfd9bbca233"
   integrity sha512-6cCp71Y5tKw1o9sGVBOa9OwY4vJ+YoLpFcWiTt9YCBhYlcQi0z68EiiN9mJ6/401Za6TZ5YOZg012IHHZt15lw==
 
 color-convert@^1.9.0:
@@ -1264,6 +1287,14 @@ fastfall@^1.5.0:
   dependencies:
     reusify "^1.0.0"
 
+fastify-autoload@^3.9.0:
+  version "3.9.0"
+  resolved "https://registry.yarnpkg.com/fastify-autoload/-/fastify-autoload-3.9.0.tgz#9e5ccd0bd5867970233f54ef21b636e7c077f2e9"
+  integrity sha512-GNal/ijLiuwCJBmr7oVVQH/cuDQ9ytm/HbDZLbSWSGr3GW8doGp88vChN3SN87o99isL65whgoqwB97E+XoegQ==
+  dependencies:
+    pkg-up "^3.1.0"
+    semver "^7.3.2"
+
 fastify-cli@^2.14.0:
   version "2.14.0"
   resolved "https://registry.npmjs.org/fastify-cli/-/fastify-cli-2.14.0.tgz"
@@ -1581,6 +1612,13 @@ graphql-jit@^0.7.0:
     lodash.merge "4.6.2"
     lodash.mergewith "4.6.2"
 
+graphql-query-complexity@^0.7.0:
+  version "0.7.2"
+  resolved "https://registry.yarnpkg.com/graphql-query-complexity/-/graphql-query-complexity-0.7.2.tgz#7fc6bb20930ab1b666ecf3bbfb24b65b6f08ecc4"
+  integrity sha512-+VgmrfxGEjHI3zuojWOR8bsz7Ycz/BZjNjxnlUieTz5DsB92WoIrYCSZdWG7UWZ3rfcA1Gb2Nf+wB80GsaZWuQ==
+  dependencies:
+    lodash.get "^4.4.2"
+
 graphql-sequelize@^9.4.3:
   version "9.4.3"
   resolved "https://registry.npmjs.org/graphql-sequelize/-/graphql-sequelize-9.4.3.tgz"
@@ -1589,6 +1627,13 @@ graphql-sequelize@^9.4.3:
     bluebird "^3.4.0"
     invariant "2.2.1"
     lodash "^4.0.0"
+
+graphql-subscriptions@^1.1.0:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/graphql-subscriptions/-/graphql-subscriptions-1.2.1.tgz#2142b2d729661ddf967b7388f7cf1dd4cf2e061d"
+  integrity sha512-95yD/tKi24q8xYa7Q9rhQN16AYj5wPbrb8tmHGM3WRc9EBmWrG/0kkMl+tQG8wcEuE9ibR4zyOM31p5Sdr2v4g==
+  dependencies:
+    iterall "^1.3.0"
 
 graphql@^15.4.0, graphql@^15.5.1:
   version "15.7.2"
@@ -1895,6 +1940,11 @@ isexe@^2.0.0:
   resolved "https://registry.npmjs.org/isexe/-/isexe-2.0.0.tgz"
   integrity sha1-6PvzdNxVb/iUehDcsFctYz8s+hA=
 
+iterall@^1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/iterall/-/iterall-1.3.0.tgz#afcb08492e2915cbd8a0884eb93a8c94d0d72fea"
+  integrity sha512-QZ9qOMdF+QLHxy1QIpUHUU1D5pS2CG2P69LF6L6CPjPYA/XMOmKV3PZpawHoAjHNyB0swdVTRxdYT4tbBbxqwg==
+
 iterate-iterator@^1.0.1:
   version "1.0.2"
   resolved "https://registry.npmjs.org/iterate-iterator/-/iterate-iterator-1.0.2.tgz"
@@ -1987,6 +2037,11 @@ locate-path@^3.0.0:
   dependencies:
     p-locate "^3.0.0"
     path-exists "^3.0.0"
+
+lodash.get@^4.4.2:
+  version "4.4.2"
+  resolved "https://registry.yarnpkg.com/lodash.get/-/lodash.get-4.4.2.tgz#2d177f652fa31e939b4438d5341499dfa3825e99"
+  integrity sha1-LRd/ZS+jHpObRDjVNBSZ36OCXpk=
 
 lodash.memoize@^4.1.2:
   version "4.1.2"
@@ -3196,7 +3251,7 @@ tslib@^1.8.1:
   resolved "https://registry.npmjs.org/tslib/-/tslib-1.14.1.tgz"
   integrity sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==
 
-tslib@~2.3.0:
+tslib@^2.0.1, tslib@~2.3.0:
   version "2.3.1"
   resolved "https://registry.npmjs.org/tslib/-/tslib-2.3.1.tgz"
   integrity sha512-77EbyPPpMz+FRFRuAFlWMtmgUWGe9UOG2Z25NqCwiIjRhOf5iKGuzSe5P2w1laq+FkRy4p+PCuVkJSGkzTEKVw==
@@ -3229,6 +3284,20 @@ type-fest@^1.0.0:
   version "1.4.0"
   resolved "https://registry.npmjs.org/type-fest/-/type-fest-1.4.0.tgz"
   integrity sha512-yGSza74xk0UG8k+pLh5oeoYirvIiWo5t0/o3zHHAO2tRDiZcxWP7fywNlXhqb6/r6sWvwi+RsyQMWhVLe4BVuA==
+
+type-graphql@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/type-graphql/-/type-graphql-1.1.1.tgz#dc0710d961713b92d3fee927981fa43bf71667a4"
+  integrity sha512-iOOWVn0ehCYMukmnXStbkRwFE9dcjt7/oDcBS1JyQZo9CbhlIll4lHHps54HMEk4A4c8bUPd+DjK8w1/ZrxB4A==
+  dependencies:
+    "@types/glob" "^7.1.3"
+    "@types/node" "^14.11.2"
+    "@types/semver" "^7.3.3"
+    glob "^7.1.6"
+    graphql-query-complexity "^0.7.0"
+    graphql-subscriptions "^1.1.0"
+    semver "^7.3.2"
+    tslib "^2.0.1"
 
 typed-dotenv@^10.0.1:
   version "10.0.1"

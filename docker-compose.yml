@@ -8,7 +8,7 @@ services:
     environment:
       POSTGRES_DB: ${DB_NAME:-postgres}
       POSTGRES_USER: ${DB_USER:-postgres}
-      POSTGRES_PASSWORD: ${DB_PASS:-password}
+      POSTGRES_PASSWORD: ${DB_PASS:-postgres}
     ports:
       - '${DB_PORT:-5432}:${DB_PORT:-5432}'
     volumes:
@@ -20,9 +20,9 @@ services:
     container_name: gamelab_app
     env_file: .env
     expose:
-      - '${PORT:-3000}'
+      - '${PORT:-8000}'
     ports:
-      - '${PORT:-3000}:${PORT:-3000}'
+      - '${PORT:-8000}:${PORT:-8000}'
     volumes:
       - .:/app
     depends_on:

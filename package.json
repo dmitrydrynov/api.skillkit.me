@@ -3,14 +3,16 @@
   "scripts": {
     "start": "ts-node src/server.ts",
     "dev": "tsnd -r tsconfig-paths/register --poll --respawn src/server.ts",
-    "docker": "docker-compose up -d",
+    "docker": "docker-compose up",
     "migrate:up": "ts-node src/migrate.ts up",
     "migrate:down": "ts-node src/migrate.ts down"
   },
   "dependencies": {
     "@types/node": "^16.11.11",
+    "close-with-grace": "^1.1.0",
     "dotenv": "^10.0.0",
     "fastify": "^3.24.1",
+    "fastify-autoload": "^3.9.0",
     "fastify-env": "^2.1.1",
     "fastify-jwt": "^4.0.1",
     "graphql-sequelize": "^9.4.3",
@@ -20,6 +22,7 @@
     "reflect-metadata": "^0.1.13",
     "sequelize": "^6.12.0-alpha.1",
     "sequelize-typescript": "^2.1.1",
+    "type-graphql": "^1.1.1",
     "typed-dotenv": "^10.0.1",
     "umzug": "^3.0.0-beta.16"
   },

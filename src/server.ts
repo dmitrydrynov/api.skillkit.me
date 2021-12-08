@@ -1,29 +1,37 @@
 import '@config/env';
 import { env } from '@config/env';
 import Fastify, { FastifyInstance } from 'fastify';
-import { default as JWT } from 'fastify-jwt';
+import closeWithGrace from 'close-with-grace';
 
-const fastify: FastifyInstance = Fastify({
+const app: FastifyInstance = Fastify({
   ignoreTrailingSlash: true,
   trustProxy: true,
   logger: {
-    level: 'debug',
-    prettyPrint: true,
+    level: env.LOG_LEVEL,
+    prettyPrint: env.LOG_PRETTY_PRINT,
   },
 });
 
-fastify.register(JWT, {
-  secret: env.JWT_SECRET,
-  verify: { maxAge: env.TOKEN_TTL },
+// Register your application as a normal plugin.
+app.register(import('./app'));
+
+const closeListeners = closeWithGrace({ delay: 500 }, async function ({ err }) {
+  if (err) {
+    console.error(err);
+  }
+  await app.close();
 });
 
-fastify.register(import('./plugins'));
+app.addHook('onClose', async (instance, done) => {
+  closeListeners.uninstall();
+  done();
+});
 
 const start = async () => {
   try {
-    await fastify.listen(env.PORT, env.HOST);
-  } catch (err) {
-    fastify.log.error(err);
+    await app.listen(env.PORT, env.HOST);
+  } catch (err: any) {
+    app.log.error(err);
     process.exit(1);
   }
 };
