@@ -14,6 +14,14 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript';
 
+export enum UserRole {
+  ADMIN = 'admin',
+  OPERATOR = 'operator',
+  EXPERT = 'expert',
+  MEMBER = 'member',
+  UNKNOWN = 'unknown',
+}
+
 @Table({ underscored: true })
 export class User extends Model {
   @AllowNull(false)

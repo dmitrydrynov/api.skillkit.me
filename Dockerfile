@@ -1,6 +1,7 @@
 FROM node:16-alpine AS dependencies
 WORKDIR /app
 COPY package.json package.json
+COPY package-lock.json package-lock.json
 COPY yarn.lock yarn.lock
 RUN yarn install
 

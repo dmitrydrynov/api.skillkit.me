@@ -6,7 +6,6 @@ import { default as JWT } from 'fastify-jwt';
 
 export type AppOptions = {
   // Place your custom options for app below here.
-  drynov: string;
 } & Partial<AutoloadPluginOptions>;
 
 const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void> => {
