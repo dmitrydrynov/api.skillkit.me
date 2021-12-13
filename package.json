@@ -8,6 +8,7 @@
     "migrate:down": "ts-node src/migrate.ts down"
   },
   "dependencies": {
+    "@types/mailgun-js": "^0.22.12",
     "@types/node": "^16.11.11",
     "close-with-grace": "^1.1.0",
     "dotenv": "^10.0.0",
@@ -15,7 +16,9 @@
     "fastify-autoload": "^3.9.0",
     "fastify-env": "^2.1.1",
     "fastify-jwt": "^4.0.1",
+    "generate-password": "^1.7.0",
     "graphql-sequelize": "^9.4.3",
+    "mailgun-js": "^0.22.0",
     "mercurius": "^8.11.1",
     "mercurius-auth": "^1.4.0",
     "pg": "^8.7.1",

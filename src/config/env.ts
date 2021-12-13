@@ -23,5 +23,10 @@ type Env = {
   DB_PASS: string;
   JWT_SECRET: string;
   TOKEN_TTL: string;
+  TEMP_PASS_LEN: number;
+  MAILGUN_DOMAIN: string;
+  MAILGUN_API_KEY: string;
+  MAILGUN_FROM_EMAIL: string;
+  MAILGUN_FROM_NAME: string;
   [key: string]: any;
 };

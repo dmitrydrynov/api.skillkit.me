@@ -3,13 +3,14 @@ import { UserRole } from '@models/User';
 import fp from 'fastify-plugin';
 import Mercurius from 'mercurius';
 import { buildSchema } from 'type-graphql';
-import { authChecker } from './helpers/auth-checker';
-import { UserObjectResolver } from './object-types/user';
+import { authChecker } from './auth-checker';
+import { AuthResolver } from './resolvers/auth';
+import { UserResolver } from './resolvers/user';
 
 export default fp(
   async (fastify) => {
     const schema = await buildSchema({
-      resolvers: [UserObjectResolver],
+      resolvers: [AuthResolver, UserResolver],
       authChecker,
     });
 

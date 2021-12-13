@@ -3,7 +3,7 @@ import { env } from '@config/env';
 import Fastify, { FastifyInstance } from 'fastify';
 import closeWithGrace from 'close-with-grace';
 
-const app: FastifyInstance = Fastify({
+export const app: FastifyInstance = Fastify({
   ignoreTrailingSlash: true,
   trustProxy: true,
   logger: {
