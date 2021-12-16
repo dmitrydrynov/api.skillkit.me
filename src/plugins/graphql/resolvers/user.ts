@@ -8,7 +8,7 @@ registerEnumType(UserRole, {
   name: 'UserRole',
 });
 
-@ObjectType()
+@ObjectType('User')
 export class UserObjectType {
   @Field()
   id: number;

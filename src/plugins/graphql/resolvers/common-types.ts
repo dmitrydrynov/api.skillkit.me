@@ -1,12 +1,12 @@
 import { createUnionType, Field, ObjectType } from 'type-graphql';
 
-@ObjectType()
+@ObjectType('DefaultResultResponse')
 export class DefaultResultObjectType {
   @Field()
   result: boolean;
 }
 
-@ObjectType()
+@ObjectType('DefaultErrorResponse')
 export class DefaultErrorObjectType {
   @Field()
   error: string;

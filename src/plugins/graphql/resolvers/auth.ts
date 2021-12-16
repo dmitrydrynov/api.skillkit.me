@@ -7,20 +7,20 @@ import { Op, Sequelize } from 'sequelize';
 import { Arg, Field, ObjectType, Resolver, Query, Ctx, createUnionType } from 'type-graphql';
 import { DefaultErrorObjectType, DefaultResponseType } from './common-types';
 
-@ObjectType()
+@ObjectType('SignInResponse')
 export class SignInObjectType {
   @Field()
   hasOneTimePassword: boolean;
 }
 
-@ObjectType()
+@ObjectType('AuthResponse')
 export class AuthObjectType {
   @Field()
   token: string;
 }
 
 const SignInResponseType = createUnionType({
-  name: 'SignInResponse',
+  name: 'SignInOrErrorResponse',
   types: () => [SignInObjectType, DefaultErrorObjectType] as const,
   resolveType: (value) => {
     if ('error' in value) {
@@ -32,7 +32,7 @@ const SignInResponseType = createUnionType({
 });
 
 const AuthResponseType = createUnionType({
-  name: 'AuthResponse',
+  name: 'AuthOrErrorResponse',
   types: () => [AuthObjectType, DefaultErrorObjectType] as const,
   resolveType: (value) => {
     if ('error' in value) {
