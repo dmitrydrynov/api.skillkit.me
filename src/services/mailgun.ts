@@ -14,23 +14,27 @@ const send = async ({
   variables: any;
   callback?: () => void;
 }) => {
-  const mg = mailgun({ apiKey: env.MAILGUN_API_KEY, domain: env.MAILGUN_DOMAIN });
-  const data = {
-    from: env.MAILGUN_FROM_NAME + ' <' + env.MAILGUN_FROM_EMAIL + '>',
-    to,
-    subject: subject,
-    template: template,
-    'h:X-Mailgun-Variables': JSON.stringify(variables),
-  };
-  await mg.messages().send(data, function (error) {
-    if (error) {
-      throw Error(error.message);
-    }
+  try {
+    const mg = mailgun({ apiKey: env.MAILGUN_API_KEY, domain: env.MAILGUN_DOMAIN });
+    const data = {
+      from: env.MAILGUN_FROM_NAME + ' <' + env.MAILGUN_FROM_EMAIL + '>',
+      to,
+      subject: subject,
+      template: template,
+      'h:X-Mailgun-Variables': JSON.stringify(variables),
+    };
+    await mg.messages().send(data, function (error) {
+      if (error) {
+        throw Error(error.message);
+      }
 
-    if (callback) {
-      callback();
-    }
-  });
+      if (callback) {
+        callback();
+      }
+    });
+  } catch (error) {
+    return new Error(error.message);
+  }
 };
 
 // export const sendResetPasswordEmail = async (to: string, token: string) => {
