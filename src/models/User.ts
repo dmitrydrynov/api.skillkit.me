@@ -18,6 +18,7 @@ import {
 } from 'sequelize-typescript';
 import { TempPassword } from './TempPassword';
 import { sendOneTimePassword } from '@services/mailgun';
+import { Field, ObjectType } from 'type-graphql';
 
 export enum UserRole {
   ADMIN = 'admin',
@@ -27,14 +28,17 @@ export enum UserRole {
   UNKNOWN = 'unknown',
 }
 
+@ObjectType('User')
 @Table({ underscored: true })
 export class User extends Model {
+  @Field()
   @AllowNull(false)
   @AutoIncrement
   @PrimaryKey
   @Column
   id: number;
 
+  @Field()
   @AllowNull(false)
   @IsEmail
   @Column
@@ -46,28 +50,35 @@ export class User extends Model {
   @HasOne(() => TempPassword)
   tempPassword?: TempPassword;
 
+  @Field()
   @Column
   firstName?: string;
 
+  @Field()
   @Column
   lastName?: string;
 
+  @Field()
   @Column
   fullName?: string;
 
+  @Field({ nullable: true })
   @Column
   country: string;
 
+  @Field()
   @AllowNull(false)
   @Default(false)
   @Column
   blocked: boolean;
 
+  @Field()
   @AllowNull(false)
   @CreatedAt
   @Column
   createdAt: Date;
 
+  @Field()
   @AllowNull(false)
   @UpdatedAt
   @Column

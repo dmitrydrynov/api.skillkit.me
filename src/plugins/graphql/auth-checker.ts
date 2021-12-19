@@ -1,18 +1,13 @@
-import { UserRole } from '@models/User';
 import { MercuriusContext } from 'mercurius';
 import { AuthChecker, ResolverData } from 'type-graphql';
+import { JWTUserData } from './odt/user.types';
 
 export const authChecker: AuthChecker<MercuriusContext> = (
   { context }: ResolverData<MercuriusContext>,
   roles: string[],
 ) => {
   try {
-    const { id, role = UserRole.UNKNOWN }: { id: number; role: UserRole } = context.app.jwt.verify(
-      context.reply.request.headers['authorization'],
-    );
-
-    // check auth user
-    console.log(roles, id, role);
+    const { role }: JWTUserData = context.app.jwt.verify(context.reply.request.headers['authorization']);
 
     if (roles.includes(role) === false) {
       return false;

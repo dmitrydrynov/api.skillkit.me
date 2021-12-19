@@ -3,146 +3,89 @@ import { verifyPassword } from '@helpers/encrypt';
 import { TempPassword } from '@models/TempPassword';
 import { UserRole, User } from '@models/User';
 import { MercuriusContext } from 'mercurius';
-import { Op, Sequelize } from 'sequelize';
-import { Arg, Field, ObjectType, Resolver, Query, Ctx, createUnionType } from 'type-graphql';
-import { DefaultErrorObjectType, DefaultResponseType } from './common-types';
-
-@ObjectType('SignInResponse')
-export class SignInObjectType {
-  @Field()
-  hasOneTimePassword: boolean;
-}
-
-@ObjectType('AuthResponse')
-export class AuthObjectType {
-  @Field()
-  token: string;
-}
-
-const SignInResponseType = createUnionType({
-  name: 'SignInOrErrorResponse',
-  types: () => [SignInObjectType, DefaultErrorObjectType] as const,
-  resolveType: (value) => {
-    if ('error' in value) {
-      return DefaultErrorObjectType;
-    } else {
-      return SignInObjectType;
-    }
-  },
-});
-
-const AuthResponseType = createUnionType({
-  name: 'AuthOrErrorResponse',
-  types: () => [AuthObjectType, DefaultErrorObjectType] as const,
-  resolveType: (value) => {
-    if ('error' in value) {
-      return DefaultErrorObjectType;
-    } else {
-      return AuthObjectType;
-    }
-  },
-});
+import { FindOptions, ModelStatic, NonNullFindOptions, Op, Sequelize } from 'sequelize';
+import { Arg, Resolver, Query, Ctx, Mutation } from 'type-graphql';
+import { AuthResponseType, SignInResponseType } from '../odt/auth.types';
+import { DefaultResponseType } from '../odt/common.types';
 
 @Resolver()
 export class AuthResolver {
   /**
-   * Sign in
-   */
-  @Query(() => SignInResponseType)
-  async signIn(@Arg('email') email: string, @Ctx() ctx: MercuriusContext): Promise<typeof SignInResponseType> {
-    const user = await User.findOne({
-      where: { email },
-    });
-
-    if (user === null) {
-      ctx.reply.status(400);
-
-      return { error: 'User not found or blocked' };
-    }
-
-    return { hasOneTimePassword: user.password ? false : true };
-  }
-
-  /**
    * Authorize with password
    */
   @Query(() => AuthResponseType)
-  async authorize(
+  async signIn(
     @Arg('email') email: string,
-    @Arg('password') password: string,
+    @Arg('password', { nullable: true }) password: string,
     @Ctx() ctx: MercuriusContext,
   ): Promise<typeof AuthResponseType> {
-    const user = await User.findOne({
+    let findOptions: FindOptions<any> = {
+      include: [TempPassword],
       where: {
         email,
         blocked: false,
-        [Op.and]: Sequelize.where(Sequelize.col('password'), verifyPassword(ctx.app.sequelize, 'password', password)),
       },
-    });
+    };
+
+    let user = await User.findOne(findOptions);
 
     if (user === null) {
       ctx.reply.status(400);
 
-      return { error: 'User not found or blocked' };
+      throw Error('User not found or blocked');
     }
 
-    const token = ctx.app.jwt.sign({
-      id: user.id,
-      role: UserRole.MEMBER,
-    });
+    const enabledOneTimePassword = user.password === null;
 
-    return { token };
-  }
+    if (enabledOneTimePassword) {
+      /** Need send one-time password or not */
+      if (!password) {
+        await user.setOneTimePassword();
 
-  /**
-   * Authorize with OTP
-   */
-  @Query(() => AuthResponseType)
-  async authorizeWithOTP(
-    @Arg('email') email: string,
-    @Arg('tempPassword') tempPassword: string,
-    @Ctx() ctx: MercuriusContext,
-  ): Promise<typeof AuthResponseType> {
-    let user = await User.findOne({
-      include: [TempPassword],
-      where: { email },
-    });
+        return { next: true };
+      }
 
-    if (user === null) {
-      ctx.reply.status(400);
+      /** If one-time password exist but expired  */
+      if (user.tempPassword?.expiresOn < new Date()) {
+        await user.tempPassword.destroy();
 
-      return { error: 'User not found' };
-    }
+        ctx.reply.status(400);
 
-    if (user.tempPassword?.expiresOn < new Date()) {
-      ctx.reply.status(400);
+        throw Error('One-time password expired. Try sign in again.');
+      }
 
-      return { error: 'One-time password expired. Try sign in again.' };
-    }
-
-    user = await User.findOne({
-      include: [
+      findOptions.include = [
         {
           model: TempPassword,
           where: {
             expiresOn: { [Op.gt]: new Date() },
             [Op.and]: Sequelize.where(
               Sequelize.col('temp_password'),
-              verifyPassword(ctx.app.sequelize as Sequelize, 'temp_password', tempPassword),
+              verifyPassword(ctx.app.sequelize as Sequelize, 'temp_password', password),
             ),
           },
         },
-      ],
-      where: {
-        email,
-        blocked: false,
-      },
-    });
+      ];
+    } else {
+      findOptions = {
+        include: null,
+        where: {
+          ...findOptions.where,
+          [Op.and]: Sequelize.where(Sequelize.col('password'), verifyPassword(ctx.app.sequelize, 'password', password)),
+        },
+      };
+    }
+
+    user = await User.findOne(findOptions);
 
     if (user === null) {
       ctx.reply.status(400);
 
-      return { error: 'Password is wrong or the user blocked' };
+      throw Error('Password is wrong.');
+    }
+
+    if (enabledOneTimePassword) {
+      await user.tempPassword.destroy();
     }
 
     const token = ctx.app.jwt.sign({
@@ -156,14 +99,14 @@ export class AuthResolver {
   /**
    * Sign up
    */
-  @Query(() => DefaultResponseType)
+  @Mutation(() => DefaultResponseType)
   async signUp(
     @Arg('email') email: string,
     @Arg('firstName') firstName: string,
     @Arg('lastName') lastName: string,
     @Arg('country') country: string,
     @Ctx() ctx: MercuriusContext,
-  ): Promise<typeof DefaultResponseType> {
+  ): Promise<DefaultResponseType> {
     try {
       const [newUser, created] = await User.findOrCreate({
         where: { email },
@@ -178,7 +121,7 @@ export class AuthResolver {
       if (!created) {
         ctx.reply.status(400);
 
-        return { error: 'User already exists' };
+        throw Error('User already exists.');
       }
 
       await newUser.setOneTimePassword();
@@ -188,7 +131,7 @@ export class AuthResolver {
       ctx.app.log.error(exception);
       ctx.reply.status(400);
 
-      return { error: exception.message };
+      throw Error(exception.message);
     }
   }
 }

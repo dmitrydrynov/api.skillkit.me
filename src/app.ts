@@ -2,7 +2,7 @@ import { join } from 'path';
 import { env } from '@config/env';
 import AutoLoad, { AutoloadPluginOptions } from 'fastify-autoload';
 import { FastifyPluginAsync } from 'fastify';
-import { default as JWT } from 'fastify-jwt';
+import fastifyJWT from 'fastify-jwt';
 
 export type AppOptions = {
   // Place your custom options for app below here.
@@ -10,7 +10,7 @@ export type AppOptions = {
 
 const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void> => {
   // Register JWT
-  fastify.register(JWT, {
+  fastify.register(fastifyJWT, {
     secret: env.JWT_SECRET,
     verify: { maxAge: env.TOKEN_TTL },
   });
