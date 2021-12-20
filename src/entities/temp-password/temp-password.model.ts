@@ -14,7 +14,7 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript';
-import { User } from './User';
+import { User } from '../user/user.model';
 
 @Table({ underscored: true })
 export class TempPassword extends Model {

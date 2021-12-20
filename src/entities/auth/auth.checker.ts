@@ -1,6 +1,6 @@
+import { JWTUserData } from '@entities/user/user.types';
 import { MercuriusContext } from 'mercurius';
 import { AuthChecker, ResolverData } from 'type-graphql';
-import { JWTUserData } from './odt/user.types';
 
 export const authChecker: AuthChecker<MercuriusContext> = (
   { context }: ResolverData<MercuriusContext>,

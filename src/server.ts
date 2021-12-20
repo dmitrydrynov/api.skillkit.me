@@ -1,7 +1,6 @@
-import '@config/env';
 import { env } from '@config/env';
-import Fastify, { FastifyInstance } from 'fastify';
 import closeWithGrace from 'close-with-grace';
+import Fastify, { FastifyInstance } from 'fastify';
 
 export const app: FastifyInstance = Fastify({
   ignoreTrailingSlash: true,

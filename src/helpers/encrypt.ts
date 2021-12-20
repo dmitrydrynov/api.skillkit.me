@@ -1,8 +1,8 @@
 import { randomInt } from 'crypto';
+import { env } from '@config/env';
 import { Sequelize } from 'sequelize';
 import { ModelCtor } from 'sequelize-typescript';
 import { Fn } from 'sequelize/lib/utils';
-import { env } from '@config/env';
 
 export type DecryptionOptions = {
   as: string;

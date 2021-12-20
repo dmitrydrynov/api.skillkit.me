@@ -1,4 +1,4 @@
-import { UserRole } from '@models/User';
+import { UserRole } from './user.model';
 
 export class JWTUserData {
   id: number;

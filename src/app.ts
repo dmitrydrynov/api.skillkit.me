@@ -1,8 +1,8 @@
 import { join } from 'path';
 import { env } from '@config/env';
-import AutoLoad, { AutoloadPluginOptions } from 'fastify-autoload';
 import { FastifyPluginAsync } from 'fastify';
-import fastifyJWT from 'fastify-jwt';
+import AutoLoad, { AutoloadPluginOptions } from 'fastify-autoload';
+import { default as fastifyJWT } from 'fastify-jwt';
 
 export type AppOptions = {
   // Place your custom options for app below here.

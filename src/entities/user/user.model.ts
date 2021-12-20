@@ -1,5 +1,6 @@
 import { env } from '@config/env';
 import { encryptPassword } from '@helpers/encrypt';
+import { sendOneTimePassword } from '@services/mailgun';
 import { generate as generatePassword } from 'generate-password';
 import {
   AllowNull,
@@ -16,9 +17,8 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript';
-import { TempPassword } from './TempPassword';
-import { sendOneTimePassword } from '@services/mailgun';
 import { Field, ObjectType } from 'type-graphql';
+import { TempPassword } from '../temp-password/temp-password.model';
 
 export enum UserRole {
   ADMIN = 'admin',

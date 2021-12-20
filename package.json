@@ -4,14 +4,16 @@
     "start": "ts-node src/server.ts",
     "dev": "tsnd -r tsconfig-paths/register --poll --respawn src/server.ts",
     "docker": "docker-compose up",
-    "migrate:up": "ts-node src/migrate.ts up",
-    "migrate:down": "ts-node src/migrate.ts down"
+    "migrate": "ts-node src/db/migrate.ts",
+    "seed": "ts-node src/db/seed.ts"
   },
   "dependencies": {
     "@types/mailgun-js": "^0.22.12",
     "@types/node": "^16.11.11",
     "close-with-grace": "^1.1.0",
     "dotenv": "^10.0.0",
+    "eslint-import-resolver-typescript": "^2.5.0",
+    "eslint-plugin-import": "^2.25.3",
     "fastify": "^3.24.1",
     "fastify-autoload": "^3.9.0",
     "fastify-env": "^2.1.1",
@@ -30,6 +32,7 @@
     "umzug": "^3.0.0-beta.16"
   },
   "devDependencies": {
+    "@types/sequelize": "^4.28.10",
     "@types/validator": "^13.7.0",
     "@typescript-eslint/eslint-plugin": "^5.5.0",
     "@typescript-eslint/parser": "^5.5.0",

@@ -1,14 +1,13 @@
 import { env } from '@config/env';
-import { UserRole } from '@models/User';
-import { FastifyReply } from 'fastify';
-import { FastifyRequest } from 'fastify';
+import { authChecker } from '@entities/auth/auth.checker';
+import { AuthResolver } from '@entities/auth/auth.resolver';
+import { UserRole } from '@entities/user/user.model';
+import { UserResolver } from '@entities/user/user.resolver';
+import { JWTUserData } from '@entities/user/user.types';
+import { FastifyReply, FastifyRequest } from 'fastify';
 import fp from 'fastify-plugin';
 import Mercurius, { MercuriusContext } from 'mercurius';
 import { buildSchema } from 'type-graphql';
-import { authChecker } from './auth-checker';
-import { JWTUserData } from './odt/user.types';
-import { AuthResolver } from './resolvers/auth';
-import { UserResolver } from './resolvers/user';
 
 export default fp(
   async (fastify) => {

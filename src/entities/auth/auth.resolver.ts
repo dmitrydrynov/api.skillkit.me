@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { TempPassword } from '@entities/temp-password/temp-password.model';
+import { User, UserRole } from '@entities/user/user.model';
 import { verifyPassword } from '@helpers/encrypt';
-import { TempPassword } from '@models/TempPassword';
-import { UserRole, User } from '@models/User';
+import { DefaultResponseType } from '@plugins/graphql/common.types';
 import { MercuriusContext } from 'mercurius';
-import { FindOptions, ModelStatic, NonNullFindOptions, Op, Sequelize } from 'sequelize';
-import { Arg, Resolver, Query, Ctx, Mutation } from 'type-graphql';
-import { AuthResponseType, SignInResponseType } from '../odt/auth.types';
-import { DefaultResponseType } from '../odt/common.types';
+import { FindOptions, Op, Sequelize } from 'sequelize';
+import { Arg, Ctx, Mutation, Query, Resolver } from 'type-graphql';
+import { AuthResponseType } from './auth.types';
 
 @Resolver()
 export class AuthResolver {

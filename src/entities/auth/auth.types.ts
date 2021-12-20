@@ -1,4 +1,4 @@
-import { createUnionType, Field, ObjectType } from 'type-graphql';
+import { Field, ObjectType, createUnionType } from 'type-graphql';
 
 @ObjectType('SignInResponse')
 export class SignInResponseType {
