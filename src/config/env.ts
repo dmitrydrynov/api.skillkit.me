@@ -30,3 +30,5 @@ type Env = {
   MAILGUN_FROM_NAME: string;
   [key: string]: any;
 };
+
+module.exports = { env };

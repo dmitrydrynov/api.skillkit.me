@@ -1,3 +1,4 @@
+import User from '@entities/user/user.model';
 import { Field, ObjectType, createUnionType } from 'type-graphql';
 
 @ObjectType('SignInResponse')
@@ -10,12 +11,16 @@ export class SignInResponseType {
 export class AuthTokenResponseType {
   @Field()
   token: string;
+  @Field()
+  user: User;
 }
 
 @ObjectType('AuthNextResponse')
 export class AuthNextResponseType {
   @Field()
   next: boolean;
+  @Field()
+  otp: boolean;
 }
 
 export const AuthResponseType = createUnionType({

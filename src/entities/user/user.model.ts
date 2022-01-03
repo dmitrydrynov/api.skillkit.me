@@ -18,7 +18,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript';
 import { Field, ObjectType } from 'type-graphql';
-import { TempPassword } from '../temp-password/temp-password.model';
+import TempPassword from '../temp-password/temp-password.model';
 
 export enum UserRole {
   ADMIN = 'admin',
@@ -30,7 +30,7 @@ export enum UserRole {
 
 @ObjectType('User')
 @Table({ underscored: true })
-export class User extends Model {
+export default class User extends Model {
   @Field()
   @AllowNull(false)
   @AutoIncrement

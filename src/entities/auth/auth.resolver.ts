@@ -1,19 +1,21 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { TempPassword } from '@entities/temp-password/temp-password.model';
-import { User, UserRole } from '@entities/user/user.model';
+import TempPassword from '@entities/temp-password/temp-password.model';
+import User, { UserRole } from '@entities/user/user.model';
 import { verifyPassword } from '@helpers/encrypt';
 import { DefaultResponseType } from '@plugins/graphql/common.types';
+import fetch from 'cross-fetch';
 import { MercuriusContext } from 'mercurius';
 import { FindOptions, Op, Sequelize } from 'sequelize';
 import { Arg, Ctx, Mutation, Query, Resolver } from 'type-graphql';
-import { AuthResponseType } from './auth.types';
+import { AuthResponseType, AuthTokenResponseType } from './auth.types';
+import CurrentUser from './current-user.decorator';
 
 @Resolver()
 export class AuthResolver {
   /**
    * Authorize with password
    */
-  @Query(() => AuthResponseType)
+  @Mutation(() => AuthResponseType)
   async signIn(
     @Arg('email') email: string,
     @Arg('password', { nullable: true }) password: string,
@@ -42,7 +44,7 @@ export class AuthResolver {
       if (!password) {
         await user.setOneTimePassword();
 
-        return { next: true };
+        return { next: true, otp: true };
       }
 
       /** If one-time password exist but expired  */
@@ -67,13 +69,19 @@ export class AuthResolver {
         },
       ];
     } else {
-      findOptions = {
-        include: null,
-        where: {
-          ...findOptions.where,
-          [Op.and]: Sequelize.where(Sequelize.col('password'), verifyPassword(ctx.app.sequelize, 'password', password)),
-        },
-      };
+      if (password) {
+        findOptions = {
+          where: {
+            ...findOptions.where,
+            [Op.and]: Sequelize.where(
+              Sequelize.col('password'),
+              verifyPassword(ctx.app.sequelize, 'password', password),
+            ),
+          },
+        };
+      } else {
+        return { next: true, otp: false };
+      }
     }
 
     user = await User.findOne(findOptions);
@@ -93,7 +101,52 @@ export class AuthResolver {
       role: UserRole.MEMBER,
     });
 
-    return { token };
+    return { token, user };
+  }
+
+  /**
+   * Authorize with code (OAuth2)
+   */
+  @Query(() => AuthTokenResponseType)
+  async signInByCode(
+    @Arg('code') code: string,
+    @Arg('state', { nullable: true }) state: string,
+    @Ctx() ctx: MercuriusContext,
+  ): Promise<AuthTokenResponseType> {
+    const {
+      reply: { request },
+    } = ctx;
+
+    const accessToken = await ctx.app.discordOAuth2.getAccessTokenFromAuthorizationCodeFlow({
+      query: request.body['variables'],
+    });
+
+    const userData: any = await fetch('https://discord.com/api/users/@me', {
+      headers: {
+        authorization: `${accessToken.token_type} ${accessToken.access_token}`,
+      },
+    });
+
+    const [user] = await User.findOrCreate({
+      where: { email: userData.email },
+      defaults: {
+        email: userData.email,
+        fullname: userData.username,
+      },
+    });
+
+    if (user === null) {
+      ctx.reply.status(400);
+
+      throw Error('Authorisation is wrong.');
+    }
+
+    const token = ctx.app.jwt.sign({
+      id: user.id,
+      role: UserRole.MEMBER,
+    });
+
+    return { token, user };
   }
 
   /**
@@ -133,5 +186,19 @@ export class AuthResolver {
 
       throw Error(exception.message);
     }
+  }
+
+  /**
+   * Get authenticated user
+   */
+  @Query(() => User)
+  async authenticatedUser(@CurrentUser() currentUser: User, @Ctx() ctx: MercuriusContext): Promise<User> {
+    const user = await User.findByPk(1);
+
+    if (!user || user.blocked) {
+      throw Error('Authenticated User not found or blocked');
+    }
+
+    return user;
   }
 }

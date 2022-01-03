@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { MercuriusContext } from 'mercurius';
 import { Authorized, Ctx, Query, Resolver } from 'type-graphql';
-import { User, UserRole } from './user.model';
+import User, { UserRole } from './user.model';
 import CurrentUser from '../auth/current-user.decorator';
 
 @Resolver()

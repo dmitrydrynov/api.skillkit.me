@@ -2,17 +2,58 @@ import { join } from 'path';
 import { env } from '@config/env';
 import { FastifyPluginAsync } from 'fastify';
 import AutoLoad, { AutoloadPluginOptions } from 'fastify-autoload';
+import Cors from 'fastify-cors';
+import helmet from 'fastify-helmet';
 import { default as fastifyJWT } from 'fastify-jwt';
+import oauth2 from 'fastify-oauth2';
 
 export type AppOptions = {
   // Place your custom options for app below here.
 } & Partial<AutoloadPluginOptions>;
 
 const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void> => {
+  // HEADERS SECURITY
+  fastify.register(helmet, {
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        baseUri: ["'self'"],
+        fontSrc: ["'self'", 'https:', 'data:'],
+        frameAncestors: ["'self'"],
+        imgSrc: ["'self'", 'data:', 'via.placeholder.com', 'cdn.discordapp.com'], // list all the good source
+        objectSrc: ["'none'"],
+        scriptSrc: ["'self'", 'unpkg.com', "'unsafe-eval'"], // list all the good source
+        scriptSrcAttr: ["'none'"],
+        styleSrc: ["'self'", 'https:', "'unsafe-inline'"],
+      },
+    },
+  });
+
+  // CORS
+  fastify.register(Cors, {
+    credentials: true,
+    origin: true,
+  });
+
   // Register JWT
   fastify.register(fastifyJWT, {
     secret: env.JWT_SECRET,
     verify: { maxAge: env.TOKEN_TTL },
+  });
+
+  // DISCORD OAUTH2
+  fastify.register(oauth2, {
+    name: 'discordOAuth2',
+    credentials: {
+      client: {
+        id: env.DISCORD_CLIENT_ID,
+        secret: env.DISCORD_SECRET,
+      },
+      auth: oauth2.DISCORD_CONFIGURATION,
+    },
+    scope: ['identify'],
+    startRedirectPath: '/auth/discord',
+    callbackUri: env.DISCORD_REDIRECT_URI, // this URL must be exposed
   });
 
   // Do not touch the following lines
@@ -27,9 +68,16 @@ const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void>
   // define your routes in one of these
   void fastify.register(AutoLoad, {
     dir: join(__dirname, 'routes'),
+    maxDepth: 10,
     options: opts,
   });
 };
 
 export default app;
 export { app };
+
+declare module 'fastify' {
+  interface FastifyInstance {
+    discordOAuth2: any;
+  }
+}

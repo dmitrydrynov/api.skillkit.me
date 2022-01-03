@@ -14,10 +14,10 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript';
-import { User } from '../user/user.model';
+import User from '../user/user.model';
 
 @Table({ underscored: true })
-export class TempPassword extends Model {
+export default class TempPassword extends Model {
   @AllowNull(false)
   @AutoIncrement
   @PrimaryKey

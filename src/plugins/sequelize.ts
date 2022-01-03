@@ -11,7 +11,7 @@ export default fp(
         logging(message) {
           fastify.log.debug(message);
         },
-        models: [pathResolve(__dirname, '../models')],
+        models: [pathResolve(__dirname, '../entities/**/*.model.ts')],
       },
     );
 
