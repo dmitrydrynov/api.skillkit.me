@@ -133,15 +133,19 @@ export class AuthResolver {
       throw Error('User data not available.');
     }
 
-    const userData = await userDataResponse.json();
+    const userData: any = await userDataResponse.json();
+
+    const [firstName, lastName]: string[] = userData.username.split(' ');
+    const avatar = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
 
     const [user, created] = await User.findOrCreate({
       include: [ConnectedUser],
       where: { email: userData.email },
       defaults: {
         email: userData.email,
-        firstName: userData.username,
-        lastName: '',
+        firstName: firstName ? firstName : '',
+        lastName: lastName ? lastName : '',
+        avatar,
       },
     });
 
@@ -151,28 +155,40 @@ export class AuthResolver {
       throw Error('Authorisation is wrong.');
     }
 
-    if (created || !user.hasConnectedWith(serviceName)) {
+    if (created) {
       const connectedUser = await ConnectedUser.create({
         userId: user.id,
         serviceName,
         serviceUserId: userData.id,
-        nickname: userData.username,
+        username: userData.username,
+        avatar,
         token: `${accessToken.token_type} ${accessToken.access_token}`,
         expiresIn: accessToken.expires_in,
       });
 
-      user.connectedUsers.push(connectedUser);
-    }
+      user.connectedUsers = [connectedUser];
+    } else {
+      if (user.hasConnectedWith(serviceName)) {
+        const connectedUser = await user.updateConnectedUser(serviceName, {
+          username: userData.username,
+          avatar,
+          token: `${accessToken.token_type} ${accessToken.access_token}`,
+          expiresIn: accessToken.expires_in,
+        });
 
-    if (!created && user.hasConnectedWith(serviceName)) {
-      const connectedUser = await user.updateConnectedUser(serviceName, {
-        nickname: userData.username,
-        token: `${accessToken.token_type} ${accessToken.access_token}`,
-        expiresIn: accessToken.expires_in,
-      });
-
-      if (!connectedUser) {
-        throw Error('Authorisation is wrong.');
+        if (!connectedUser) {
+          throw Error('Authorisation is wrong.');
+        }
+      } else {
+        await ConnectedUser.create({
+          userId: user.id,
+          serviceName,
+          serviceUserId: userData.id,
+          username: userData.username,
+          avatar,
+          token: `${accessToken.token_type} ${accessToken.access_token}`,
+          expiresIn: accessToken.expires_in,
+        });
       }
     }
 

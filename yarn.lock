@@ -1710,6 +1710,14 @@ fastify-error@^0.3.0, fastify-error@^0.3.1:
   resolved "https://registry.npmjs.org/fastify-error/-/fastify-error-0.3.1.tgz"
   integrity sha512-oCfpcsDndgnDVgiI7bwFKAun2dO+4h84vBlkWsWnz/OUK9Reff5UFoFl241xTiLeHWX/vU9zkDVXqYUxjOwHcQ==
 
+fastify-file-routes@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/fastify-file-routes/-/fastify-file-routes-1.1.1.tgz#0d831ef27d21135411b96ae43ae50821b34f969d"
+  integrity sha512-5pZ/uJD9H278Yt6fpv35MDcc8xSa649vKxLM5/zrFF97Nq1b/k401Wrsr/fZpu5EvtcXiaNEu0moPrDPgEJpYw==
+  dependencies:
+    fastify-plugin "^3.0.0"
+    picocolors "^1.0.0"
+
 fastify-helmet@^5.3.2:
   version "5.3.2"
   resolved "https://registry.yarnpkg.com/fastify-helmet/-/fastify-helmet-5.3.2.tgz#eda259b8a9ad5ccc6dacc1b7ed358c03f59a7f7f"
@@ -3130,6 +3138,11 @@ pgpass@1.x:
   integrity sha512-YmuA56alyBq7M59vxVBfPJrGSozru8QAdoNlWuW3cz8l+UX3cWge0vTvjKhsSHSJpo3Bom8/Mm6hf0TR5GY0+w==
   dependencies:
     split2 "^3.1.1"
+
+picocolors@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/picocolors/-/picocolors-1.0.0.tgz#cb5bdc74ff3f51892236eaf79d68bc44564ab81c"
+  integrity sha512-1fygroTLlHu66zi26VoTDv8yRgm0Fccecssto+MhsZ0D/DGW2sm8E8AjW7NU5VVTRt5GxbeZ5qBuJr+HyLYkjQ==
 
 picomatch@^2.0.4, picomatch@^2.2.1, picomatch@^2.2.3:
   version "2.3.0"

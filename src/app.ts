@@ -3,6 +3,7 @@ import { env } from '@config/env';
 import { FastifyPluginAsync } from 'fastify';
 import AutoLoad, { AutoloadPluginOptions } from 'fastify-autoload';
 import Cors from 'fastify-cors';
+import { fileRoutes } from 'fastify-file-routes';
 import helmet from 'fastify-helmet';
 import { default as fastifyJWT } from 'fastify-jwt';
 import oauth2 from 'fastify-oauth2';
@@ -58,7 +59,7 @@ const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void>
 
   // Do not touch the following lines
   // This loads all plugins defined in plugins
-  void fastify.register(AutoLoad, {
+  fastify.register(AutoLoad, {
     dir: join(__dirname, 'plugins'),
     options: opts,
     maxDepth: 1,
@@ -66,10 +67,8 @@ const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void>
 
   // This loads all plugins defined in routes
   // define your routes in one of these
-  void fastify.register(AutoLoad, {
-    dir: join(__dirname, 'routes'),
-    maxDepth: 10,
-    options: opts,
+  fastify.register(fileRoutes, {
+    routesDir: './routes',
   });
 };
 

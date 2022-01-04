@@ -1,4 +1,4 @@
-import { DATE, INTEGER, QueryInterface, STRING, fn, literal } from 'sequelize';
+import { DATE, INTEGER, QueryInterface, STRING, fn } from 'sequelize';
 import { MigrationParams } from 'umzug';
 
 export async function up({ context: sequelize }: MigrationParams<QueryInterface>): Promise<void> {
@@ -26,9 +26,11 @@ export async function up({ context: sequelize }: MigrationParams<QueryInterface>
       type: STRING,
       allowNull: false,
     },
-    nickname: {
+    username: {
       type: STRING,
-      allowNull: true,
+    },
+    avatar: {
+      type: STRING,
     },
     token: {
       type: STRING,

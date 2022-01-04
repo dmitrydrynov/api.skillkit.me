@@ -19,6 +19,7 @@ export async function up({ context: sequelize }: MigrationParams<QueryInterface>
     password: STRING,
     first_name: STRING,
     last_name: STRING,
+    avatar: STRING,
     country: STRING,
     blocked: {
       type: BOOLEAN,

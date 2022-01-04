@@ -5,7 +5,6 @@ import {
   Column,
   CreatedAt,
   ForeignKey,
-  HasOne,
   Model,
   PrimaryKey,
   Table,
@@ -43,7 +42,11 @@ export default class ConnectedUser extends Model {
 
   @Field()
   @Column
-  nickname: string;
+  username: string;
+
+  @Field()
+  @Column
+  avatar?: string;
 
   @Field()
   @Column

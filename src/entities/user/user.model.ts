@@ -67,6 +67,10 @@ export default class User extends Model {
   @Column
   fullName?: string;
 
+  @Field()
+  @Column
+  avatar?: string;
+
   @Field({ nullable: true })
   @Column
   country: string;
@@ -137,7 +141,7 @@ export default class User extends Model {
       return false;
     }
 
-    connectedUser.nickname = data.nickname;
+    connectedUser.username = data.username;
     connectedUser.token = data.token;
     connectedUser.expiresIn = data.expiresIn;
     await connectedUser.save();
