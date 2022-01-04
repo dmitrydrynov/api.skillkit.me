@@ -1,4 +1,5 @@
 import { env } from '@config/env';
+import ConnectedUser from '@entities/connected-users/connected-user.model';
 import { encryptPassword } from '@helpers/encrypt';
 import { sendOneTimePassword } from '@services/mailgun';
 import { generate as generatePassword } from 'generate-password';
@@ -10,6 +11,7 @@ import {
   Column,
   CreatedAt,
   Default,
+  HasMany,
   HasOne,
   IsEmail,
   Model,
@@ -49,6 +51,9 @@ export default class User extends Model {
 
   @HasOne(() => TempPassword)
   tempPassword?: TempPassword;
+
+  @HasMany(() => ConnectedUser, 'userId')
+  connectedUsers?: ConnectedUser[];
 
   @Field()
   @Column
@@ -113,5 +118,30 @@ export default class User extends Model {
     }
 
     await sendOneTimePassword(this.email, tempPassword);
+  }
+
+  hasConnectedWith(serviceName: string): boolean {
+    if (this.connectedUsers?.length === 0) {
+      return false;
+    }
+
+    const hasService = this.connectedUsers.find((connectedUser) => connectedUser.serviceName === serviceName);
+
+    return !!hasService;
+  }
+
+  async updateConnectedUser(serviceName: string, data: any): Promise<boolean> {
+    const connectedUser = this.connectedUsers?.find((connectedUser) => connectedUser.serviceName === serviceName);
+
+    if (!connectedUser) {
+      return false;
+    }
+
+    connectedUser.nickname = data.nickname;
+    connectedUser.token = data.token;
+    connectedUser.expiresIn = data.expiresIn;
+    await connectedUser.save();
+
+    return true;
   }
 }

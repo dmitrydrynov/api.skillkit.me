@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import ConnectedUser from '@entities/connected-users/connected-user.model';
 import TempPassword from '@entities/temp-password/temp-password.model';
 import User, { UserRole } from '@entities/user/user.model';
 import { verifyPassword } from '@helpers/encrypt';
@@ -110,6 +111,7 @@ export class AuthResolver {
   @Query(() => AuthTokenResponseType)
   async signInByCode(
     @Arg('code') code: string,
+    @Arg('serviceName') serviceName: string,
     @Arg('state', { nullable: true }) state: string,
     @Ctx() ctx: MercuriusContext,
   ): Promise<AuthTokenResponseType> {
@@ -121,17 +123,25 @@ export class AuthResolver {
       query: request.body['variables'],
     });
 
-    const userData: any = await fetch('https://discord.com/api/users/@me', {
+    const userDataResponse: any = await fetch('https://discord.com/api/users/@me', {
       headers: {
         authorization: `${accessToken.token_type} ${accessToken.access_token}`,
       },
     });
 
-    const [user] = await User.findOrCreate({
+    if (!userDataResponse.ok) {
+      throw Error('User data not available.');
+    }
+
+    const userData = await userDataResponse.json();
+
+    const [user, created] = await User.findOrCreate({
+      include: [ConnectedUser],
       where: { email: userData.email },
       defaults: {
         email: userData.email,
-        fullname: userData.username,
+        firstName: userData.username,
+        lastName: '',
       },
     });
 
@@ -139,6 +149,31 @@ export class AuthResolver {
       ctx.reply.status(400);
 
       throw Error('Authorisation is wrong.');
+    }
+
+    if (created || !user.hasConnectedWith(serviceName)) {
+      const connectedUser = await ConnectedUser.create({
+        userId: user.id,
+        serviceName,
+        serviceUserId: userData.id,
+        nickname: userData.username,
+        token: `${accessToken.token_type} ${accessToken.access_token}`,
+        expiresIn: accessToken.expires_in,
+      });
+
+      user.connectedUsers.push(connectedUser);
+    }
+
+    if (!created && user.hasConnectedWith(serviceName)) {
+      const connectedUser = await user.updateConnectedUser(serviceName, {
+        nickname: userData.username,
+        token: `${accessToken.token_type} ${accessToken.access_token}`,
+        expiresIn: accessToken.expires_in,
+      });
+
+      if (!connectedUser) {
+        throw Error('Authorisation is wrong.');
+      }
     }
 
     const token = ctx.app.jwt.sign({
@@ -193,7 +228,7 @@ export class AuthResolver {
    */
   @Query(() => User)
   async authenticatedUser(@CurrentUser() currentUser: User, @Ctx() ctx: MercuriusContext): Promise<User> {
-    const user = await User.findByPk(1);
+    const user = await User.findByPk(currentUser.id);
 
     if (!user || user.blocked) {
       throw Error('Authenticated User not found or blocked');
