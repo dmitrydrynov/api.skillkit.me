@@ -10,7 +10,7 @@ export class UserResolver {
    * Users list
    */
   @Authorized([UserRole.MEMBER])
-  @Query(() => [User])
+  @Query(() => [User], { description: 'Get users list' })
   async users(@CurrentUser() currentUser: User, @Ctx() ctx: MercuriusContext): Promise<Array<User>> {
     const users: User[] = await User.findAll();
 

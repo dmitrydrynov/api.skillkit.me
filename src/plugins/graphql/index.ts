@@ -23,12 +23,16 @@ export default fp(
         const context: Partial<MercuriusContext> = { reply, user: null };
 
         if (request.headers['authorization']) {
-          const { id, role = UserRole.UNKNOWN }: JWTUserData = fastify.jwt.verify(request.headers['authorization']);
+          try {
+            const { id, role = UserRole.UNKNOWN }: JWTUserData = fastify.jwt.verify(request.headers['authorization']);
 
-          context.user = {
-            id,
-            role,
-          };
+            context.user = {
+              id,
+              role,
+            };
+          } catch (error) {
+            console.log('[JWT Verify]', error);
+          }
         }
 
         return context;

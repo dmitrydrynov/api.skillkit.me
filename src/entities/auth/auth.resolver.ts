@@ -3,7 +3,7 @@ import ConnectedUser from '@entities/connected-users/connected-user.model';
 import TempPassword from '@entities/temp-password/temp-password.model';
 import User, { UserRole } from '@entities/user/user.model';
 import { verifyPassword } from '@helpers/encrypt';
-import { DefaultResponseType } from '@plugins/graphql/common.types';
+import { DefaultResponseType } from '@plugins/graphql/types/common.types';
 import fetch from 'cross-fetch';
 import { MercuriusContext } from 'mercurius';
 import { FindOptions, Op, Sequelize } from 'sequelize';
@@ -16,7 +16,7 @@ export class AuthResolver {
   /**
    * Authorize with password
    */
-  @Mutation(() => AuthResponseType)
+  @Mutation(() => AuthResponseType, { description: 'Sign in by email and password' })
   async signIn(
     @Arg('email') email: string,
     @Arg('password', { nullable: true }) password: string,
@@ -108,7 +108,7 @@ export class AuthResolver {
   /**
    * Authorize with code (OAuth2)
    */
-  @Query(() => AuthTokenResponseType)
+  @Query(() => AuthTokenResponseType, { description: 'Sign in by query param code for external oauth2' })
   async signInByCode(
     @Arg('code') code: string,
     @Arg('serviceName') serviceName: string,
@@ -203,12 +203,11 @@ export class AuthResolver {
   /**
    * Sign up
    */
-  @Mutation(() => DefaultResponseType)
+  @Mutation(() => DefaultResponseType, { description: 'To register a new user' })
   async signUp(
     @Arg('email') email: string,
     @Arg('firstName') firstName: string,
     @Arg('lastName') lastName: string,
-    @Arg('country') country: string,
     @Ctx() ctx: MercuriusContext,
   ): Promise<DefaultResponseType> {
     try {
@@ -218,7 +217,6 @@ export class AuthResolver {
           firstName,
           lastName,
           email,
-          country,
         },
       });
 
@@ -242,7 +240,7 @@ export class AuthResolver {
   /**
    * Get authenticated user
    */
-  @Query(() => User)
+  @Query(() => User, { description: 'Get authenticated user data' })
   async authenticatedUser(@CurrentUser() currentUser: User, @Ctx() ctx: MercuriusContext): Promise<User> {
     const user = await User.findByPk(currentUser.id);
 
