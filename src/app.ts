@@ -4,7 +4,7 @@ import { FastifyPluginAsync } from 'fastify';
 import AutoLoad, { AutoloadPluginOptions } from 'fastify-autoload';
 import Cors from 'fastify-cors';
 import { fileRoutes } from 'fastify-file-routes';
-import helmet from 'fastify-helmet';
+// import helmet from 'fastify-helmet';
 import { default as fastifyJWT } from 'fastify-jwt';
 import oauth2 from 'fastify-oauth2';
 
@@ -14,21 +14,21 @@ export type AppOptions = {
 
 const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void> => {
   // HEADERS SECURITY
-  fastify.register(helmet, {
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"],
-        baseUri: ["'self'"],
-        fontSrc: ["'self'", 'https:', 'data:'],
-        frameAncestors: ["'self'"],
-        imgSrc: ["'self'", 'data:', 'via.placeholder.com', 'cdn.discordapp.com'], // list all the good source
-        objectSrc: ["'none'"],
-        scriptSrc: ["'self'", 'unpkg.com', "'unsafe-eval'"], // list all the good source
-        scriptSrcAttr: ["'none'"],
-        styleSrc: ["'self'", 'https:', "'unsafe-inline'"],
-      },
-    },
-  });
+  // fastify.register(helmet, {
+  //   contentSecurityPolicy: {
+  //     directives: {
+  //       defaultSrc: ["'self'", "'unsafe-inline'"],
+  //       baseUri: ["'self'"],
+  //       fontSrc: ["'self'", 'https:', 'data:'],
+  //       frameAncestors: ["'self'"],
+  //       imgSrc: ["'self'", 'data:', 'via.placeholder.com', 'cdn.discordapp.com'], // list all the good source
+  //       objectSrc: ["'none'"],
+  //       scriptSrc: ["'self'", 'unpkg.com', "'unsafe-eval'"], // list all the good source
+  //       scriptSrcAttr: ["'none'"],
+  //       styleSrc: ["'self'", 'https:', 'unpkg.com', "'unsafe-inline'"],
+  //     },
+  //   },
+  // });
 
   // CORS
   fastify.register(Cors, {
