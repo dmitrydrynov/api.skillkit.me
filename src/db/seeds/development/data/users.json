@@ -1,0 +1,29 @@
+[
+  {
+    "id": 1,
+    "email": "admingamelab@alilot.com",
+    "password": "admingamelab",
+    "blocked": false,
+    "first_name": "Super",
+    "last_name": "Admin",
+    "country": "us"
+  },
+  {
+    "id": 2,
+    "email": "usergamelab@alilot.com",
+    "password": "user.gamelab",
+    "blocked": false,
+    "first_name": "First",
+    "last_name": "User",
+    "country": "us"
+  },
+  {
+    "id": 3,
+    "email": "user2gamelab@alilot.com",
+    "password": "user2gamelab",
+    "blocked": false,
+    "first_name": "Second",
+    "last_name": "User",
+    "country": "us"
+  }
+]
