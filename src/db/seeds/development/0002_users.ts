@@ -1,3 +1,4 @@
+import Role from '@entities/role/role.model';
 import { encryptPassword } from '@helpers/encrypt';
 import { faker } from '@faker-js/faker';
 import { Op, QueryInterface, Sequelize } from 'sequelize';
@@ -9,8 +10,11 @@ const { address, datatype, internet, name, random } = faker;
 const USERS_COUNT = 100;
 
 export async function up({ context: sequelize }: MigrationParams<QueryInterface>): Promise<void> {
+  const roles: Role[] = await Role.findAll();
+
   const data = usersData.map((user) => ({
     ...user,
+    roleId: roles.find((r) => r.name.toString() === user.roleId).id,
     password: encryptPassword(sequelize.sequelize, user.password),
   }));
 
@@ -25,6 +29,7 @@ export async function up({ context: sequelize }: MigrationParams<QueryInterface>
         last_name: name.lastName(),
         country: random.arrayElement([null, address.countryCode()]),
         blocked: datatype.boolean(),
+        roleId: random.arrayElement(roles.map((r) => r.id)),
       };
     });
 

@@ -8,7 +8,7 @@ import { SequelizeStorage, Umzug } from 'umzug';
   const sequelize = new Sequelize(
     `postgres://${env.DB_USER}:${env.DB_PASS}@${env.DB_HOST}:${env.DB_PORT}/${env.DB_NAME}`,
     {
-      models: [pathResolve(__dirname, 'entities/**/*.model.ts')],
+      models: [pathResolve(__dirname, '../entities/**/*.model.ts')],
     },
   );
 

@@ -1,5 +1,6 @@
 import { env } from '@config/env';
 import ConnectedUser from '@entities/connected-users/connected-user.model';
+import Role from '@entities/role/role.model';
 import { encryptPassword } from '@helpers/encrypt';
 import { sendOneTimePassword } from '@services/mailgun';
 import { generate as generatePassword } from 'generate-password';
@@ -11,6 +12,7 @@ import {
   Column,
   CreatedAt,
   Default,
+  ForeignKey,
   HasMany,
   HasOne,
   IsEmail,
@@ -80,6 +82,10 @@ export default class User extends Model {
   @Default(false)
   @Column
   blocked: boolean;
+
+  @ForeignKey(() => Role)
+  @Column
+  roleId: number;
 
   @Field()
   @AllowNull(false)
