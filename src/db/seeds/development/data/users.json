@@ -7,7 +7,7 @@
     "first_name": "Super",
     "last_name": "Admin",
     "country": "us",
-    "roleId": "admin"
+    "role_id": "admin"
   },
   {
     "id": 2,
@@ -17,7 +17,7 @@
     "first_name": "First",
     "last_name": "User",
     "country": "us",
-    "roleId": "member"
+    "role_id": "member"
   },
   {
     "id": 3,
@@ -27,6 +27,6 @@
     "first_name": "Second",
     "last_name": "User",
     "country": "us",
-    "roleId": "expert"
+    "role_id": "expert"
   }
 ]

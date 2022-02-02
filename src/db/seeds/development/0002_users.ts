@@ -14,7 +14,7 @@ export async function up({ context: sequelize }: MigrationParams<QueryInterface>
 
   const data = usersData.map((user) => ({
     ...user,
-    roleId: roles.find((r) => r.name.toString() === user.roleId).id,
+    role_id: roles.find((r) => r.name.toString() === user.role_id).id,
     password: encryptPassword(sequelize.sequelize, user.password),
   }));
 
@@ -29,7 +29,7 @@ export async function up({ context: sequelize }: MigrationParams<QueryInterface>
         last_name: name.lastName(),
         country: random.arrayElement([null, address.countryCode()]),
         blocked: datatype.boolean(),
-        roleId: random.arrayElement(roles.map((r) => r.id)),
+        role_id: random.arrayElement(roles.map((r) => r.id)),
       };
     });
 
