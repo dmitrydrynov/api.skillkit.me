@@ -21,6 +21,7 @@ export async function up({ context: sequelize }: MigrationParams<QueryInterface>
     last_name: STRING,
     avatar: STRING,
     country: STRING,
+    birthday_date: DATE,
     blocked: {
       type: BOOLEAN,
       allowNull: false,

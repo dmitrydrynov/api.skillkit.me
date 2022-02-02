@@ -30,6 +30,7 @@ export async function up({ context: sequelize }: MigrationParams<QueryInterface>
         country: random.arrayElement([null, address.countryCode()]),
         blocked: datatype.boolean(),
         role_id: random.arrayElement(roles.map((r) => r.id)),
+        birthday_date: datatype.datetime({ max: Date.now() }),
       };
     });
 
