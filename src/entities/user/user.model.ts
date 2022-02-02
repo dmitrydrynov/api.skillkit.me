@@ -77,6 +77,10 @@ export default class User extends Model {
   @Column
   country: string;
 
+  @Field({ nullable: true })
+  @Column
+  birthdayDate: Date;
+
   @Field()
   @AllowNull(false)
   @Default(false)

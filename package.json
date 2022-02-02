@@ -15,6 +15,7 @@
     "@faker-js/faker": "^6.0.0-alpha.5",
     "@types/mailgun-js": "^0.22.12",
     "@types/node": "^16.11.11",
+    "class-validator": "^0.13.2",
     "close-with-grace": "^1.1.0",
     "cross-fetch": "^3.1.4",
     "discord-api-types": "^0.26.0",

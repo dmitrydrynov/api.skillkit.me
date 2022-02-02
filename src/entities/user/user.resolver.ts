@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { MercuriusContext } from 'mercurius';
-import { Authorized, Ctx, Query, Resolver } from 'type-graphql';
+import { Arg, Authorized, Ctx, Query, Resolver } from 'type-graphql';
 import User, { UserRole } from './user.model';
+import { UserWhereUniqueInput } from './user.types';
 import CurrentUser from '../auth/current-user.decorator';
 
 @Resolver()
@@ -19,5 +20,20 @@ export class UserResolver {
     }
 
     return users;
+  }
+
+  /**
+   * Get user data
+   */
+  @Authorized([UserRole.MEMBER, UserRole.EXPERT, UserRole.OPERATOR, UserRole.ADMIN])
+  @Query(() => User, { description: 'Get user data by ID' })
+  async user(@Arg('where') where: UserWhereUniqueInput, @CurrentUser() currentUser: User): Promise<User> {
+    const user = await User.findByPk(where.id);
+
+    if (!user || user.blocked) {
+      throw Error('The user not found or blocked');
+    }
+
+    return user;
   }
 }

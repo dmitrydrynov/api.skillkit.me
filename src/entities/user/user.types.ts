@@ -1,3 +1,4 @@
+import { Field, InputType } from 'type-graphql';
 import { UserRole } from './user.model';
 
 export class JWTUserData {
@@ -7,4 +8,10 @@ export class JWTUserData {
   country?: string;
   email?: string;
   role?: UserRole;
+}
+
+@InputType('UserWhereUniqueInput')
+export class UserWhereUniqueInput {
+  @Field()
+  id: number;
 }
