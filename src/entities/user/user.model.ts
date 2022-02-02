@@ -69,7 +69,7 @@ export default class User extends Model {
   @Column
   fullName?: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column
   avatar?: string;
 
