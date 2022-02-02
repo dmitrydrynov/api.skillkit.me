@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "name": "admin"
+  },
+  {
+    "id": 2,
+    "name": "operator"
+  },
+  {
+    "id": 3,
+    "name": "expert"
+  },
+  {
+    "id": 4,
+    "name": "member"
+  },
+  {
+    "id": 5,
+    "name": "unknown"
+  }
+]

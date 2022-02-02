@@ -12,6 +12,7 @@
   "dependencies": {
     "@discordjs/builders": "^0.11.0",
     "@discordjs/rest": "^0.2.0-canary.0",
+    "@faker-js/faker": "^6.0.0-alpha.5",
     "@types/mailgun-js": "^0.22.12",
     "@types/node": "^16.11.11",
     "close-with-grace": "^1.1.0",

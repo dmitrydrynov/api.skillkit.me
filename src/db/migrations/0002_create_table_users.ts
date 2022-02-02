@@ -26,6 +26,11 @@ export async function up({ context: sequelize }: MigrationParams<QueryInterface>
       allowNull: false,
       defaultValue: false,
     },
+    role_id: {
+      type: INTEGER,
+      allowNull: false,
+      defaultValue: 5,
+    },
     created_at: {
       type: DATE,
       allowNull: false,
