@@ -2,9 +2,11 @@
 import { createWriteStream } from 'fs';
 import path from 'path';
 import { env } from '@config/env';
+import { verifyPassword } from '@helpers/encrypt';
 import { removeFile, uploadFile } from '@helpers/file';
 import Hashids from 'hashids';
 import { MercuriusContext } from 'mercurius';
+import { Op, Sequelize } from 'sequelize';
 import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from 'type-graphql';
 import User, { UserRole } from './user.model';
 import { UserDataInput, UserWhereUniqueInput } from './user.types';
@@ -77,6 +79,56 @@ export class UserResolver {
       return user;
     } catch (error) {
       throw Error(error.message);
+    }
+  }
+
+  /**
+   * Change user password
+   */
+  @Authorized([UserRole.MEMBER, UserRole.EXPERT, UserRole.OPERATOR, UserRole.ADMIN])
+  @Mutation(() => Boolean, { description: 'Change user password' })
+  async changeUserPassword(
+    @Arg('useOTP') useOTP: boolean,
+    @Arg('oldPassword', { nullable: true }) oldPassword: string,
+    @Arg('newPassword', { nullable: true }) newPassword: string,
+    @Arg('confirmPassword', { nullable: true }) confirmPassword: string,
+    @CurrentUser() currentUser: User,
+    @Ctx() ctx: MercuriusContext,
+  ): Promise<boolean> {
+    const user = await User.findOne({
+      where: {
+        id: currentUser.id,
+        blocked: false,
+      },
+    });
+
+    if (useOTP) {
+      await user.update('password', null);
+
+      return true;
+    }
+
+    if (!user.enabledOneTimePassword()) {
+      const countUsersWithPassword = await User.count({
+        where: {
+          [Op.and]: Sequelize.where(
+            Sequelize.col('password'),
+            verifyPassword(ctx.app.sequelize as Sequelize, 'password', oldPassword),
+          ),
+        },
+      });
+
+      if (countUsersWithPassword === 0) {
+        throw Error('Old password is not correct!');
+      }
+
+      if (newPassword === confirmPassword) {
+        await user.update({ password: newPassword });
+
+        return true;
+      } else {
+        throw Error('Password mismatch!');
+      }
     }
   }
 }

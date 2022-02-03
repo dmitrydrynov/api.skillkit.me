@@ -134,6 +134,10 @@ export default class User extends Model {
     await sendOneTimePassword(this.email, tempPassword);
   }
 
+  enabledOneTimePassword() {
+    return this.password === null;
+  }
+
   hasConnectedWith(serviceName: string): boolean {
     if (this.connectedUsers?.length === 0) {
       return false;
