@@ -1,4 +1,4 @@
-import { join } from 'path';
+import path, { join } from 'path';
 import { env } from '@config/env';
 import { FastifyPluginAsync } from 'fastify';
 import AutoLoad, { AutoloadPluginOptions } from 'fastify-autoload';
@@ -69,6 +69,15 @@ const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void>
   // define your routes in one of these
   fastify.register(fileRoutes, {
     routesDir: './routes',
+  });
+
+  // This share public folder for storage
+  fastify.register((instance, opts, next) => {
+    fastify.register(require('fastify-static'), {
+      root: path.join(__dirname, '../storage'),
+      prefix: '/storage/',
+    });
+    next();
   });
 };
 

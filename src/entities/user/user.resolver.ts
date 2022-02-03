@@ -1,11 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { createWriteStream } from 'fs';
-import { FileUpload } from 'graphql-upload';
+import path from 'path';
+import { env } from '@config/env';
+import { removeFile, uploadFile } from '@helpers/file';
+import Hashids from 'hashids';
 import { MercuriusContext } from 'mercurius';
 import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from 'type-graphql';
 import User, { UserRole } from './user.model';
 import { UserDataInput, UserWhereUniqueInput } from './user.types';
 import CurrentUser from '../auth/current-user.decorator';
+
+const hashids = new Hashids(env.HASH_SALT, 16);
 
 @Resolver()
 export class UserResolver {
@@ -49,30 +54,29 @@ export class UserResolver {
     @Arg('data') data: UserDataInput,
     @CurrentUser() currentUser: User,
   ): Promise<User> {
-    const uploadData = await data.avatar;
-    const { filename, createReadStream } = uploadData as unknown as FileUpload;
+    try {
+      const user = await User.findByPk(where.id);
 
-    const uploadingResponse = new Promise((resolve, reject) =>
-      createReadStream()
-        .pipe(createWriteStream(__dirname + `/../../storage/avatars/${filename}`))
-        .on('finish', () => resolve(true))
-        .on('error', () => reject(false)),
-    );
+      if (!user || user.blocked) {
+        throw Error('The user not found or blocked');
+      }
 
-    const uploaded = await uploadingResponse;
+      user.set({ ...data, avatar: null });
 
-    if (await uploadingResponse) {
-      // get url
+      if (data.avatar) {
+        if (user.avatar) {
+          await removeFile(user.avatar);
+        }
+
+        const avatarName = 'avatar-' + hashids.encode(user.id, Date.now());
+        user.avatar = await uploadFile(data.avatar, 'avatars', avatarName);
+      }
+
+      await user.save();
+
+      return user;
+    } catch (error) {
+      throw Error(error.message);
     }
-
-    const user = await User.findByPk(where.id);
-
-    if (!user || user.blocked) {
-      throw Error('The user not found or blocked');
-    }
-
-    await user.update({ ...data });
-
-    return user;
   }
 }
