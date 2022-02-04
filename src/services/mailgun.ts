@@ -33,7 +33,7 @@ const send = async ({
       }
     });
   } catch (error) {
-    return new Error(error.message);
+    throw Error(error.message);
   }
 };
 

@@ -103,6 +103,11 @@ export default class User extends Model {
   @Column
   updatedAt: Date;
 
+  @Field({ defaultValue: false })
+  useOTP(): boolean {
+    return this.password === null;
+  }
+
   @BeforeCreate
   @BeforeUpdate
   static encrypt(instance: User): void {
@@ -131,11 +136,11 @@ export default class User extends Model {
       await userTempPassword.update({ expiresOn, tempPassword });
     }
 
-    await sendOneTimePassword(this.email, tempPassword);
-  }
-
-  enabledOneTimePassword() {
-    return this.password === null;
+    try {
+      await sendOneTimePassword(this.email, tempPassword);
+    } catch (error) {
+      throw Error(error.message);
+    }
   }
 
   hasConnectedWith(serviceName: string): boolean {

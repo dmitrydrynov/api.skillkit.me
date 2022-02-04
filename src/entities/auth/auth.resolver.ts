@@ -38,9 +38,7 @@ export class AuthResolver {
       throw Error('User not found or blocked');
     }
 
-    const enabledOneTimePassword = user.password === null;
-
-    if (enabledOneTimePassword) {
+    if (user.useOTP()) {
       /** Need send one-time password or not */
       if (!password) {
         await user.setOneTimePassword();
@@ -93,7 +91,7 @@ export class AuthResolver {
       throw Error('Password is wrong.');
     }
 
-    if (enabledOneTimePassword) {
+    if (user.useOTP()) {
       await user.tempPassword.destroy();
     }
 

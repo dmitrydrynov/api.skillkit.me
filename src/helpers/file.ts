@@ -1,4 +1,4 @@
-import { createWriteStream, promises } from 'fs';
+import { constants, createWriteStream, promises } from 'fs';
 import path from 'path';
 import { env } from '@config/env';
 import { FileUpload } from 'graphql-upload';
@@ -26,6 +26,11 @@ export const uploadFile = async (uploadPromise, dirName, fileName) => {
   }
 };
 
-export const removeFile = async (file) => {
-  await promises.unlink(env.FILE_STORAGE_DIR + file);
+export const removeFile = async (file: string) => {
+  try {
+    await promises.access(env.FILE_STORAGE_DIR + file, constants.F_OK);
+    await promises.unlink(env.FILE_STORAGE_DIR + file);
+  } catch (error) {
+    console.error(error.message);
+  }
 };

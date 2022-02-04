@@ -63,7 +63,7 @@ export class UserResolver {
         throw Error('The user not found or blocked');
       }
 
-      user.set({ ...data, avatar: null });
+      user.set({ ...data, avatar: user.avatar });
 
       if (data.avatar) {
         if (user.avatar) {
@@ -103,12 +103,13 @@ export class UserResolver {
     });
 
     if (useOTP) {
-      await user.update('password', null);
+      user.password = null;
+      await user.save();
 
       return true;
     }
 
-    if (!user.enabledOneTimePassword()) {
+    if (!user.useOTP()) {
       const countUsersWithPassword = await User.count({
         where: {
           [Op.and]: Sequelize.where(
@@ -122,6 +123,14 @@ export class UserResolver {
         throw Error('Old password is not correct!');
       }
 
+      if (newPassword === confirmPassword) {
+        await user.update({ password: newPassword });
+
+        return true;
+      } else {
+        throw Error('Password mismatch!');
+      }
+    } else {
       if (newPassword === confirmPassword) {
         await user.update({ password: newPassword });
 
