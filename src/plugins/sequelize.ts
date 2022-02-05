@@ -1,6 +1,7 @@
 import { resolve as pathResolve } from 'path';
 import { env } from '@config/env';
 import fp from 'fastify-plugin';
+import { Op } from 'sequelize';
 import { Sequelize } from 'sequelize-typescript';
 
 export default fp(
