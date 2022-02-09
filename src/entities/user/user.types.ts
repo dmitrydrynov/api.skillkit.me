@@ -37,4 +37,7 @@ export class UserDataInput {
 
   @Field(() => GraphQLUpload, { nullable: true })
   avatar?: Upload;
+
+  @Field({ nullable: true })
+  about?: string;
 }

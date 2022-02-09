@@ -1,4 +1,5 @@
-import { BOOLEAN, DATE, INTEGER, QueryInterface, fn } from 'sequelize';
+import { UserSkillLevelEnum } from '@entities/user-skill/user-skill.types';
+import { BOOLEAN, DATE, ENUM, INTEGER, QueryInterface, TEXT, fn } from 'sequelize';
 import { MigrationParams } from 'umzug';
 
 export async function up({ context: sequelize }: MigrationParams<QueryInterface>): Promise<void> {
@@ -11,7 +12,7 @@ export async function up({ context: sequelize }: MigrationParams<QueryInterface>
     },
     user_id: {
       type: INTEGER,
-      unique: true,
+      allowNull: false,
       onDelete: 'cascade',
       references: {
         model: 'users',
@@ -20,12 +21,18 @@ export async function up({ context: sequelize }: MigrationParams<QueryInterface>
     },
     skill_id: {
       type: INTEGER,
+      allowNull: false,
       unique: true,
       onDelete: 'cascade',
       references: {
         model: 'skills',
         key: 'id',
       },
+    },
+    level: {
+      type: ENUM,
+      values: Object.values(UserSkillLevelEnum),
+      allowNull: false,
     },
     initial_id: {
       type: INTEGER,
@@ -36,11 +43,12 @@ export async function up({ context: sequelize }: MigrationParams<QueryInterface>
         key: 'id',
       },
     },
-    isDraft: {
+    is_draft: {
       type: BOOLEAN,
       allowNull: false,
       defaultValue: true,
     },
+    description: TEXT,
     published_at: DATE,
     created_at: {
       type: DATE,

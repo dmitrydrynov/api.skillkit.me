@@ -32,6 +32,7 @@ export async function up({ context: sequelize }: MigrationParams<QueryInterface>
       allowNull: false,
       defaultValue: 5,
     },
+    about: STRING,
     created_at: {
       type: DATE,
       allowNull: false,

@@ -91,6 +91,10 @@ export default class User extends Model {
   @Column
   roleId: number;
 
+  @Field({ nullable: true })
+  @Column
+  about?: string;
+
   @Field()
   @AllowNull(false)
   @CreatedAt

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { IDFilter, OrderDirection, StringFilter } from '@plugins/graphql/types/common.types';
+import { IDFilter, OrderDirection, StringFilter, WhereUniqueInput } from '@plugins/graphql/types/common.types';
 import { Field, InputType, registerEnumType } from 'type-graphql';
 
 @InputType('SkillWhereInput')

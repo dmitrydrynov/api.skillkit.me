@@ -89,3 +89,9 @@ export enum OrderDirection {
 registerEnumType(OrderDirection, {
   name: 'OrderDirection',
 });
+
+@InputType('WhereUniqueInput')
+export class WhereUniqueInput {
+  @Field(() => ID)
+  id: number;
+}

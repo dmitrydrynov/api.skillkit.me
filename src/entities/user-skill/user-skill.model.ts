@@ -1,11 +1,5 @@
-import { env } from '@config/env';
-import ConnectedUser from '@entities/connected-users/connected-user.model';
-import Role from '@entities/role/role.model';
 import Skill from '@entities/skill/skill.model';
 import User from '@entities/user/user.model';
-import { encryptPassword } from '@helpers/encrypt';
-import { sendOneTimePassword } from '@services/mailgun';
-import { generate as generatePassword } from 'generate-password';
 import {
   AllowNull,
   AutoIncrement,
@@ -18,8 +12,8 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript';
-import { Field, ObjectType } from 'type-graphql';
-import TempPassword from '../temp-password/temp-password.model';
+import { Field, ID, ObjectType } from 'type-graphql';
+import { UserSkillLevelEnum } from './user-skill.types';
 
 export enum UserRole {
   ADMIN = 'admin',
@@ -32,7 +26,7 @@ export enum UserRole {
 @ObjectType('UserSkill')
 @Table({ underscored: true })
 export default class UserSkill extends Model {
-  @Field()
+  @Field(() => ID)
   @AllowNull(false)
   @AutoIncrement
   @PrimaryKey
@@ -43,18 +37,23 @@ export default class UserSkill extends Model {
   @Column
   userId: number;
 
+  @Field(() => User)
+  async user() {
+    return await User.findByPk(this.userId);
+  }
+
   @ForeignKey(() => Skill)
   @Column
   skillId: number;
 
-  // @Field()
-  // async user(): Promise<User> {
-  //   if (!this.userId) {
-  //     return Promise.resolve(null);
-  //   }
+  @Field(() => Skill)
+  async skill() {
+    return await Skill.findByPk(this.skillId);
+  }
 
-  //   return User.findByPk(this.userId);
-  // }
+  @Field(() => UserSkillLevelEnum)
+  @Column
+  level: UserSkillLevelEnum;
 
   @Field()
   @AllowNull(false)
@@ -62,12 +61,15 @@ export default class UserSkill extends Model {
   @Column
   isDraft: boolean;
 
-  @Field()
+  @Field(() => ID, { nullable: true })
   @Column
   initialId: number;
 
-  @Field()
-  @AllowNull(false)
+  @Field({ nullable: true })
+  @Column
+  description?: string;
+
+  @Field({ nullable: true })
   @Column
   publishedAt: Date;
 
