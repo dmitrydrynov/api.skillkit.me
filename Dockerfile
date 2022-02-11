@@ -22,5 +22,5 @@ COPY entrypoint.sh .
 COPY ./storage/ ./storage/
 EXPOSE ${PORT:-8000}
 ENV PORT ${PORT:-3000}
-ENTRYPOINT ["sh", "/docker-entrypoint.sh"]
+ENTRYPOINT ["sh", "/entrypoint.sh"]
 CMD yarn build && yarn start
