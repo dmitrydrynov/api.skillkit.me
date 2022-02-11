@@ -12,7 +12,6 @@ COPY . ./
 COPY entrypoint.sh .
 EXPOSE ${PORT:-8000}
 ENV PORT ${PORT:-3000}
-RUN ["chmod", "+x", "./entrypoint.sh"]
 CMD yarn dev
 
 FROM node:16-alpine AS prod
@@ -23,6 +22,5 @@ COPY entrypoint.sh .
 COPY ./storage/ ./storage/
 EXPOSE ${PORT:-8000}
 ENV PORT ${PORT:-3000}
-RUN ["chmod", "+x", "./entrypoint.sh"]
-ENTRYPOINT ["./entrypoint.sh"]
+ENTRYPOINT ["sh", "/docker-entrypoint.sh"]
 CMD yarn build && yarn start
