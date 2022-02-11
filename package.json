@@ -2,8 +2,8 @@
   "license": "MIT",
   "scripts": {
     "dev": "tsnd -r tsconfig-paths/register --poll --respawn src/server.ts",
-    "build": "rimraf build/ && tsc && tsc-alias",
-    "start": "node build/server.js",
+    "build": "rimraf ./build/ && tsc && tsc-alias",
+    "start": "node ./build/server.js",
     "discord:start": "ts-node src/discord/bot.ts",
     "discord:deploy-commands": "ts-node src/discord/deploy-commands.ts",
     "docker": "docker-compose up",
