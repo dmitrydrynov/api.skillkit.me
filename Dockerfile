@@ -25,5 +25,4 @@ COPY ./storage/ ./storage/
 EXPOSE ${PORT:-8000}
 ENV PORT ${PORT:-3000}
 RUN yarn build
-ENTRYPOINT ["sh", "./entrypoint.sh"]
 CMD ["yarn", "start"]
