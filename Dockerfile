@@ -11,7 +11,6 @@ COPY --from=dependencies /app/node_modules ./node_modules
 COPY . ./
 COPY entrypoint.sh .
 RUN chmod +x ./entrypoint.sh
-RUN mkdir ./storage >/dev/null 2>&1
 EXPOSE ${PORT:-8000}
 ENV PORT ${PORT:-3000}
 CMD yarn dev
@@ -22,7 +21,6 @@ COPY package.json package.json
 COPY --from=dependencies /app/node_modules node_modules
 COPY entrypoint.sh .
 RUN chmod +x ./entrypoint.sh
-RUN mkdir ./storage >/dev/null 2>&1
 COPY ./storage/ ./storage/
 EXPOSE ${PORT:-8000}
 ENV PORT ${PORT:-3000}
