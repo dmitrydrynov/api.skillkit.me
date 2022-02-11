@@ -2,23 +2,71 @@ version: '3'
 
 services:
   db:
-    build: ./docker/postgres
-    container_name: gamelab_db
+    image: postgres:13
+    container_name: skillkit_db
     env_file: .env
     environment:
       POSTGRES_DB: ${DB_NAME:-postgres}
       POSTGRES_USER: ${DB_USER:-postgres}
       POSTGRES_PASSWORD: ${DB_PASS:-postgres}
+      PGDATA: /var/lib/postgresql/data/tmp
     ports:
       - '${DB_PORT:-5432}:${DB_PORT:-5432}'
     volumes:
-      - ./docker/postgres/data:/var/lib/postgresql/data
-  app:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - skillkit_network
+    restart: unless-stopped
+  dev:
     build:
-      context: .
+      context: ./
       target: dev
-    container_name: gamelab_app
+    container_name: skillkit_backend
     env_file: .env
+    expose:
+      - '${PORT:-8000}'
+    ports:
+      - '${PORT:-8000}:${PORT:-8000}'
+    depends_on:
+      - db
+    networks:
+      - skillkit_network
+    restart: unless-stopped
+
+  prod:
+    build:
+      context: ./
+      target: prod
+    container_name: skillkit_backend
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - PORT=${PORT}
+      - HOST=${HOST}
+
+      - LOG_PRETTY_PRINT=${LOG_PRETTY_PRINT}
+      - LOG_LEVEL=${LOG_LEVEL}
+
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+
+      - JWT_SECRET=${JWT_SECRET}
+
+      - TOKEN_TTL=${TOKEN_TTL}
+      - TEMP_PASS_LEN=${TEMP_PASS_LEN}
+
+      - MAILGUN_DOMAIN=${MAILGUN_DOMAIN}
+      - MAILGUN_API_KEY=${MAILGUN_API_KEY}
+      - MAILGUN_FROM_EMAIL=${MAILGUN_FROM_EMAIL}
+      - MAILGUN_FROM_NAME=${MAILGUN_FROM_NAME}
+
+      - DISCORD_CLIENT_ID=${DISCORD_CLIENT_ID}
+      - DISCORD_SECRET=${DISCORD_SECRET}
+      - DISCORD_REDIRECT_URI=${DISCORD_REDIRECT_URI}
+      - DISCORD_TOKEN=${DISCORD_TOKEN}
+      - DISCORD_GUILD_ID=${DISCORD_GUILD_ID}
     expose:
       - '${PORT:-8000}'
     ports:
@@ -28,3 +76,12 @@ services:
     depends_on:
       - db
     restart: on-failure
+    networks:
+      - skillkit_network
+
+networks:
+  skillkit_network:
+    driver: bridge
+
+volumes:
+  db-data:

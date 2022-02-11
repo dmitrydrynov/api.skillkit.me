@@ -1,13 +1,15 @@
 {
   "license": "MIT",
   "scripts": {
-    "start": "ts-node src/server.ts",
+    "dev": "tsnd -r tsconfig-paths/register --poll --respawn src/server.ts",
+    "build": "rimraf build/ && tsc && tsc-alias",
+    "start": "node build/server.js",
     "discord:start": "ts-node src/discord/bot.ts",
     "discord:deploy-commands": "ts-node src/discord/deploy-commands.ts",
-    "dev": "tsnd -r tsconfig-paths/register --poll --respawn src/server.ts",
     "docker": "docker-compose up",
     "migrate": "ts-node src/db/migrate.ts",
-    "seed": "ts-node src/db/seed.ts"
+    "seed": "ts-node src/db/seed.ts",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@discordjs/builders": "^0.11.0",
@@ -15,6 +17,7 @@
     "@faker-js/faker": "^6.0.0-alpha.5",
     "@types/mailgun-js": "^0.22.12",
     "@types/node": "^16.11.11",
+    "@types/pg": "^8.6.4",
     "class-validator": "^0.13.2",
     "close-with-grace": "^1.1.0",
     "cross-fetch": "^3.1.4",
@@ -40,7 +43,7 @@
     "mercurius": "^8.11.1",
     "mercurius-auth": "^1.4.0",
     "mercurius-upload": "^3.0.1",
-    "pg": "^8.7.1",
+    "pg": "^8.7.3",
     "reflect-metadata": "^0.1.13",
     "sequelize": "^6.12.0-alpha.1",
     "sequelize-typescript": "^2.1.1",
@@ -58,10 +61,13 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
     "fastify-cli": "^2.14.0",
+    "husky": "^7.0.4",
     "pino-pretty": "^7.2.0",
     "prettier": "^2.5.0",
+    "rimraf": "^3.0.2",
     "ts-node": "^10.4.0",
     "ts-node-dev": "^1.1.8",
+    "tsc-alias": "^1.6.0",
     "tsconfig-paths": "^3.12.0",
     "typescript": "^4.5.2"
   }

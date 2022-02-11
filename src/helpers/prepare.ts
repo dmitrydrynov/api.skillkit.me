@@ -1,6 +1,6 @@
 import { SkillOrderByInput, SkillWhereInput } from '@entities/skill/skill.types';
 import { WhereUniqueInput } from '@plugins/graphql/types/common.types';
-import { DestroyOptions, Op } from 'sequelize';
+import { Op } from 'sequelize';
 
 export const prepareFindOptions = (
   where: WhereUniqueInput | SkillWhereInput,

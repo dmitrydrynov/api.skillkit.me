@@ -2,7 +2,6 @@ import CurrentUser from '@entities/auth/current-user.decorator';
 import User, { UserRole } from '@entities/user/user.model';
 import { prepareFindOptions } from '@helpers/prepare';
 import { WhereUniqueInput } from '@plugins/graphql/types/common.types';
-import { DestroyOptions, WhereOptions } from 'sequelize';
 import { Arg, Authorized, ID, Mutation, Query, Resolver } from 'type-graphql';
 import UserSkill from './user-skill.model';
 import { UserSkillLevelEnum, UserSkillOrderByInput, UserSkillWhereInput } from './user-skill.types';

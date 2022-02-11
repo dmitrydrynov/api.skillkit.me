@@ -1,3 +1,4 @@
+import { env } from '@config/env';
 import { authChecker } from '@entities/auth/auth.checker';
 import { AuthResolver } from '@entities/auth/auth.resolver';
 import { SkillResolver } from '@entities/skill/skill.resolver';
@@ -47,11 +48,13 @@ export default fp(
       },
     });
 
-    fastify.register(AltairFastify, {
-      path: '/altair',
-      baseURL: '/altair/',
-      endpointURL: '/graphql',
-    });
+    if (env.ALTAIR_ENABLED) {
+      fastify.register(AltairFastify, {
+        path: '/altair',
+        baseURL: '/altair/',
+        endpointURL: '/graphql',
+      });
+    }
   },
   {
     name: 'graphql',
