@@ -21,7 +21,7 @@ services:
     build:
       context: ./
       target: dev
-    container_name: skillkit_backend
+    container_name: skillkit_backend_dev
     env_file: .env
     expose:
       - '${PORT:-8000}'
@@ -37,7 +37,7 @@ services:
     build:
       context: ./
       target: prod
-    container_name: skillkit_backend
+    container_name: skillkit_backend_prod
     environment:
       - NODE_ENV=${NODE_ENV}
       - PORT=${PORT}

@@ -10,9 +10,9 @@ WORKDIR /app
 COPY --from=dependencies /app/node_modules ./node_modules
 COPY . ./
 COPY entrypoint.sh .
-RUN chmod +x ./entrypoint.sh
 EXPOSE ${PORT:-8000}
 ENV PORT ${PORT:-3000}
+RUN ["chmod", "+x", "./entrypoint.sh"]
 CMD yarn dev
 
 FROM node:16-alpine AS prod
@@ -20,9 +20,9 @@ WORKDIR /app
 COPY package.json package.json
 COPY --from=dependencies /app/node_modules node_modules
 COPY entrypoint.sh .
-RUN chmod +x ./entrypoint.sh
 COPY ./storage/ ./storage/
 EXPOSE ${PORT:-8000}
 ENV PORT ${PORT:-3000}
+RUN ["chmod", "+x", "./entrypoint.sh"]
 ENTRYPOINT ["./entrypoint.sh"]
 CMD yarn build && yarn start
