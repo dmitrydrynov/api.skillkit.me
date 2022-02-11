@@ -8,7 +8,7 @@ RUN yarn install
 FROM node:16-alpine AS dev
 WORKDIR /app
 COPY --from=dependencies /app/node_modules ./node_modules
-COPY . ./
+COPY . .
 COPY entrypoint.sh .
 EXPOSE ${PORT:-8000}
 ENV PORT ${PORT:-3000}
@@ -19,6 +19,7 @@ WORKDIR /app
 COPY package.json package.json
 COPY tsconfig.json ./tsconfig.json
 COPY --from=dependencies /app/node_modules node_modules
+COPY . .
 COPY entrypoint.sh .
 COPY ./storage/ ./storage/
 EXPOSE ${PORT:-8000}
