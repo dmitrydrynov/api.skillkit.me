@@ -12,7 +12,7 @@ COPY . ./
 COPY entrypoint.sh .
 EXPOSE ${PORT:-8000}
 ENV PORT ${PORT:-3000}
-RUN yarn dev
+CMD ["yarn", "dev"]
 
 FROM node:16-alpine AS prod
 WORKDIR /app
