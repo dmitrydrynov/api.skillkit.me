@@ -1,3 +1,4 @@
+import fs from 'fs';
 import path, { join } from 'path';
 import { env } from '@config/env';
 import { FastifyPluginAsync } from 'fastify';
@@ -73,8 +74,14 @@ const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void>
 
   // This share public folder for storage
   fastify.register((instance, opts, next) => {
+    const storagePath = path.join(__dirname, '../storage');
+
+    if (!fs.existsSync(storagePath)) {
+      fs.mkdirSync(storagePath);
+    }
+
     fastify.register(require('fastify-static'), {
-      root: path.join(__dirname, '../storage'),
+      root: storagePath,
       prefix: '/storage/',
     });
     next();
