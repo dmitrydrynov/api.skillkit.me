@@ -39,36 +39,7 @@ services:
       context: .
       target: runner
     container_name: skillkit_backend_prod
-    environment:
-      - NODE_ENV=production
-
-      - PORT=${PORT}
-      - HOST=${HOST}
-
-      - LOG_PRETTY_PRINT=${LOG_PRETTY_PRINT}
-      - LOG_LEVEL=${LOG_LEVEL}
-
-      - DB_HOST=${DB_HOST}
-      - DB_PORT=${DB_PORT}
-      - DB_NAME=${DB_NAME}
-      - DB_USER=${DB_USER}
-      - DB_PASS=${DB_PASS}
-
-      - JWT_SECRET=${JWT_SECRET}
-
-      - TOKEN_TTL=${TOKEN_TTL}
-      - TEMP_PASS_LEN=${TEMP_PASS_LEN}
-
-      - MAILGUN_DOMAIN=${MAILGUN_DOMAIN}
-      - MAILGUN_API_KEY=${MAILGUN_API_KEY}
-      - MAILGUN_FROM_EMAIL=${MAILGUN_FROM_EMAIL}
-      - MAILGUN_FROM_NAME=${MAILGUN_FROM_NAME}
-
-      - DISCORD_CLIENT_ID=${DISCORD_CLIENT_ID}
-      - DISCORD_SECRET=${DISCORD_SECRET}
-      - DISCORD_REDIRECT_URI=${DISCORD_REDIRECT_URI}
-      - DISCORD_TOKEN=${DISCORD_TOKEN}
-      - DISCORD_GUILD_ID=${DISCORD_GUILD_ID}
+    env_file: .env
     expose:
       - '${PORT:-8000}'
     ports:
