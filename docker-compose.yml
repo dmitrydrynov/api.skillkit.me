@@ -12,6 +12,8 @@ services:
       PGDATA: /var/lib/postgresql/data/tmp
     ports:
       - '${DB_PORT:-5432}:${DB_PORT:-5432}'
+    expose:
+      - '${DB_PORT:-5432}'
     volumes:
       - db-data:/var/lib/postgresql/data
     networks:
