@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "email": "admingamelab@alilot.com",
+    "password": null,
+    "blocked": false,
+    "first_name": "Super",
+    "last_name": "Admin",
+    "country": "us",
+    "role_id": "admin"
+  }
+]

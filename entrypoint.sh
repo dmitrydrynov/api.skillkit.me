@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 
-node build/db/migrate.js up
-node build/db/seed.js up
+if [ "$NODE_ENV" == "production" ] 
+then
+  node db/migrate.js up
+  node db/seed.js up
+else
+  yarn migrate up
+  yarn seed up
+fi
 
 exec "$@"

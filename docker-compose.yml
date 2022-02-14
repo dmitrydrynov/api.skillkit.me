@@ -1,4 +1,4 @@
-version: '3'
+version: '3.8'
 
 services:
   db:
@@ -19,8 +19,8 @@ services:
     restart: unless-stopped
   dev:
     build:
-      context: ./
-      target: dev
+      context: .
+      target: dependencies
     container_name: skillkit_backend_dev
     env_file: .env
     expose:
@@ -32,14 +32,16 @@ services:
     networks:
       - skillkit_network
     restart: unless-stopped
+    command: yarn dev
 
   prod:
     build:
-      context: ./
-      target: prod
+      context: .
+      target: runner
     container_name: skillkit_backend_prod
     environment:
-      - NODE_ENV=${NODE_ENV}
+      - NODE_ENV=production
+
       - PORT=${PORT}
       - HOST=${HOST}
 
@@ -71,11 +73,9 @@ services:
       - '${PORT:-8000}'
     ports:
       - '${PORT:-8000}:${PORT:-8000}'
-    volumes:
-      - .:/app
     depends_on:
       - db
-    restart: on-failure
+    restart: unless-stopped
     networks:
       - skillkit_network
 

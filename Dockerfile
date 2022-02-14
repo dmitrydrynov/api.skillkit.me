@@ -1,28 +1,20 @@
 FROM node:16-alpine AS dependencies
-RUN apk update && apk add bash
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
+COPY . .
 COPY package.json yarn.lock ./
 RUN yarn install
 
-FROM node:16-alpine AS dev
+FROM node:16-alpine AS build
 WORKDIR /app
+COPY . .
 COPY --from=dependencies /app/node_modules ./node_modules
-COPY . .
-COPY entrypoint.sh .
-EXPOSE ${PORT:-8000}
-ENV PORT ${PORT:-3000}
-CMD ["yarn", "dev"]
-
-FROM node:16-alpine AS prod
-WORKDIR /app
-COPY package.json package.json
-COPY tsconfig.json ./tsconfig.json
-COPY --from=dependencies /app/node_modules node_modules
-COPY . .
-COPY entrypoint.sh .
-COPY ./storage/ ./storage/
-EXPOSE ${PORT:-8000}
-ENV PORT ${PORT:-3000}
 RUN yarn build
-CMD ["yarn", "start"]
+
+FROM node:16-alpine AS runner
+WORKDIR /app
+COPY entrypoint.sh .
+COPY --from=build /app/build .
+COPY --from=dependencies /app/node_modules ./node_modules
+ENTRYPOINT [ "sh", "./entrypoint.sh" ]
+CMD [ "node", "server.js" ]
