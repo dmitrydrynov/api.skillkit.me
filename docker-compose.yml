@@ -9,7 +9,6 @@ services:
       POSTGRES_DB: ${DB_NAME:-postgres}
       POSTGRES_USER: ${DB_USER:-postgres}
       POSTGRES_PASSWORD: ${DB_PASS:-postgres}
-      PGDATA: /var/lib/postgresql/data/tmp
     ports:
       - '${DB_PORT:-5432}:5432'
     volumes:
@@ -17,6 +16,12 @@ services:
     networks:
       - skillkit_network
     restart: unless-stopped
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-postgres}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
   dev:
     build:
       context: .
