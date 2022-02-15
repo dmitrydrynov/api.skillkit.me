@@ -1,5 +1,5 @@
 FROM node:16-alpine AS dependencies
-RUN apt-get update
+RUN apk update
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY . .
