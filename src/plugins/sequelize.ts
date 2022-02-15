@@ -1,10 +1,5 @@
+import { resolve as pathResolve } from 'path';
 import { env } from '@config/env';
-import ConnectedUser from '@entities/connected-users/connected-user.model';
-import Role from '@entities/role/role.model';
-import Skill from '@entities/skill/skill.model';
-import TempPassword from '@entities/temp-password/temp-password.model';
-import UserSkill from '@entities/user-skill/user-skill.model';
-import User from '@entities/user/user.model';
 import fp from 'fastify-plugin';
 import { Client } from 'pg';
 import { Sequelize } from 'sequelize-typescript';
@@ -26,7 +21,7 @@ export default fp(
       logging(message) {
         fastify.log.debug(message);
       },
-      models: [Role, User, Skill, UserSkill, TempPassword, ConnectedUser],
+      models: [pathResolve(__dirname, '../entities/**/*.model.{js,ts}')],
     });
 
     try {
