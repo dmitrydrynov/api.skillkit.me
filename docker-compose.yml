@@ -57,6 +57,10 @@ services:
       - skillkit_network
     restart: unless-stopped
     command: yarn dev
+    volumes:
+      - type: bind
+        source: ./storage
+        target: /app/storage
 
   prod:
     build:
@@ -74,6 +78,10 @@ services:
     restart: unless-stopped
     networks:
       - skillkit_network
+    volumes:
+      - type: bind
+        source: ./storage
+        target: /app/storage
 
 networks:
   skillkit_network:
