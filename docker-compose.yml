@@ -39,6 +39,8 @@ services:
       - skillkit_network
     depends_on:
       - db
+    links:
+      - db
     labels:
       io.portainer.accesscontrol.teams: dev,prod
 
