@@ -5,12 +5,9 @@ import { Sequelize } from 'sequelize-typescript';
 import { SequelizeStorage, Umzug } from 'umzug';
 
 (async () => {
-  const sequelize = new Sequelize(
-    `postgres://${env.DB_USER}:${env.DB_PASS}@${env.DB_HOST}:${env.DB_PORT}/${env.DB_NAME}`,
-    {
-      models: [pathResolve(__dirname, '../entities/**/*.model.ts')],
-    },
-  );
+  const sequelize = new Sequelize(`${env.DB_URL}/${env.DB_NAME}`, {
+    models: [pathResolve(__dirname, '../entities/**/*.model.ts')],
+  });
 
   try {
     await sequelize.authenticate();

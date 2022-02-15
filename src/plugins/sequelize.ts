@@ -7,7 +7,7 @@ import { Sequelize } from 'sequelize-typescript';
 export default fp(
   async (fastify) => {
     // create db if it doesn't already exist
-    const client = new Client(`postgres://${env.DB_USER}:${env.DB_PASS}@${env.DB_HOST}:${env.DB_PORT}`);
+    const client = new Client(env.DB_URL);
     await client.connect();
 
     try {
@@ -17,15 +17,12 @@ export default fp(
       fastify.log.info(`A table "${env.DB_NAME}" already exists.`);
     }
 
-    const sequelize = new Sequelize(
-      `postgres://${env.DB_USER}:${env.DB_PASS}@${env.DB_HOST}:${env.DB_PORT}/${env.DB_NAME}`,
-      {
-        logging(message) {
-          fastify.log.debug(message);
-        },
-        models: [pathResolve(__dirname, '../entities/**/*.model.ts')],
+    const sequelize = new Sequelize(`${env.DB_URL}/${env.DB_NAME}`, {
+      logging(message) {
+        fastify.log.debug(message);
       },
-    );
+      models: [pathResolve(__dirname, '../entities/**/*.model.ts')],
+    });
 
     try {
       await sequelize.authenticate();

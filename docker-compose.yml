@@ -9,6 +9,7 @@ services:
       POSTGRES_DB: ${DB_NAME:-postgres}
       POSTGRES_USER: ${DB_USER:-postgres}
       POSTGRES_PASSWORD: ${DB_PASS:-postgres}
+      PGDATA: /var/lib/postgresql/data/pgdata
     ports:
       - '${DB_PORT:-5432}:5432'
     volumes:
