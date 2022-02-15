@@ -52,7 +52,6 @@ services:
 
 networks:
   skillkit_network:
-    driver: bridge
 
 volumes:
   db-data:
