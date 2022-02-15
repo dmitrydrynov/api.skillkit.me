@@ -68,6 +68,7 @@ services:
       - '${PORT:-8000}:${PORT:-8000}'
     depends_on:
       - db
+      - pgadmin
     restart: unless-stopped
     networks:
       - skillkit_network
