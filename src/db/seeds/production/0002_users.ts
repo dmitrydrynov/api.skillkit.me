@@ -1,8 +1,8 @@
-import Role from '@entities/role/role.model';
-import { encryptPassword } from '@helpers/encrypt';
 import { Op, QueryInterface, Sequelize } from 'sequelize';
 import { MigrationParams } from 'umzug';
 import usersData from './data/users.json';
+import Role from '../../../entities/role/role.model';
+import { encryptPassword } from '../../../helpers/encrypt';
 
 export async function up({ context: sequelize }: MigrationParams<QueryInterface>): Promise<void> {
   const roles: Role[] = await Role.findAll();
