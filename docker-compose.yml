@@ -23,6 +23,8 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
+    labels:
+      io.portainer.accesscontrol.teams: dev,prod
 
   pgadmin:
     container_name: skillkit_pgadmin
@@ -37,6 +39,8 @@ services:
       - skillkit_network
     depends_on:
       - db
+    labels:
+      io.portainer.accesscontrol.teams: dev,prod
 
   dev:
     build:
@@ -72,6 +76,8 @@ services:
     restart: unless-stopped
     networks:
       - skillkit_network
+    labels:
+      io.portainer.accesscontrol.teams: dev,prod
 
 networks:
   skillkit_network:
