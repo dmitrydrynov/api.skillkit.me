@@ -16,6 +16,7 @@ type Env = {
   HOST: string;
   LOG_PRETTY_PRINT: boolean;
   LOG_LEVEL: string;
+  DB_URL: string;
   DB_HOST: string;
   DB_PORT: number;
   DB_NAME: string;

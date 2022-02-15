@@ -23,6 +23,21 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
+
+  pgadmin:
+    container_name: skillkit_pgadmin
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: '${PGADMIN_DEFAULT_EMAIL}'
+      PGADMIN_DEFAULT_PASSWORD: '${PGADMIN_DEFAULT_PASSWORD}'
+    ports:
+      - '${PGADMIN_PORT}:80'
+    networks:
+      - skillkit_network
+    depends_on:
+      - db
+
   dev:
     build:
       context: .
@@ -35,6 +50,7 @@ services:
       - '${PORT:-8000}:${PORT:-8000}'
     depends_on:
       - db
+      - pgadmin
     networks:
       - skillkit_network
     restart: unless-stopped
