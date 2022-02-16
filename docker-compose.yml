@@ -76,7 +76,7 @@ services:
     networks:
       - skillkit_network
     volumes:
-      - ${FILE_STORAGE_DIR}:/app/storage
+      - ${PROJECT_STORAGE_DIR}:${CONTAINER_STORAGE_DIR}
 
 networks:
   skillkit_network:

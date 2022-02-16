@@ -11,7 +11,7 @@ export const uploadFile = async (uploadPromise, dirName, fileName) => {
   try {
     const uploadingResponse = new Promise((resolve, reject) =>
       createReadStream()
-        .pipe(createWriteStream(env.FILE_STORAGE_DIR + targetPath))
+        .pipe(createWriteStream(env.CONTAINER_STORAGE_DIR + targetPath))
         .on('finish', () => resolve(true))
         .on('error', () => reject(false)),
     );
@@ -28,8 +28,8 @@ export const uploadFile = async (uploadPromise, dirName, fileName) => {
 
 export const removeFile = async (file: string) => {
   try {
-    await promises.access(env.FILE_STORAGE_DIR + file, constants.F_OK);
-    await promises.unlink(env.FILE_STORAGE_DIR + file);
+    await promises.access(env.CONTAINER_STORAGE_DIR + file, constants.F_OK);
+    await promises.unlink(env.CONTAINER_STORAGE_DIR + file);
   } catch (error) {
     console.error(error.message);
   }
