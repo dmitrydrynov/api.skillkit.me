@@ -52,11 +52,12 @@ services:
       - '${PORT:-8000}:${PORT:-8000}'
     depends_on:
       - db
-      - pgadmin
     networks:
       - skillkit_network
     restart: unless-stopped
     command: yarn dev
+    volumes:
+      - ./storage:/app/storage
 
   prod:
     build:
@@ -74,6 +75,8 @@ services:
     restart: unless-stopped
     networks:
       - skillkit_network
+    volumes:
+      - ${FILE_STORAGE_DIR}:/app/storage
 
 networks:
   skillkit_network:
