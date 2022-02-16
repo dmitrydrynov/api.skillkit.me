@@ -52,15 +52,12 @@ services:
       - '${PORT:-8000}:${PORT:-8000}'
     depends_on:
       - db
-      - pgadmin
     networks:
       - backend_network
     restart: unless-stopped
     command: yarn dev
     volumes:
-      - type: bind
-        source: ./storage
-        target: /app/storage
+      - ./storage:/app/storage
 
   prod:
     build:
@@ -77,11 +74,9 @@ services:
       - pgadmin
     restart: unless-stopped
     networks:
-      - backend_network
+      - skillkit_network
     volumes:
-      - type: bind
-        source: ./storage
-        target: /app/storage
+      - ${PROJECT_STORAGE_DIR}:${CONTAINER_STORAGE_DIR}
 
 networks:
   backend_network:
