@@ -74,7 +74,7 @@ services:
       - pgadmin
     restart: unless-stopped
     networks:
-      - skillkit_network
+      - backend_network
     volumes:
       - ${PROJECT_STORAGE_DIR}:${CONTAINER_STORAGE_DIR}
 
