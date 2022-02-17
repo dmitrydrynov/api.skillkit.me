@@ -1,7 +1,6 @@
 FROM node:16-alpine AS dependencies
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
-COPY . .
 COPY package.json yarn.lock ./
 RUN yarn install
 
