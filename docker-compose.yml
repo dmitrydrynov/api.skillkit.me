@@ -69,7 +69,7 @@ services:
       - '${PORT:-8000}'
     ports:
       - '${PORT:-8000}:${PORT:-8000}'
-      - 443: ${PORT:-8000}
+      - '443: ${PORT:-8000}'
     depends_on:
       - db
       - pgadmin
