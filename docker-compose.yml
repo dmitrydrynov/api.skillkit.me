@@ -65,11 +65,12 @@ services:
       target: runner
     container_name: skillkit_backend_prod
     env_file: .env
+    environment:
+      - https_proxy=http://localhost:${PORT:-8000}
     expose:
       - '${PORT:-8000}'
     ports:
       - '${PORT:-8000}:${PORT:-8000}'
-      - '443:${PORT:-8000}'
     depends_on:
       - db
       - pgadmin
