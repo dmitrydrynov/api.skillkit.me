@@ -58,6 +58,7 @@ services:
     command: yarn dev
     volumes:
       - ./storage:/app/storage
+      - .:/app
 
   prod:
     build:
