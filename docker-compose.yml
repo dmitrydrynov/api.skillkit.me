@@ -17,7 +17,7 @@ services:
     networks:
       backend_network:
         aliases:
-          - ${HOST:-skillkit_db}
+          - api.skillkit.me
     restart: unless-stopped
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-postgres}']
