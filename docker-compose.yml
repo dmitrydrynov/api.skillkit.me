@@ -15,9 +15,7 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data
     networks:
-      backend_network:
-        aliases:
-          - api.skillkit.me
+      - backend_network
     restart: unless-stopped
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-postgres}']
@@ -71,6 +69,7 @@ services:
       - '${PORT:-8000}'
     ports:
       - '${PORT:-8000}:${PORT:-8000}'
+      - 443: ${PORT:-8000}
     depends_on:
       - db
       - pgadmin
