@@ -66,12 +66,7 @@ export class UserResolver {
       user.set({ ...data, avatar: user.avatar });
 
       if (data.avatar) {
-        if (user.avatar) {
-          await removeFile(user.avatar);
-        }
-
-        const avatarName = 'avatar-' + hashids.encode(user.id, Date.now());
-        user.avatar = await uploadFile(data.avatar, 'avatars', avatarName);
+        user.avatar = data.avatar;
       }
 
       await user.save();

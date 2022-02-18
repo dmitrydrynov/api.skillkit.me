@@ -35,8 +35,8 @@ export class UserDataInput {
   @Field({ nullable: true })
   birthdayDate?: Date;
 
-  @Field(() => GraphQLUpload, { nullable: true })
-  avatar?: Upload;
+  @Field({ nullable: true })
+  avatar?: string;
 
   @Field({ nullable: true })
   about?: string;
