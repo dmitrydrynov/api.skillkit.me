@@ -36,3 +36,18 @@ export class UserSkillOrderByInput {
   @Field(() => OrderDirection, { nullable: true })
   level?: OrderDirection;
 }
+
+@InputType('UserSkillUpdateInput')
+export class UserSkillUpdateInput {
+  @Field({ nullable: true })
+  description?: string;
+
+  @Field({ nullable: true })
+  isDraft?: boolean;
+
+  @Field(() => UserSkillLevelEnum, { nullable: true })
+  level?: UserSkillLevelEnum;
+
+  @Field({ nullable: true })
+  skillId?: number;
+}

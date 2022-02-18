@@ -4,7 +4,12 @@ import { prepareFindOptions } from '@helpers/prepare';
 import { WhereUniqueInput } from '@plugins/graphql/types/common.types';
 import { Arg, Authorized, ID, Mutation, Query, Resolver } from 'type-graphql';
 import UserSkill from './user-skill.model';
-import { UserSkillLevelEnum, UserSkillOrderByInput, UserSkillWhereInput } from './user-skill.types';
+import {
+  UserSkillLevelEnum,
+  UserSkillOrderByInput,
+  UserSkillUpdateInput,
+  UserSkillWhereInput,
+} from './user-skill.types';
 
 @Resolver()
 export class UserSkillResolver {
@@ -73,6 +78,30 @@ export class UserSkillResolver {
   }
 
   /**
+   * Update a user skill
+   */
+  @Authorized([UserRole.MEMBER, UserRole.EXPERT, UserRole.OPERATOR, UserRole.ADMIN])
+  @Mutation(() => UserSkill, { description: 'Add a user skill' })
+  async updateUserSkill(
+    @Arg('where') where: WhereUniqueInput,
+    @Arg('data') data: UserSkillUpdateInput,
+    @CurrentUser() authUser: User,
+  ): Promise<UserSkill> {
+    try {
+      const userSkill: UserSkill = await UserSkill.findOne({
+        where: {
+          userId: authUser.id,
+          id: where.id,
+        },
+      });
+
+      return await userSkill.update(data);
+    } catch (error) {
+      throw Error(error.message);
+    }
+  }
+
+  /**
    * Delete user skill
    */
   @Authorized([UserRole.MEMBER, UserRole.EXPERT, UserRole.OPERATOR, UserRole.ADMIN])
@@ -81,6 +110,7 @@ export class UserSkillResolver {
     try {
       return await UserSkill.destroy({ where: { id: where.id } });
     } catch (error) {
+      console.log(error);
       throw Error(error.message);
     }
   }
