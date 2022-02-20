@@ -57,7 +57,6 @@ services:
     restart: unless-stopped
     command: yarn dev
     volumes:
-      - ./storage:/app/storage
       - .:/app
 
   prod:
@@ -76,8 +75,6 @@ services:
     restart: unless-stopped
     networks:
       - backend_network
-    volumes:
-      - ${PROJECT_STORAGE_DIR}:${CONTAINER_STORAGE_DIR}
 
 networks:
   backend_network:

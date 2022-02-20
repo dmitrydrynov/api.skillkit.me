@@ -30,8 +30,6 @@ type Env = {
   MAILGUN_API_KEY: string;
   MAILGUN_FROM_EMAIL: string;
   MAILGUN_FROM_NAME: string;
-  PROJECT_STORAGE_DIR: string;
-  CONTAINER_STORAGE_DIR: string;
   [key: string]: any;
 };
 

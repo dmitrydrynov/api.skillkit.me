@@ -1,6 +1,5 @@
 import { constants, createWriteStream, promises } from 'fs';
 import path from 'path';
-import { env } from '@config/env';
 import { FileUpload } from 'graphql-upload';
 
 export const uploadFile = async (uploadPromise, dirName, fileName) => {
@@ -11,7 +10,7 @@ export const uploadFile = async (uploadPromise, dirName, fileName) => {
   try {
     const uploadingResponse = new Promise((resolve, reject) =>
       createReadStream()
-        .pipe(createWriteStream(env.CONTAINER_STORAGE_DIR + targetPath))
+        .pipe(createWriteStream('./storage/' + targetPath))
         .on('finish', () => resolve(true))
         .on('error', () => reject(false)),
     );
@@ -28,8 +27,8 @@ export const uploadFile = async (uploadPromise, dirName, fileName) => {
 
 export const removeFile = async (file: string) => {
   try {
-    await promises.access(env.CONTAINER_STORAGE_DIR + file, constants.F_OK);
-    await promises.unlink(env.CONTAINER_STORAGE_DIR + file);
+    await promises.access('./storage/' + file, constants.F_OK);
+    await promises.unlink('./storage/' + file);
   } catch (error) {
     console.error(error.message);
   }
