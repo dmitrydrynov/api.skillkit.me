@@ -23,11 +23,18 @@ export class UserSkillResolver {
     @Arg('orderBy', () => [UserSkillOrderByInput], { nullable: true }) orderBy: UserSkillOrderByInput[],
     @Arg('take', { nullable: true }) take: number,
     @Arg('skip', { nullable: true }) skip: number,
+    @CurrentUser() authUser: User,
   ): Promise<Array<UserSkill>> {
     try {
       const findOptions: any = prepareFindOptions(where, take, skip, orderBy);
 
-      const userSkills: UserSkill[] = await UserSkill.findAll(findOptions);
+      const userSkills: UserSkill[] = await UserSkill.findAll({
+        ...findOptions,
+        where: {
+          ...findOptions.where,
+          userId: authUser.id,
+        },
+      });
 
       return userSkills;
     } catch (error) {
@@ -106,9 +113,12 @@ export class UserSkillResolver {
    */
   @Authorized([UserRole.MEMBER, UserRole.EXPERT, UserRole.OPERATOR, UserRole.ADMIN])
   @Mutation(() => Number, { description: 'Delete user skill' })
-  async deleteUserSkill(@Arg('where', { nullable: true }) where: WhereUniqueInput): Promise<number> {
+  async deleteUserSkill(
+    @Arg('where', { nullable: true }) where: WhereUniqueInput,
+    @CurrentUser() authUser: User,
+  ): Promise<number> {
     try {
-      return await UserSkill.destroy({ where: { id: where.id } });
+      return await UserSkill.destroy({ where: { id: where.id, userId: authUser.id } });
     } catch (error) {
       console.log(error);
       throw Error(error.message);

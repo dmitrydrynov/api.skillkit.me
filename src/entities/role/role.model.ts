@@ -1,5 +1,5 @@
-import { UserRole } from '@entities/user/user.model';
-import { AllowNull, AutoIncrement, Column, Model, PrimaryKey, Table } from 'sequelize-typescript';
+import User, { UserRole } from '@entities/user/user.model';
+import { AllowNull, AutoIncrement, Column, HasMany, Model, PrimaryKey, Table } from 'sequelize-typescript';
 import { Field, ObjectType } from 'type-graphql';
 
 @ObjectType('Role')
@@ -16,4 +16,7 @@ export default class Role extends Model {
   @AllowNull(false)
   @Column
   name: UserRole;
+
+  @HasMany(() => User)
+  users: User[];
 }

@@ -19,8 +19,8 @@ export class AuthTokenResponseType {
 export class AuthNextResponseType {
   @Field()
   next: boolean;
-  @Field()
-  otp: boolean;
+  @Field({ nullable: true })
+  otp?: boolean;
 }
 
 export const AuthResponseType = createUnionType({

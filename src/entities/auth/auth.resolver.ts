@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import ConnectedUser from '@entities/connected-users/connected-user.model';
+import Role from '@entities/role/role.model';
 import TempPassword from '@entities/temp-password/temp-password.model';
 import User, { UserRole } from '@entities/user/user.model';
 import { verifyPassword } from '@helpers/encrypt';
@@ -23,7 +24,7 @@ export class AuthResolver {
     @Ctx() ctx: MercuriusContext,
   ): Promise<typeof AuthResponseType> {
     let findOptions: FindOptions<any> = {
-      include: [TempPassword],
+      include: [TempPassword, Role],
       where: {
         email,
         blocked: false,
@@ -56,6 +57,7 @@ export class AuthResolver {
       }
 
       findOptions.include = [
+        Role,
         {
           model: TempPassword,
           where: {
@@ -70,6 +72,7 @@ export class AuthResolver {
     } else {
       if (password) {
         findOptions = {
+          include: [Role],
           where: {
             ...findOptions.where,
             [Op.and]: Sequelize.where(
@@ -97,7 +100,7 @@ export class AuthResolver {
 
     const token = ctx.app.jwt.sign({
       id: user.id,
-      role: UserRole.MEMBER,
+      role: user.role.name,
     });
 
     return { token, user };
@@ -192,7 +195,7 @@ export class AuthResolver {
 
     const token = ctx.app.jwt.sign({
       id: user.id,
-      role: UserRole.MEMBER,
+      role: user.role.name,
     });
 
     return { token, user };
@@ -201,32 +204,70 @@ export class AuthResolver {
   /**
    * Sign up
    */
-  @Mutation(() => DefaultResponseType, { description: 'To register a new user' })
-  async signUp(
+  @Mutation(() => AuthResponseType, { description: 'To register a new user' })
+  async registerUser(
     @Arg('email') email: string,
-    @Arg('firstName') firstName: string,
-    @Arg('lastName') lastName: string,
+    @Arg('firstName', { nullable: true }) firstName: string,
+    @Arg('lastName', { nullable: true }) lastName: string,
+    @Arg('password', { nullable: true }) password: string,
     @Ctx() ctx: MercuriusContext,
-  ): Promise<DefaultResponseType> {
+  ): Promise<typeof AuthResponseType> {
     try {
-      const [newUser, created] = await User.findOrCreate({
-        where: { email },
-        defaults: {
-          firstName,
-          lastName,
-          email,
-        },
-      });
+      if (!password) {
+        const memberRole = await Role.findOne({ where: { name: UserRole.MEMBER } });
 
-      if (!created) {
-        ctx.reply.status(400);
+        const [newUser, created] = await User.findOrCreate({
+          where: { email },
+          defaults: {
+            firstName,
+            lastName,
+            email,
+            roleId: memberRole.id,
+          },
+        });
 
-        throw Error('User already exists.');
+        if (!created) {
+          ctx.reply.status(400);
+
+          throw Error('User already exists.');
+        }
+
+        await newUser.setOneTimePassword();
+
+        return { next: true };
+      } else {
+        const user = await User.findOne({
+          include: [
+            {
+              model: TempPassword,
+              where: {
+                expiresOn: { [Op.gt]: new Date() },
+                [Op.and]: Sequelize.where(
+                  Sequelize.col('temp_password'),
+                  verifyPassword(ctx.app.sequelize as Sequelize, 'temp_password', password),
+                ),
+              },
+            },
+          ],
+          where: {
+            email,
+            blocked: false,
+          },
+        });
+
+        if (user === null) {
+          ctx.reply.status(400);
+
+          throw Error('Password is wrong.');
+        }
+
+        const token = ctx.app.jwt.sign({
+          id: user.id,
+          role: user.role.name,
+        });
+
+        return { token, user };
       }
-
-      await newUser.setOneTimePassword();
-
-      return { result: true };
     } catch (exception) {
       ctx.app.log.error(exception);
       ctx.reply.status(400);

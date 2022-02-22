@@ -7,9 +7,11 @@ export const authChecker: AuthChecker<MercuriusContext> = (
   roles: string[],
 ) => {
   try {
-    const { role }: JWTUserData = context.app.jwt.verify(context.reply.request.headers['authorization']);
+    const jwtData: JWTUserData = context.app.jwt.verify(context.reply.request.headers['authorization']);
 
-    if (roles.includes(role) === false) {
+    console.log('[LOG authChecker]', jwtData, roles);
+
+    if (roles.includes(jwtData.role) === false) {
       return false;
     }
 

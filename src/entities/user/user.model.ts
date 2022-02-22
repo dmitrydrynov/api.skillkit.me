@@ -9,6 +9,7 @@ import {
   AutoIncrement,
   BeforeCreate,
   BeforeUpdate,
+  BelongsTo,
   Column,
   CreatedAt,
   Default,
@@ -90,6 +91,15 @@ export default class User extends Model {
   @ForeignKey(() => Role)
   @Column
   roleId: number;
+
+  // @Field(() => Role)
+  // async role() {
+  //   return await Role.findByPk(this.roleId);
+  // }
+
+  @Field()
+  @BelongsTo(() => Role)
+  role: Role;
 
   @Field({ nullable: true })
   @Column

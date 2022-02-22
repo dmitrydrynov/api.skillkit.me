@@ -22,7 +22,6 @@ export async function up({ context: sequelize }: MigrationParams<QueryInterface>
     skill_id: {
       type: INTEGER,
       allowNull: false,
-      unique: true,
       onDelete: 'cascade',
       references: {
         model: 'skills',
