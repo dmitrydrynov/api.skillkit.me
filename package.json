@@ -1,7 +1,7 @@
 {
   "license": "MIT",
   "scripts": {
-    "dev": "tsnd -r tsconfig-paths/register --poll --respawn src/server.ts",
+    "dev": "tsnd -r tsconfig-paths/register --poll --respawn --inspect=0.0.0.0:9229  src/server.ts",
     "build": "rimraf ./build/ && tsc && tsc-alias",
     "start": "node ./build/server.js",
     "discord:start": "ts-node src/discord/bot.ts",
@@ -43,6 +43,7 @@
     "mercurius": "^8.11.1",
     "mercurius-auth": "^1.4.0",
     "mercurius-upload": "^3.0.1",
+    "nextcloud-link": "^1.2.9",
     "pg": "^8.7.3",
     "reflect-metadata": "^0.1.13",
     "sequelize": "^6.12.0-alpha.1",

@@ -12,5 +12,9 @@
   },
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+  },
+  "DockerRun.DisableDockerrc": true,
+  "DockerRun.Containers": [
+    "e7f1d6a87df1"
+  ]
 }

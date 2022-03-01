@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { GraphQLUpload, Upload } from 'graphql-upload';
+import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { Field, InputType } from 'type-graphql';
 import { UserRole } from './user.model';
 
@@ -35,8 +35,8 @@ export class UserDataInput {
   @Field({ nullable: true })
   birthdayDate?: Date;
 
-  @Field({ nullable: true })
-  avatar?: string;
+  @Field(() => GraphQLUpload, { nullable: true })
+  avatar?: FileUpload;
 
   @Field({ nullable: true })
   about?: string;

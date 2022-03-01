@@ -50,6 +50,7 @@ services:
       - '${PORT:-8000}'
     ports:
       - '${PORT:-8000}:${PORT:-8000}'
+      - '9229:9229'
     depends_on:
       - db
     networks:

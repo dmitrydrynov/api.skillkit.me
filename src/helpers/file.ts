@@ -1,28 +1,60 @@
-import { constants, createWriteStream, promises } from 'fs';
+import { constants, promises } from 'fs';
 import path from 'path';
-import { FileUpload } from 'graphql-upload';
+import { FastifyInstance } from 'fastify';
+import { FileUpload, Upload } from 'graphql-upload';
 
-export const uploadFile = async (uploadPromise, dirName, fileName) => {
-  const uploadData = await uploadPromise;
-  const { filename, createReadStream } = uploadData as unknown as FileUpload;
-  const targetPath = `/${dirName}/${fileName}${path.extname(filename)}`;
+export const uploadFile = async (app: FastifyInstance, file: FileUpload, dirName, fileName) => {
+  const { nextcloud } = app;
+  const { filename, createReadStream } = await file;
+
+  const newFileName = fileName + path.extname(filename);
+  const targetPath = '/cdn/skillkit/' + dirName;
+  const newFilePath = targetPath + '/' + newFileName;
+
+  const isStorageReady = await app.nextcloud.checkConnectivity();
+
+  const stream = createReadStream();
+  const chunks = [];
+
+  for await (const chunk of stream) {
+    chunks.push(chunk);
+  }
+
+  const buffer = Buffer.concat(chunks);
+
+  console.log('Upload file is ready', isStorageReady);
 
   try {
-    const uploadingResponse = new Promise((resolve, reject) =>
-      createReadStream()
-        .pipe(createWriteStream('./storage/' + targetPath))
-        .on('finish', () => resolve(true))
-        .on('error', () => reject(false)),
-    );
-
-    if (await uploadingResponse) {
-      return targetPath;
+    if (!(await nextcloud.exists(targetPath))) {
+      await nextcloud.createFolderHierarchy(targetPath);
     }
-  } catch (error) {
-    console.error(`File ${filename} didn't load`);
 
-    return null;
+    await nextcloud.put(newFilePath, buffer);
+    const uploadedFile = await nextcloud.shares.get(newFilePath);
+
+    return uploadedFile.url;
+  } catch (error) {
+    console.error(`File ${filename} didn't load`, error);
+
+    return Promise.reject(error);
   }
+
+  // try {
+  //   const uploadingResponse = new Promise((resolve, reject) =>
+  //     createReadStream()
+  //       .pipe(createWriteStream('./storage/' + targetPath))
+  //       .on('finish', () => resolve(true))
+  //       .on('error', () => reject(false)),
+  //   );
+
+  //   if (await uploadingResponse) {
+  //     return targetPath;
+  //   }
+  // } catch (error) {
+  //   console.error(`File ${filename} didn't load`);
+
+  //   return null;
+  // }
 };
 
 export const removeFile = async (file: string) => {

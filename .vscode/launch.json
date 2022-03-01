@@ -10,6 +10,17 @@
       "name": "Launch Development",
       "skipFiles": ["<node_internals>/**"],
       "command": "yarn dev"
+    },
+    {
+      "name": "Docker: Attach to Node",
+      "type": "node",
+      "request": "attach",
+      "restart": true,
+      "port": 9229,
+      "address": "0.0.0.0",
+      "localRoot": "${workspaceFolder}",
+      "remoteRoot": "/app",
+      "protocol": "inspector"
     }
   ]
 }

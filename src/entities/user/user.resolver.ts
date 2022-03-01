@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { createWriteStream } from 'fs';
-import path from 'path';
 import { env } from '@config/env';
+import Role from '@entities/role/role.model';
 import { verifyPassword } from '@helpers/encrypt';
 import { removeFile, uploadFile } from '@helpers/file';
 import Hashids from 'hashids';
@@ -21,8 +20,8 @@ export class UserResolver {
    */
   @Authorized([UserRole.MEMBER])
   @Query(() => [User], { description: 'Get users list' })
-  async users(@CurrentUser() currentUser: User, @Ctx() ctx: MercuriusContext): Promise<Array<User>> {
-    const users: User[] = await User.findAll();
+  async users(): Promise<Array<User>> {
+    const users: User[] = await User.findAll({ include: [Role] });
 
     if (users.length === 0) {
       throw new Error();
@@ -37,7 +36,7 @@ export class UserResolver {
   @Authorized([UserRole.MEMBER, UserRole.EXPERT, UserRole.OPERATOR, UserRole.ADMIN])
   @Query(() => User, { description: 'Get user data by ID' })
   async user(@Arg('where') where: UserWhereUniqueInput, @CurrentUser() currentUser: User): Promise<User> {
-    const user = await User.findByPk(where.id);
+    const user = await User.findByPk(where.id, { include: [Role] });
 
     if (!user || user.blocked) {
       throw Error('The user not found or blocked');
@@ -54,19 +53,24 @@ export class UserResolver {
   async updateUser(
     @Arg('where') where: UserWhereUniqueInput,
     @Arg('data') data: UserDataInput,
-    @CurrentUser() currentUser: User,
+    @Ctx() ctx: MercuriusContext,
   ): Promise<User> {
     try {
-      const user = await User.findByPk(where.id);
+      const user = await User.findByPk(where.id, { include: [Role] });
 
       if (!user || user.blocked) {
         throw Error('The user not found or blocked');
       }
 
-      user.set({ ...data, avatar: user.avatar });
+      user.set({ ...data, avatar: null });
 
       if (data.avatar) {
-        user.avatar = data.avatar;
+        if (user.avatar) {
+          await removeFile(user.avatar);
+        }
+
+        const avatarName = 'avatar-' + hashids.encode(user.id, Date.now());
+        user.avatar = await uploadFile(ctx.app, data.avatar, 'avatars', avatarName);
       }
 
       await user.save();

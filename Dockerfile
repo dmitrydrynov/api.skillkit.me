@@ -8,6 +8,7 @@ FROM node:17-alpine AS build
 WORKDIR /app
 COPY . .
 COPY --from=dependencies /app/node_modules ./node_modules
+ENV NODE_OPTIONS="--max-old-space-size=4096"
 RUN yarn build
 
 FROM node:17-alpine AS runner
