@@ -62,8 +62,6 @@ export class UserResolver {
         throw Error('The user not found or blocked');
       }
 
-      user.set({ ...data, avatar: null });
-
       if (data.avatar) {
         if (user.avatar) {
           await removeFile(ctx.app, user.avatar);
