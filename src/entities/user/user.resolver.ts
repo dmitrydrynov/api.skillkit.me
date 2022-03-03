@@ -66,7 +66,7 @@ export class UserResolver {
 
       if (data.avatar) {
         if (user.avatar) {
-          await removeFile(user.avatar);
+          await removeFile(ctx.app, user.avatar);
         }
 
         const avatarName = 'avatar-' + hashids.encode(user.id, Date.now());
