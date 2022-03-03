@@ -1,7 +1,6 @@
 import fs from 'fs';
 import path, { join } from 'path';
 import { env } from '@config/env';
-import nextcloudPlugin from '@plugins/nextcloud';
 import { FastifyPluginAsync } from 'fastify';
 import AutoLoad, { AutoloadPluginOptions } from 'fastify-autoload';
 import Cors from 'fastify-cors';
