@@ -1,11 +1,9 @@
-import Skill from '@entities/skill/skill.model';
 import User from '@entities/user/user.model';
 import {
   AllowNull,
   AutoIncrement,
   Column,
   CreatedAt,
-  Default,
   ForeignKey,
   Model,
   PrimaryKey,
@@ -13,7 +11,6 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript';
 import { Field, ID, ObjectType } from 'type-graphql';
-import { UserToolLevelEnum } from './user-tool.types';
 
 @ObjectType('UserTool')
 @Table({ underscored: true })
@@ -34,9 +31,9 @@ export default class UserTool extends Model {
     return await User.findByPk(this.userId);
   }
 
-  @Field(() => UserToolLevelEnum)
+  @Field()
   @Column
-  level: UserToolLevelEnum;
+  title: string;
 
   @Field({ nullable: true })
   @Column

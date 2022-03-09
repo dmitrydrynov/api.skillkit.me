@@ -2,17 +2,17 @@ import CurrentUser from '@entities/auth/current-user.decorator';
 import User, { UserRole } from '@entities/user/user.model';
 import { prepareFindOptions } from '@helpers/prepare';
 import { WhereUniqueInput } from '@plugins/graphql/types/common.types';
-import { Arg, Authorized, ID, Mutation, Query, Resolver } from 'type-graphql';
+import { Arg, Authorized, Mutation, Query, Resolver } from 'type-graphql';
 import UserTool from './user-tool.model';
-import { UserToolLevelEnum, UserToolOrderByInput, UserToolUpdateInput, UserToolWhereInput } from './user-tool.types';
+import { UserToolCreateInput, UserToolOrderByInput, UserToolUpdateInput, UserToolWhereInput } from './user-tool.types';
 
 @Resolver()
 export class UserToolResolver {
   /**
-   * User skills list
+   * User tools list
    */
   @Authorized([UserRole.MEMBER, UserRole.EXPERT, UserRole.OPERATOR, UserRole.ADMIN])
-  @Query(() => [UserTool], { description: 'Get skills list' })
+  @Query(() => [UserTool], { description: 'Get user tools list' })
   async userTools(
     @Arg('where', { nullable: true }) where: UserToolWhereInput,
     @Arg('orderBy', () => [UserToolOrderByInput], { nullable: true }) orderBy: UserToolOrderByInput[],
@@ -38,52 +38,64 @@ export class UserToolResolver {
   }
 
   /**
-   * A user skill
+   * A user tool
    */
   @Authorized([UserRole.MEMBER, UserRole.EXPERT, UserRole.OPERATOR, UserRole.ADMIN])
-  @Query(() => UserTool, { description: 'Get skills list' })
-  async userTool(@Arg('where', { nullable: true }) where: WhereUniqueInput): Promise<UserTool> {
-    try {
-      const userTool: UserTool = await UserTool.findByPk(where.id);
-
-      return userTool;
-    } catch (error) {
-      throw Error(error.message);
-    }
-  }
-
-  /**
-   * Add a user skill
-   */
-  @Authorized([UserRole.MEMBER, UserRole.EXPERT, UserRole.OPERATOR, UserRole.ADMIN])
-  @Mutation(() => UserTool, { description: 'Add a user skill' })
-  async createUserTool(
-    @Arg('skillId', () => ID) skillId: number,
-    @Arg('level', () => UserToolLevelEnum) level: UserToolLevelEnum,
+  @Query(() => UserTool, { description: 'Get tools list' })
+  async userTool(
+    @Arg('where', { nullable: true }) where: WhereUniqueInput,
     @CurrentUser() authUser: User,
   ): Promise<UserTool> {
     try {
-      const userTool: UserTool = await UserTool.create({
-        userId: authUser.id,
-        skillId,
-        level,
+      const userTool: UserTool = await UserTool.findOne({
+        where: {
+          userId: authUser.id,
+          id: where.id,
+        },
       });
 
       return userTool;
     } catch (error) {
-      if (error.name === 'SequelizeUniqueConstraintError') {
-        throw Error('You have this skill already.');
-      }
-
       throw Error(error.message);
     }
   }
 
   /**
-   * Update a user skill
+   * Add a user tool
    */
   @Authorized([UserRole.MEMBER, UserRole.EXPERT, UserRole.OPERATOR, UserRole.ADMIN])
-  @Mutation(() => UserTool, { description: 'Add a user skill' })
+  @Mutation(() => UserTool, { description: 'Add a user tool' })
+  async createUserTool(@Arg('data') data: UserToolCreateInput, @CurrentUser() authUser: User): Promise<UserTool> {
+    try {
+      const { title, description } = data;
+
+      const [userTool, created] = await UserTool.findOrCreate({
+        where: {
+          userId: authUser.id,
+          title,
+        },
+        defaults: {
+          userId: authUser.id,
+          title,
+          description,
+        },
+      });
+
+      if (!created) {
+        throw Error('You have this tool already. Select it from tools list.');
+      }
+
+      return userTool;
+    } catch (error) {
+      throw Error(error.message);
+    }
+  }
+
+  /**
+   * Update a user tool
+   */
+  @Authorized([UserRole.MEMBER, UserRole.EXPERT, UserRole.OPERATOR, UserRole.ADMIN])
+  @Mutation(() => UserTool, { description: 'Add a user tool' })
   async updateUserTool(
     @Arg('where') where: WhereUniqueInput,
     @Arg('data') data: UserToolUpdateInput,
@@ -104,10 +116,10 @@ export class UserToolResolver {
   }
 
   /**
-   * Delete user skill
+   * Delete user tool
    */
   @Authorized([UserRole.MEMBER, UserRole.EXPERT, UserRole.OPERATOR, UserRole.ADMIN])
-  @Mutation(() => Number, { description: 'Delete user skill' })
+  @Mutation(() => Number, { description: 'Delete user tool' })
   async deleteUserTool(
     @Arg('where', { nullable: true }) where: WhereUniqueInput,
     @CurrentUser() authUser: User,

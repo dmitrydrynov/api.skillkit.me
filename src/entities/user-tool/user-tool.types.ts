@@ -1,17 +1,5 @@
 import { IDFilter, OrderDirection } from '@plugins/graphql/types/common.types';
-import { Field, InputType, registerEnumType } from 'type-graphql';
-
-export enum UserToolLevelEnum {
-  INTERFACE = 'interface', // LVL1 - ориентация в интерфейсе
-  BASIC = 'basic', // LVL2 - может выполнить базовые функции инструмента
-  MASTER = 'master', // LVL3 - уверенно владеет функционалом требуемой для решаемой задачи и умело его настраивает
-  ADVANCED = 'ADVANCED', // LVL4 - владеет всем функционалом инструмента и его настройками
-  EXPERT = 'expert', // LVL5 - умеет создавать дополнительный функционал для этого инструмента
-}
-
-registerEnumType(UserToolLevelEnum, {
-  name: 'UserToolLevelEnum',
-});
+import { Field, InputType } from 'type-graphql';
 
 @InputType('UserToolWhereInput')
 export class UserToolWhereInput {
@@ -25,20 +13,20 @@ export class UserToolOrderByInput {
   id?: OrderDirection;
 
   @Field(() => OrderDirection, { nullable: true })
-  level?: OrderDirection;
+  title?: OrderDirection;
 }
 
 @InputType('UserToolUpdateInput')
 export class UserToolUpdateInput {
+  @Field()
+  description: string;
+}
+
+@InputType('UserToolCreateInput')
+export class UserToolCreateInput {
+  @Field({ nullable: true })
+  title: string;
+
   @Field({ nullable: true })
   description?: string;
-
-  @Field({ nullable: true })
-  isDraft?: boolean;
-
-  @Field(() => UserToolLevelEnum, { nullable: true })
-  level?: UserToolLevelEnum;
-
-  @Field({ nullable: true })
-  skillId?: number;
 }

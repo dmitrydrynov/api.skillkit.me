@@ -1,5 +1,4 @@
-import { UserToolLevelEnum } from '@entities/user-tool/user-tool.types';
-import { DATE, ENUM, INTEGER, QueryInterface, TEXT, fn } from 'sequelize';
+import { DATE, INTEGER, QueryInterface, STRING, TEXT, fn } from 'sequelize';
 import { MigrationParams } from 'umzug';
 
 export async function up({ context: sequelize }: MigrationParams<QueryInterface>): Promise<void> {
@@ -19,9 +18,8 @@ export async function up({ context: sequelize }: MigrationParams<QueryInterface>
         key: 'id',
       },
     },
-    level: {
-      type: ENUM,
-      values: Object.values(UserToolLevelEnum),
+    title: {
+      type: STRING,
       allowNull: false,
     },
     description: TEXT,

@@ -3,6 +3,7 @@ import { authChecker } from '@entities/auth/auth.checker';
 import { AuthResolver } from '@entities/auth/auth.resolver';
 import { SkillResolver } from '@entities/skill/skill.resolver';
 import { UserSkillResolver } from '@entities/user-skill/user-skill.resolver';
+import { UserToolResolver } from '@entities/user-tool/user-tool.resolver';
 import { UserRole } from '@entities/user/user.model';
 import { UserResolver } from '@entities/user/user.resolver';
 import { JWTUserData } from '@entities/user/user.types';
@@ -16,7 +17,7 @@ import { buildSchema } from 'type-graphql';
 export default fp(
   async (fastify) => {
     const schema = await buildSchema({
-      resolvers: [AuthResolver, UserResolver, SkillResolver, UserSkillResolver],
+      resolvers: [AuthResolver, UserResolver, SkillResolver, UserSkillResolver, UserToolResolver],
       authChecker,
     });
 
