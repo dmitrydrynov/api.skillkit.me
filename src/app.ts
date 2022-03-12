@@ -1,11 +1,9 @@
-import fs from 'fs';
-import path, { join } from 'path';
+import { join } from 'path';
 import { env } from '@config/env';
 import { FastifyPluginAsync } from 'fastify';
 import AutoLoad, { AutoloadPluginOptions } from 'fastify-autoload';
 import Cors from 'fastify-cors';
 import { fileRoutes } from 'fastify-file-routes';
-// import helmet from 'fastify-helmet';
 import { default as fastifyJWT } from 'fastify-jwt';
 import oauth2 from 'fastify-oauth2';
 
@@ -14,23 +12,6 @@ export type AppOptions = {
 } & Partial<AutoloadPluginOptions>;
 
 const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void> => {
-  // HEADERS SECURITY
-  // fastify.register(helmet, {
-  //   contentSecurityPolicy: {
-  //     directives: {
-  //       defaultSrc: ["'self'", "'unsafe-inline'"],
-  //       baseUri: ["'self'"],
-  //       fontSrc: ["'self'", 'https:', 'data:'],
-  //       frameAncestors: ["'self'"],
-  //       imgSrc: ["'self'", 'data:', 'via.placeholder.com', 'cdn.discordapp.com'], // list all the good source
-  //       objectSrc: ["'none'"],
-  //       scriptSrc: ["'self'", 'unpkg.com', "'unsafe-eval'"], // list all the good source
-  //       scriptSrcAttr: ["'none'"],
-  //       styleSrc: ["'self'", 'https:', 'unpkg.com', "'unsafe-inline'"],
-  //     },
-  //   },
-  // });
-
   // CORS
   fastify.register(Cors, {
     credentials: true,
@@ -53,7 +34,7 @@ const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void>
       },
       auth: oauth2.DISCORD_CONFIGURATION,
     },
-    scope: ['identify'],
+    scope: ['identify', 'email'],
     startRedirectPath: '/auth/discord',
     callbackUri: env.DISCORD_REDIRECT_URI, // this URL must be exposed
   });
@@ -70,21 +51,6 @@ const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void>
   // define your routes in one of these
   fastify.register(fileRoutes, {
     routesDir: './routes',
-  });
-
-  // This share public folder for storage
-  fastify.register((instance, opts, next) => {
-    const storagePath = path.join(__dirname, '../storage');
-
-    if (!fs.existsSync(storagePath)) {
-      fs.mkdirSync(storagePath);
-    }
-
-    fastify.register(require('fastify-static'), {
-      root: storagePath,
-      prefix: '/storage/',
-    });
-    next();
   });
 };
 

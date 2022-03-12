@@ -3,27 +3,32 @@ import User, { UserRole } from '@entities/user/user.model';
 import { prepareFindOptions } from '@helpers/prepare';
 import { WhereUniqueInput } from '@plugins/graphql/types/common.types';
 import { Arg, Authorized, Mutation, Query, Resolver } from 'type-graphql';
-import UserTool from './user-tool.model';
-import { UserToolCreateInput, UserToolOrderByInput, UserToolUpdateInput, UserToolWhereInput } from './user-tool.types';
+import UserSchool from './user-school.model';
+import {
+  UserSchoolCreateInput,
+  UserSchoolOrderByInput,
+  UserSchoolUpdateInput,
+  UserSchoolWhereInput,
+} from './user-school.types';
 
 @Resolver()
-export class UserToolResolver {
+export class UserSchoolResolver {
   /**
-   * User tools list
+   * User schools list
    */
   @Authorized([UserRole.MEMBER, UserRole.EXPERT, UserRole.OPERATOR, UserRole.ADMIN])
-  @Query(() => [UserTool])
-  async userTools(
-    @Arg('where', { nullable: true }) where: UserToolWhereInput,
-    @Arg('orderBy', () => [UserToolOrderByInput], { nullable: true }) orderBy: UserToolOrderByInput[],
+  @Query(() => [UserSchool])
+  async userSchools(
+    @Arg('where', { nullable: true }) where: UserSchoolWhereInput,
+    @Arg('orderBy', () => [UserSchoolOrderByInput], { nullable: true }) orderBy: UserSchoolOrderByInput[],
     @Arg('take', { nullable: true }) take: number,
     @Arg('skip', { nullable: true }) skip: number,
     @CurrentUser() authUser: User,
-  ): Promise<Array<UserTool>> {
+  ): Promise<Array<UserSchool>> {
     try {
       const findOptions: any = prepareFindOptions(where, take, skip, orderBy);
 
-      const userTools: UserTool[] = await UserTool.findAll({
+      const userSchools: UserSchool[] = await UserSchool.findAll({
         ...findOptions,
         where: {
           ...findOptions.where,
@@ -31,45 +36,45 @@ export class UserToolResolver {
         },
       });
 
-      return userTools;
+      return userSchools;
     } catch (error) {
       throw Error(error.message);
     }
   }
 
   /**
-   * A user tool
+   * A user school
    */
   @Authorized([UserRole.MEMBER, UserRole.EXPERT, UserRole.OPERATOR, UserRole.ADMIN])
-  @Query(() => UserTool)
-  async userTool(
+  @Query(() => UserSchool)
+  async userSchool(
     @Arg('where', { nullable: true }) where: WhereUniqueInput,
     @CurrentUser() authUser: User,
-  ): Promise<UserTool> {
+  ): Promise<UserSchool> {
     try {
-      const userTool: UserTool = await UserTool.findOne({
+      const userSchool: UserSchool = await UserSchool.findOne({
         where: {
           userId: authUser.id,
           id: where.id,
         },
       });
 
-      return userTool;
+      return userSchool;
     } catch (error) {
       throw Error(error.message);
     }
   }
 
   /**
-   * Add a user tool
+   * Add a user school
    */
   @Authorized([UserRole.MEMBER, UserRole.EXPERT, UserRole.OPERATOR, UserRole.ADMIN])
-  @Mutation(() => UserTool)
-  async createUserTool(@Arg('data') data: UserToolCreateInput, @CurrentUser() authUser: User): Promise<UserTool> {
+  @Mutation(() => UserSchool)
+  async createUserSchool(@Arg('data') data: UserSchoolCreateInput, @CurrentUser() authUser: User): Promise<UserSchool> {
     try {
-      const { title, description, userSkillId } = data;
+      const { title, description, userSkillId, startedAt, finishedAt } = data;
 
-      const [userTool, created] = await UserTool.findOrCreate({
+      const [userSchool, created] = await UserSchool.findOrCreate({
         where: {
           userId: authUser.id,
           title,
@@ -79,54 +84,56 @@ export class UserToolResolver {
           userSkillId,
           title,
           description,
+          startedAt,
+          finishedAt,
         },
       });
 
       if (!created) {
-        throw Error('You have this tool already. Select it from tools list.');
+        throw Error('You have this school already. Select it from schools list.');
       }
 
-      return userTool;
+      return userSchool;
     } catch (error) {
       throw Error(error.message);
     }
   }
 
   /**
-   * Update a user tool
+   * Update a user school
    */
   @Authorized([UserRole.MEMBER, UserRole.EXPERT, UserRole.OPERATOR, UserRole.ADMIN])
-  @Mutation(() => UserTool)
-  async updateUserTool(
+  @Mutation(() => UserSchool)
+  async updateUserSchool(
     @Arg('where') where: WhereUniqueInput,
-    @Arg('data') data: UserToolUpdateInput,
+    @Arg('data') data: UserSchoolUpdateInput,
     @CurrentUser() authUser: User,
-  ): Promise<UserTool> {
+  ): Promise<UserSchool> {
     try {
-      const userTool: UserTool = await UserTool.findOne({
+      const userSchool: UserSchool = await UserSchool.findOne({
         where: {
           userId: authUser.id,
           id: where.id,
         },
       });
 
-      return await userTool.update(data);
+      return await userSchool.update(data);
     } catch (error) {
       throw Error(error.message);
     }
   }
 
   /**
-   * Delete user tool
+   * Delete user school
    */
   @Authorized([UserRole.MEMBER, UserRole.EXPERT, UserRole.OPERATOR, UserRole.ADMIN])
   @Mutation(() => Number)
-  async deleteUserTool(
+  async deleteUserSchool(
     @Arg('where', { nullable: true }) where: WhereUniqueInput,
     @CurrentUser() authUser: User,
   ): Promise<number> {
     try {
-      return await UserTool.destroy({ where: { id: where.id, userId: authUser.id } });
+      return await UserSchool.destroy({ where: { id: where.id, userId: authUser.id } });
     } catch (error) {
       console.log(error);
       throw Error(error.message);

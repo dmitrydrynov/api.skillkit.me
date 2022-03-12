@@ -1,6 +1,8 @@
 import { env } from '@config/env';
 import ConnectedUser from '@entities/connected-users/connected-user.model';
 import Role from '@entities/role/role.model';
+import UserSkill from '@entities/user-skill/user-skill.model';
+import UserTool from '@entities/user-tool/user-tool.model';
 import { encryptPassword } from '@helpers/encrypt';
 import { sendOneTimePassword } from '@services/mailgun';
 import { generate as generatePassword } from 'generate-password';
@@ -36,6 +38,7 @@ export enum UserRole {
 @ObjectType('User')
 @Table({ underscored: true })
 export default class User extends Model {
+  [x: string]: any;
   @Field()
   @AllowNull(false)
   @AutoIncrement
@@ -92,14 +95,25 @@ export default class User extends Model {
   @Column
   roleId: number;
 
-  // @Field(() => Role)
-  // async role() {
-  //   return await Role.findByPk(this.roleId);
-  // }
-
   @Field()
   @BelongsTo(() => Role)
   role: Role;
+
+  @HasMany(() => UserSkill)
+  userSkillItems: UserSkill[];
+
+  @Field(() => [UserSkill], { nullable: true })
+  async userSkills() {
+    return this.getUserSkillItems();
+  }
+
+  @HasMany(() => UserTool)
+  userToolItems: UserTool[];
+
+  @Field(() => [UserTool], { nullable: true })
+  async userTools() {
+    return this.getUserToolItems();
+  }
 
   @Field({ nullable: true })
   @Column

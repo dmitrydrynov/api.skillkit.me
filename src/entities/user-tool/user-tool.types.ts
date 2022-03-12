@@ -1,10 +1,13 @@
 import { IDFilter, OrderDirection } from '@plugins/graphql/types/common.types';
-import { Field, InputType } from 'type-graphql';
+import { Field, ID, InputType } from 'type-graphql';
 
 @InputType('UserToolWhereInput')
 export class UserToolWhereInput {
   @Field(() => IDFilter, { nullable: true })
   id?: IDFilter;
+
+  @Field(() => IDFilter, { nullable: true })
+  userSkillId?: IDFilter;
 }
 
 @InputType('UserToolOrderByInput')
@@ -18,15 +21,18 @@ export class UserToolOrderByInput {
 
 @InputType('UserToolUpdateInput')
 export class UserToolUpdateInput {
-  @Field()
+  @Field({ nullable: true })
   description: string;
 }
 
 @InputType('UserToolCreateInput')
 export class UserToolCreateInput {
-  @Field({ nullable: true })
+  @Field()
   title: string;
 
   @Field({ nullable: true })
   description?: string;
+
+  @Field(() => ID, { nullable: true })
+  userSkillId: number;
 }

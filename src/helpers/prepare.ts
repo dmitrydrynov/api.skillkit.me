@@ -1,12 +1,13 @@
 import { SkillOrderByInput, SkillWhereInput } from '@entities/skill/skill.types';
-import { WhereUniqueInput } from '@plugins/graphql/types/common.types';
+import { OrderDirection, WhereUniqueInput } from '@plugins/graphql/types/common.types';
 import { Op } from 'sequelize';
+import { UserToolWhereInput } from './../entities/user-tool/user-tool.types';
 
 export const prepareFindOptions = (
-  where: WhereUniqueInput | SkillWhereInput,
+  where: WhereUniqueInput | SkillWhereInput | UserToolWhereInput,
   take = 0,
   skip = 0,
-  orderBy: SkillOrderByInput[] = [],
+  orderBy: SkillOrderByInput[] = [{ id: OrderDirection.asc }],
 ) => {
   const findOptions: any = {};
 
@@ -25,7 +26,7 @@ export const prepareFindOptions = (
       Object.entries(value).map(([k, v]) => {
         switch (k) {
           case 'equals':
-            sequelizeWhere[key][k] = v;
+            sequelizeWhere[key] = v;
             break;
           case 'in':
             sequelizeWhere[key] = { [Op.in]: v };
@@ -53,13 +54,10 @@ export const prepareFindOptions = (
   }
 
   // prepare Order for Sequelize
-  if (orderBy) {
-    findOptions.order = [];
-
-    orderBy.map((order) => {
-      findOptions.order.push([Object.keys(order)[0], Object.values(order)[0]]);
-    });
-  }
+  findOptions.order = [];
+  orderBy.map((order) => {
+    findOptions.order.push([Object.keys(order)[0], Object.values(order)[0]]);
+  });
 
   return findOptions;
 };

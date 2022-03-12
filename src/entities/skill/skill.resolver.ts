@@ -10,7 +10,7 @@ export class SkillResolver {
    * Skills list
    */
   @Authorized([UserRole.MEMBER, UserRole.EXPERT, UserRole.OPERATOR, UserRole.ADMIN])
-  @Query(() => [Skill], { description: 'Get skills list' })
+  @Query(() => [Skill])
   async skills(
     @Arg('where', { nullable: true }) where: SkillWhereInput,
     @Arg('orderBy', () => [SkillOrderByInput], { nullable: true }) orderBy: SkillOrderByInput[],
@@ -32,7 +32,7 @@ export class SkillResolver {
    * Add a skill
    */
   @Authorized([UserRole.MEMBER, UserRole.EXPERT, UserRole.OPERATOR, UserRole.ADMIN])
-  @Mutation(() => Skill, { description: 'Get skills list' })
+  @Mutation(() => Skill)
   async createSkill(@Arg('name') name: string): Promise<Skill> {
     try {
       const skill: Skill = await Skill.create({

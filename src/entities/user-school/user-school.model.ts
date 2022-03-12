@@ -14,9 +14,9 @@ import {
 } from 'sequelize-typescript';
 import { Field, ID, ObjectType } from 'type-graphql';
 
-@ObjectType('UserTool')
+@ObjectType('UserSchool')
 @Table({ underscored: true })
-export default class UserTool extends Model {
+export default class UserSchool extends Model {
   [x: string]: any;
   @Field(() => ID)
   @AllowNull(false)
@@ -56,6 +56,15 @@ export default class UserTool extends Model {
   @Field({ nullable: true })
   @Column
   description?: string;
+
+  @Field()
+  @AllowNull(false)
+  @Column
+  startedAt: Date;
+
+  @Field({ nullable: true })
+  @Column
+  finishedAt?: Date;
 
   @Field()
   @AllowNull(false)

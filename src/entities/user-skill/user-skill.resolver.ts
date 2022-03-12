@@ -17,7 +17,7 @@ export class UserSkillResolver {
    * User skills list
    */
   @Authorized([UserRole.MEMBER, UserRole.EXPERT, UserRole.OPERATOR, UserRole.ADMIN])
-  @Query(() => [UserSkill], { description: 'Get skills list' })
+  @Query(() => [UserSkill])
   async userSkills(
     @Arg('where', { nullable: true }) where: UserSkillWhereInput,
     @Arg('orderBy', () => [UserSkillOrderByInput], { nullable: true }) orderBy: UserSkillOrderByInput[],
@@ -46,7 +46,7 @@ export class UserSkillResolver {
    * A user skill
    */
   @Authorized([UserRole.MEMBER, UserRole.EXPERT, UserRole.OPERATOR, UserRole.ADMIN])
-  @Query(() => UserSkill, { description: 'Get skills list' })
+  @Query(() => UserSkill)
   async userSkill(@Arg('where', { nullable: true }) where: WhereUniqueInput): Promise<UserSkill> {
     try {
       const userSkill: UserSkill = await UserSkill.findByPk(where.id);
@@ -61,7 +61,7 @@ export class UserSkillResolver {
    * Add a user skill
    */
   @Authorized([UserRole.MEMBER, UserRole.EXPERT, UserRole.OPERATOR, UserRole.ADMIN])
-  @Mutation(() => UserSkill, { description: 'Add a user skill' })
+  @Mutation(() => UserSkill)
   async createUserSkill(
     @Arg('skillId', () => ID) skillId: number,
     @Arg('level', () => UserSkillLevelEnum) level: UserSkillLevelEnum,
@@ -88,7 +88,7 @@ export class UserSkillResolver {
    * Update a user skill
    */
   @Authorized([UserRole.MEMBER, UserRole.EXPERT, UserRole.OPERATOR, UserRole.ADMIN])
-  @Mutation(() => UserSkill, { description: 'Add a user skill' })
+  @Mutation(() => UserSkill)
   async updateUserSkill(
     @Arg('where') where: WhereUniqueInput,
     @Arg('data') data: UserSkillUpdateInput,
@@ -112,7 +112,7 @@ export class UserSkillResolver {
    * Delete user skill
    */
   @Authorized([UserRole.MEMBER, UserRole.EXPERT, UserRole.OPERATOR, UserRole.ADMIN])
-  @Mutation(() => Number, { description: 'Delete user skill' })
+  @Mutation(() => Number)
   async deleteUserSkill(
     @Arg('where', { nullable: true }) where: WhereUniqueInput,
     @CurrentUser() authUser: User,

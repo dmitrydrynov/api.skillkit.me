@@ -17,7 +17,7 @@ export class AuthResolver {
   /**
    * Authorize with password
    */
-  @Mutation(() => AuthResponseType, { description: 'Sign in by email and password' })
+  @Mutation(() => AuthResponseType)
   async signIn(
     @Arg('email') email: string,
     @Arg('password', { nullable: true }) password: string,
@@ -120,68 +120,45 @@ export class AuthResolver {
       reply: { request },
     } = ctx;
 
-    const accessToken = await ctx.app.discordOAuth2.getAccessTokenFromAuthorizationCodeFlow({
-      query: request.body['variables'],
-    });
-
-    const userDataResponse: any = await fetch('https://discord.com/api/users/@me', {
-      headers: {
-        authorization: `${accessToken.token_type} ${accessToken.access_token}`,
-      },
-    });
-
-    if (!userDataResponse.ok) {
-      throw Error('User data not available.');
-    }
-
-    const userData: any = await userDataResponse.json();
-
-    const [firstName, lastName]: string[] = userData.username.split(' ');
-    const avatar = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
-
-    const [user, created] = await User.findOrCreate({
-      include: [ConnectedUser],
-      where: { email: userData.email },
-      defaults: {
-        email: userData.email,
-        firstName: firstName ? firstName : '',
-        lastName: lastName ? lastName : '',
-        avatar,
-      },
-    });
-
-    if (user === null) {
-      ctx.reply.status(400);
-
-      throw Error('Authorisation is wrong.');
-    }
-
-    if (created) {
-      const connectedUser = await ConnectedUser.create({
-        userId: user.id,
-        serviceName,
-        serviceUserId: userData.id,
-        username: userData.username,
-        avatar,
-        token: `${accessToken.token_type} ${accessToken.access_token}`,
-        expiresIn: accessToken.expires_in,
+    try {
+      const accessToken = await ctx.app.discordOAuth2.getAccessTokenFromAuthorizationCodeFlow({
+        query: request.body['variables'],
       });
 
-      user.connectedUsers = [connectedUser];
-    } else {
-      if (user.hasConnectedWith(serviceName)) {
-        const connectedUser = await user.updateConnectedUser(serviceName, {
-          username: userData.username,
-          avatar,
-          token: `${accessToken.token_type} ${accessToken.access_token}`,
-          expiresIn: accessToken.expires_in,
-        });
+      const userDataResponse: any = await fetch('https://discord.com/api/users/@me', {
+        headers: {
+          authorization: `${accessToken.token_type} ${accessToken.access_token}`,
+        },
+      });
 
-        if (!connectedUser) {
-          throw Error('Authorisation is wrong.');
-        }
-      } else {
-        await ConnectedUser.create({
+      if (!userDataResponse.ok) {
+        throw Error('User data not available.');
+      }
+
+      const userData: any = await userDataResponse.json();
+
+      const [firstName, lastName]: string[] = userData.username.split(' ');
+      const avatar = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
+
+      const [user, created] = await User.findOrCreate({
+        include: [ConnectedUser, Role],
+        where: { email: userData.email },
+        defaults: {
+          email: userData.email,
+          firstName: firstName ? firstName : '',
+          lastName: lastName ? lastName : '',
+          avatar,
+        },
+      });
+
+      if (user === null) {
+        ctx.reply.status(400);
+
+        throw Error('Authorisation is wrong.');
+      }
+
+      if (created) {
+        const connectedUser = await ConnectedUser.create({
           userId: user.id,
           serviceName,
           serviceUserId: userData.id,
@@ -190,21 +167,51 @@ export class AuthResolver {
           token: `${accessToken.token_type} ${accessToken.access_token}`,
           expiresIn: accessToken.expires_in,
         });
+
+        user.connectedUsers = [connectedUser];
+      } else {
+        if (user.hasConnectedWith(serviceName)) {
+          const connectedUser = await user.updateConnectedUser(serviceName, {
+            username: userData.username,
+            avatar,
+            token: `${accessToken.token_type} ${accessToken.access_token}`,
+            expiresIn: accessToken.expires_in,
+          });
+
+          if (!connectedUser) {
+            throw Error('Authorisation is wrong.');
+          }
+        } else {
+          await ConnectedUser.create({
+            userId: user.id,
+            serviceName,
+            serviceUserId: userData.id,
+            username: userData.username,
+            avatar,
+            token: `${accessToken.token_type} ${accessToken.access_token}`,
+            expiresIn: accessToken.expires_in,
+          });
+        }
       }
+
+      const token = ctx.app.jwt.sign({
+        id: user.id,
+        role: user.role.name,
+      });
+
+      return { token, user };
+    } catch (exception) {
+      ctx.app.log.error(exception);
+      ctx.reply.status(400);
+
+      throw Error(exception.message);
     }
-
-    const token = ctx.app.jwt.sign({
-      id: user.id,
-      role: user.role.name,
-    });
-
-    return { token, user };
   }
 
   /**
    * Sign up
    */
-  @Mutation(() => AuthResponseType, { description: 'To register a new user' })
+  @Mutation(() => AuthResponseType)
   async registerUser(
     @Arg('email') email: string,
     @Arg('firstName', { nullable: true }) firstName: string,
@@ -279,7 +286,7 @@ export class AuthResolver {
   /**
    * Get authenticated user
    */
-  @Query(() => User, { description: 'Get authenticated user data' })
+  @Query(() => User)
   async authenticatedUser(@CurrentUser() currentUser: User, @Ctx() ctx: MercuriusContext): Promise<User> {
     const user = await User.findByPk(currentUser.id);
 

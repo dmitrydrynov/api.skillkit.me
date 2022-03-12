@@ -1,12 +1,15 @@
 import Skill from '@entities/skill/skill.model';
+import UserTool from '@entities/user-tool/user-tool.model';
 import User from '@entities/user/user.model';
 import {
   AllowNull,
   AutoIncrement,
+  BelongsTo,
   Column,
   CreatedAt,
   Default,
   ForeignKey,
+  HasMany,
   Model,
   PrimaryKey,
   Table,
@@ -26,6 +29,7 @@ export enum UserRole {
 @ObjectType('UserSkill')
 @Table({ underscored: true })
 export default class UserSkill extends Model {
+  [x: string]: any;
   @Field(() => ID)
   @AllowNull(false)
   @AutoIncrement
@@ -37,23 +41,37 @@ export default class UserSkill extends Model {
   @Column
   userId: number;
 
+  @BelongsTo(() => User)
+  userItem: User;
+
   @Field(() => User)
   async user() {
-    return await User.findByPk(this.userId);
+    return await this.getUserItem();
   }
 
   @ForeignKey(() => Skill)
   @Column
   skillId: number;
 
+  @BelongsTo(() => Skill)
+  skillItem: Skill;
+
   @Field(() => Skill)
   async skill() {
-    return await Skill.findByPk(this.skillId);
+    return await this.getSkillItem();
   }
 
   @Field(() => UserSkillLevelEnum)
   @Column
   level: UserSkillLevelEnum;
+
+  @HasMany(() => UserTool)
+  userToolItems: UserTool[];
+
+  @Field(() => [UserTool])
+  async userTools() {
+    return await this.getUserToolItems();
+  }
 
   @Field()
   @AllowNull(false)

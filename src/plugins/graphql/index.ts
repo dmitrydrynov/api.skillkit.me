@@ -2,6 +2,7 @@ import { env } from '@config/env';
 import { authChecker } from '@entities/auth/auth.checker';
 import { AuthResolver } from '@entities/auth/auth.resolver';
 import { SkillResolver } from '@entities/skill/skill.resolver';
+import { UserSchoolResolver } from '@entities/user-school/user-school.resolver';
 import { UserSkillResolver } from '@entities/user-skill/user-skill.resolver';
 import { UserToolResolver } from '@entities/user-tool/user-tool.resolver';
 import { UserRole } from '@entities/user/user.model';
@@ -17,7 +18,7 @@ import { buildSchema } from 'type-graphql';
 export default fp(
   async (fastify) => {
     const schema = await buildSchema({
-      resolvers: [AuthResolver, UserResolver, SkillResolver, UserSkillResolver, UserToolResolver],
+      resolvers: [AuthResolver, UserResolver, SkillResolver, UserSkillResolver, UserToolResolver, UserSchoolResolver],
       authChecker,
     });
 

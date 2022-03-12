@@ -19,7 +19,7 @@ export class UserResolver {
    * Users list
    */
   @Authorized([UserRole.MEMBER])
-  @Query(() => [User], { description: 'Get users list' })
+  @Query(() => [User])
   async users(): Promise<Array<User>> {
     const users: User[] = await User.findAll({ include: [Role] });
 
@@ -34,7 +34,7 @@ export class UserResolver {
    * Get user data
    */
   @Authorized([UserRole.MEMBER, UserRole.EXPERT, UserRole.OPERATOR, UserRole.ADMIN])
-  @Query(() => User, { description: 'Get user data by ID' })
+  @Query(() => User)
   async user(@Arg('where') where: UserWhereUniqueInput, @CurrentUser() currentUser: User): Promise<User> {
     const user = await User.findByPk(where.id, { include: [Role] });
 
@@ -49,7 +49,7 @@ export class UserResolver {
    * Update user data
    */
   @Authorized([UserRole.MEMBER, UserRole.EXPERT, UserRole.OPERATOR, UserRole.ADMIN])
-  @Mutation(() => User, { description: 'Get user data by ID' })
+  @Mutation(() => User)
   async updateUser(
     @Arg('where') where: UserWhereUniqueInput,
     @Arg('data') data: UserDataInput,
@@ -62,15 +62,18 @@ export class UserResolver {
         throw Error('The user not found or blocked');
       }
 
-      if (data.avatar) {
+      const { avatar, ...dataForUpdate } = data;
+
+      if (avatar) {
         if (user.avatar) {
           await removeFile(ctx.app, user.avatar);
         }
 
         const avatarName = 'avatar-' + hashids.encode(user.id, Date.now());
-        user.avatar = await uploadFile(ctx.app, data.avatar, 'avatars', avatarName);
+        user.avatar = await uploadFile(ctx.app, avatar, 'avatars', avatarName);
       }
 
+      user.set(dataForUpdate);
       await user.save();
 
       return user;
@@ -83,7 +86,7 @@ export class UserResolver {
    * Change user password
    */
   @Authorized([UserRole.MEMBER, UserRole.EXPERT, UserRole.OPERATOR, UserRole.ADMIN])
-  @Mutation(() => Boolean, { description: 'Change user password' })
+  @Mutation(() => Boolean)
   async changeUserPassword(
     @Arg('useOTP') useOTP: boolean,
     @Arg('oldPassword', { nullable: true }) oldPassword: string,
