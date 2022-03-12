@@ -139,6 +139,7 @@ export class AuthResolver {
 
       const [firstName, lastName]: string[] = userData.username.split(' ');
       const avatar = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
+      const memberRole = await Role.findOne({ where: { name: UserRole.MEMBER } });
 
       const [user, created] = await User.findOrCreate({
         include: [ConnectedUser, Role],
@@ -148,6 +149,7 @@ export class AuthResolver {
           firstName: firstName ? firstName : '',
           lastName: lastName ? lastName : '',
           avatar,
+          roleId: memberRole.id,
         },
       });
 
