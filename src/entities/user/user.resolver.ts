@@ -64,6 +64,7 @@ export class UserResolver {
 
       const { avatar, ...dataForUpdate } = data;
 
+      // update avatar
       if (avatar) {
         if (user.avatar) {
           await removeFile(ctx.app, user.avatar);
@@ -71,6 +72,12 @@ export class UserResolver {
 
         const avatarName = 'avatar-' + hashids.encode(user.id, Date.now());
         user.avatar = await uploadFile(ctx.app, avatar, 'avatars', avatarName);
+      }
+
+      // remove avatar
+      if (avatar === null && user.avatar) {
+        await removeFile(ctx.app, user.avatar);
+        user.avatar = null;
       }
 
       user.set(dataForUpdate);
