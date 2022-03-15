@@ -14,9 +14,9 @@ import {
 } from 'sequelize-typescript';
 import { Field, ID, ObjectType } from 'type-graphql';
 
-@ObjectType('UserSchool')
+@ObjectType('UserJob')
 @Table({ underscored: true })
-export default class UserSchool extends Model {
+export default class UserJob extends Model {
   [x: string]: any;
   @Field(() => ID)
   @AllowNull(false)
@@ -52,6 +52,10 @@ export default class UserSchool extends Model {
   @Field()
   @Column
   title: string;
+
+  @Field()
+  @Column
+  position: string;
 
   @Field({ nullable: true })
   @Column

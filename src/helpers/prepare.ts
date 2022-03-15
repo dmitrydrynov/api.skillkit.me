@@ -1,10 +1,9 @@
-import { SkillOrderByInput, SkillWhereInput } from '@entities/skill/skill.types';
-import { OrderDirection, WhereUniqueInput } from '@plugins/graphql/types/common.types';
+import { SkillOrderByInput } from '@entities/skill/skill.types';
+import { CommonWhere, OrderDirection } from '@plugins/graphql/types/common.types';
 import { Op } from 'sequelize';
-import { UserToolWhereInput } from './../entities/user-tool/user-tool.types';
 
 export const prepareFindOptions = (
-  where: WhereUniqueInput | SkillWhereInput | UserToolWhereInput,
+  where: CommonWhere,
   take = 0,
   skip = 0,
   orderBy: SkillOrderByInput[] = [{ id: OrderDirection.asc }],

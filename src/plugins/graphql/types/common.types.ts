@@ -1,4 +1,15 @@
+import { SkillWhereInput } from '@entities/skill/skill.types';
+import { UserJobWhereInput } from '@entities/user-job/user-job.types';
+import { UserSchoolWhereInput } from '@entities/user-school/user-school.types';
+import { UserToolWhereInput } from '@entities/user-tool/user-tool.types';
 import { Field, ID, InputType, ObjectType, registerEnumType } from 'type-graphql';
+
+export type CommonWhere =
+  | WhereUniqueInput
+  | SkillWhereInput
+  | UserToolWhereInput
+  | UserSchoolWhereInput
+  | UserJobWhereInput;
 
 @ObjectType('DefaultResponseType')
 export class DefaultResponseType {
