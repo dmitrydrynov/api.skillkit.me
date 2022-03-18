@@ -1,13 +1,14 @@
 import { env } from '@config/env';
 import CurrentUser from '@entities/auth/current-user.decorator';
+import UserSkill from '@entities/user-skill/user-skill.model';
 import User, { UserRole } from '@entities/user/user.model';
-import { uploadFile } from '@helpers/file';
+import { removeFile, uploadFile } from '@helpers/file';
 import { prepareFindOptions } from '@helpers/prepare';
 import { WhereUniqueInput } from '@plugins/graphql/types/common.types';
 import Hashids from 'hashids';
 import { MercuriusContext } from 'mercurius';
-import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from 'type-graphql';
-import UserFile, { UserFileType, getUserFileType } from './user-file.model';
+import { Arg, Authorized, Ctx, ID, Mutation, Query, Resolver } from 'type-graphql';
+import UserFile, { UserFileType } from './user-file.model';
 import { UserFileCreateInput, UserFileOrderByInput, UserFileUpdateInput, UserFileWhereInput } from './user-file.types';
 
 const hashids = new Hashids(env.HASH_SALT, 16);
@@ -20,22 +21,31 @@ export class UserFileResolver {
   @Authorized([UserRole.MEMBER, UserRole.EXPERT, UserRole.OPERATOR, UserRole.ADMIN])
   @Query(() => [UserFile])
   async userFiles(
+    @Arg('attachType', { nullable: true }) attachType: string,
+    @Arg('attachId', () => ID, { nullable: true }) attachId: number,
     @Arg('where', { nullable: true }) where: UserFileWhereInput,
     @Arg('orderBy', () => [UserFileOrderByInput], { nullable: true }) orderBy: UserFileOrderByInput[],
     @Arg('take', { nullable: true }) take: number,
     @Arg('skip', { nullable: true }) skip: number,
     @CurrentUser() authUser: User,
   ): Promise<Array<UserFile>> {
-    try {
-      const findOptions: any = prepareFindOptions(where, take, skip, orderBy);
+    let userFiles: UserFile[] = null;
 
-      const userFiles: UserFile[] = await UserFile.findAll({
-        ...findOptions,
-        where: {
-          ...findOptions.where,
-          userId: authUser.id,
-        },
-      });
+    try {
+      if (attachType === 'UserSkill') {
+        const userSkill = await UserSkill.findByPk(attachId);
+        userFiles = await userSkill.getUserFiles();
+      } else {
+        const findOptions: any = prepareFindOptions(where, take, skip, orderBy);
+
+        userFiles = await UserFile.findAll({
+          ...findOptions,
+          where: {
+            ...findOptions.where,
+            userId: authUser.id,
+          },
+        });
+      }
 
       return userFiles;
     } catch (error) {
@@ -112,6 +122,12 @@ export class UserFileResolver {
         throw Error(`The ${type} wasn't loaded. Something wrong!`);
       }
 
+      if (attachTo === 'userSkill') {
+        const userSkill = await UserSkill.findOne({ where: { id: attachId } });
+
+        userFile.addUserSkill(userSkill);
+      }
+
       return userFile;
     } catch (error) {
       throw Error(error.message);
@@ -127,6 +143,7 @@ export class UserFileResolver {
     @Arg('where') where: WhereUniqueInput,
     @Arg('data') data: UserFileUpdateInput,
     @CurrentUser() authUser: User,
+    @Ctx() ctx: MercuriusContext,
   ): Promise<UserFile> {
     try {
       const userFile: UserFile = await UserFile.findOne({
@@ -136,7 +153,31 @@ export class UserFileResolver {
         },
       });
 
-      return await userFile.update(data);
+      if (!userFile) {
+        throw Error('The user file not found');
+      }
+
+      const { file, ...dataForUpdate } = data;
+
+      // update file
+      if (file) {
+        if (userFile.url) {
+          await removeFile(ctx.app, userFile.url);
+        }
+
+        const fileName = 'file-' + hashids.encode(userFile.id, authUser.id, Date.now());
+        userFile.url = await uploadFile(ctx.app, file, 'files', fileName);
+      }
+
+      // remove file
+      if (file === null && userFile.url) {
+        await removeFile(ctx.app, userFile.avatar);
+        userFile.avatar = null;
+      }
+
+      userFile.set(dataForUpdate);
+
+      return await userFile.save();
     } catch (error) {
       throw Error(error.message);
     }
@@ -150,8 +191,17 @@ export class UserFileResolver {
   async deleteUserFile(
     @Arg('where', { nullable: true }) where: WhereUniqueInput,
     @CurrentUser() authUser: User,
+    @Ctx() ctx: MercuriusContext,
   ): Promise<number> {
     try {
+      const item = await UserFile.findOne({ where: { id: where.id, userId: authUser.id } });
+
+      if (!item) {
+        throw Error("User File doesn't found");
+      }
+
+      await removeFile(ctx.app, item.url);
+
       return await UserFile.destroy({ where: { id: where.id, userId: authUser.id } });
     } catch (error) {
       console.log(error);

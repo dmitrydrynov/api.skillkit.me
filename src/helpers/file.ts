@@ -1,4 +1,3 @@
-import { constants, promises } from 'fs';
 import path, { basename } from 'path';
 import { FastifyInstance } from 'fastify';
 import { FileUpload } from 'graphql-upload';
@@ -31,7 +30,9 @@ export const uploadFile = async (app: FastifyInstance, file: FileUpload, dirName
 
 export const removeFile = async (app: FastifyInstance, filePath: string) => {
   try {
-    await app.sanity.delete(basename(filePath));
+    const response = await app.sanity.delete(basename(filePath));
+
+    console.log('[Remove File]', response);
 
     return Promise.resolve();
   } catch (error) {

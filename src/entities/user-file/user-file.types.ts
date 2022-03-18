@@ -25,10 +25,16 @@ export class UserFileOrderByInput {
 @InputType('UserFileUpdateInput')
 export class UserFileUpdateInput {
   @Field({ nullable: true })
+  url?: string;
+
+  @Field({ nullable: true })
   title: string;
 
   @Field({ nullable: true })
   description?: string;
+
+  @Field(() => GraphQLUpload, { nullable: true })
+  file?: FileUpload;
 }
 
 @InputType('UserFileCreateInput')

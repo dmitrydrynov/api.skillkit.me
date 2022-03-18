@@ -1,10 +1,13 @@
+import JuncUserSkillFile from '@entities/junc-user-skill-file/junc-user-skill-file.model';
 import Skill from '@entities/skill/skill.model';
+import UserFile from '@entities/user-file/user-file.model';
 import UserTool from '@entities/user-tool/user-tool.model';
 import User from '@entities/user/user.model';
 import {
   AllowNull,
   AutoIncrement,
   BelongsTo,
+  BelongsToMany,
   Column,
   CreatedAt,
   Default,
@@ -102,4 +105,7 @@ export default class UserSkill extends Model {
   @UpdatedAt
   @Column
   updatedAt: Date;
+
+  @BelongsToMany(() => UserFile, () => JuncUserSkillFile)
+  userFiles: UserFile[];
 }
