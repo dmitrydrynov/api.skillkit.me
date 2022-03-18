@@ -1,5 +1,6 @@
 import UserSkill from '@entities/user-skill/user-skill.model';
 import User from '@entities/user/user.model';
+import { DateTime } from 'luxon';
 import {
   AllowNull,
   AutoIncrement,
@@ -13,6 +14,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript';
 import { Field, ID, ObjectType } from 'type-graphql';
+import { UserJobExperienceResponse } from './user-job.types';
 
 @ObjectType('UserJob')
 @Table({ underscored: true })
@@ -81,4 +83,15 @@ export default class UserJob extends Model {
   @UpdatedAt
   @Column
   updatedAt: Date;
+
+  @Field(() => UserJobExperienceResponse, { nullable: true })
+  async experience() {
+    const start = DateTime.fromJSDate(this.startedAt);
+    const finish = this.finishedAt ? DateTime.fromJSDate(this.finishedAt) : DateTime.now();
+
+    const diff = finish.diff(start, ['years', 'months']);
+    const diffObj = diff.toObject();
+
+    return { years: Math.round(diffObj.years), months: Math.round(diffObj.months) };
+  }
 }

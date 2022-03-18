@@ -1,5 +1,5 @@
 import { IDFilter, OrderDirection } from '@plugins/graphql/types/common.types';
-import { Field, ID, InputType } from 'type-graphql';
+import { Field, ID, InputType, ObjectType } from 'type-graphql';
 
 @InputType('UserJobWhereInput')
 export class UserJobWhereInput {
@@ -62,4 +62,13 @@ export class UserJobCreateInput {
 
   @Field({ nullable: true })
   finishedAt?: Date;
+}
+
+@ObjectType('UserJobExperienceResponse')
+export class UserJobExperienceResponse {
+  @Field()
+  years: number;
+
+  @Field()
+  months: number;
 }
