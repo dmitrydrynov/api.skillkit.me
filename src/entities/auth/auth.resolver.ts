@@ -247,6 +247,7 @@ export class AuthResolver {
       } else {
         const user = await User.findOne({
           include: [
+            Role,
             {
               model: TempPassword,
               where: {

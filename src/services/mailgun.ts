@@ -1,5 +1,6 @@
 import { env } from '@config/env';
-import mailgun from 'mailgun-js';
+import formData from 'form-data';
+import Mailgun from 'mailgun.js';
 
 const send = async ({
   to,
@@ -15,7 +16,12 @@ const send = async ({
   callback?: () => void;
 }) => {
   try {
-    const mg = mailgun({ apiKey: env.MAILGUN_API_KEY, domain: env.MAILGUN_DOMAIN });
+    const mailgun = new Mailgun(formData);
+    const mg = mailgun.client({
+      username: 'api',
+      key: env.MAILGUN_API_KEY,
+      url: env.MAILGUN_HOST || null,
+    });
     const data = {
       from: env.MAILGUN_FROM_NAME + ' <' + env.MAILGUN_FROM_EMAIL + '>',
       to,
@@ -23,15 +29,9 @@ const send = async ({
       template: template,
       'h:X-Mailgun-Variables': JSON.stringify(variables),
     };
-    await mg.messages().send(data, function (error) {
-      if (error) {
-        throw Error(error.message);
-      }
+    await mg.messages.create(env.MAILGUN_DOMAIN, data);
 
-      if (callback) {
-        callback();
-      }
-    });
+    if (callback) callback();
   } catch (error) {
     throw Error(error.message);
   }
