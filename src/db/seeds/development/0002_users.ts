@@ -1,4 +1,5 @@
 import Role from '@entities/role/role.model';
+import User from '@entities/user/user.model';
 import { encryptPassword } from '@helpers/encrypt';
 import { faker } from '@faker-js/faker';
 import { Op, QueryInterface, Sequelize } from 'sequelize';
@@ -36,7 +37,7 @@ export async function up({ context: sequelize }: MigrationParams<QueryInterface>
 
   const records = data.concat(generated);
 
-  await sequelize.bulkInsert('users', records);
+  await User.bulkCreate(records, { ignoreDuplicates: true });
   await sequelize.sequelize.query(`ALTER SEQUENCE users_id_seq RESTART WITH ${records.length + 1}`);
 }
 
