@@ -14,7 +14,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript';
 import { Field, ID, ObjectType } from 'type-graphql';
-import { UserJobExperienceResponse } from './user-job.types';
+import { ExperienceResponse } from './user-job.types';
 
 @ObjectType('UserJob')
 @Table({ underscored: true })
@@ -84,8 +84,8 @@ export default class UserJob extends Model {
   @Column
   updatedAt: Date;
 
-  @Field(() => UserJobExperienceResponse, { nullable: true })
-  async experience() {
+  @Field(() => ExperienceResponse, { nullable: true })
+  experience() {
     const start = DateTime.fromJSDate(this.startedAt);
     const finish = this.finishedAt ? DateTime.fromJSDate(this.finishedAt) : DateTime.now();
 

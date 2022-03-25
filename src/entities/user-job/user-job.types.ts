@@ -64,8 +64,8 @@ export class UserJobCreateInput {
   finishedAt?: Date;
 }
 
-@ObjectType('UserJobExperienceResponse')
-export class UserJobExperienceResponse {
+@ObjectType('ExperienceResponse')
+export class ExperienceResponse {
   @Field()
   years: number;
 
