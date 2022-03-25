@@ -9,8 +9,18 @@ export enum UserSkillLevelEnum {
   EXPERT = 'expert',
 }
 
+export enum UserSkillViewModeEnum {
+  ONLY_ME = 'only_me',
+  BY_LINK = 'by_link',
+  EVERYONE = 'everyone',
+}
+
 registerEnumType(UserSkillLevelEnum, {
   name: 'UserSkillLevelEnum',
+});
+
+registerEnumType(UserSkillViewModeEnum, {
+  name: 'UserSkillViewModeEnum',
 });
 
 @InputType('UserSkillWhereInput')
@@ -50,4 +60,7 @@ export class UserSkillUpdateInput {
 
   @Field({ nullable: true })
   skillId?: number;
+
+  @Field(() => UserSkillViewModeEnum, { nullable: true })
+  viewMode?: UserSkillViewModeEnum;
 }

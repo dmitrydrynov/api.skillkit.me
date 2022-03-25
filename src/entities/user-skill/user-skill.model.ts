@@ -1,6 +1,9 @@
 import JuncUserSkillFile from '@entities/junc-user-skill-file/junc-user-skill-file.model';
 import Skill from '@entities/skill/skill.model';
 import UserFile from '@entities/user-file/user-file.model';
+import UserJob from '@entities/user-job/user-job.model';
+import { ExperienceResponse } from '@entities/user-job/user-job.types';
+import { UserSkillViewModeEnum } from '@entities/user-skill/user-skill.types';
 import UserTool from '@entities/user-tool/user-tool.model';
 import User from '@entities/user/user.model';
 import {
@@ -21,18 +24,11 @@ import {
 import { Field, ID, ObjectType } from 'type-graphql';
 import { UserSkillLevelEnum } from './user-skill.types';
 
-export enum UserRole {
-  ADMIN = 'admin',
-  OPERATOR = 'operator',
-  EXPERT = 'expert',
-  MEMBER = 'member',
-  UNKNOWN = 'unknown',
-}
-
 @ObjectType('UserSkill')
 @Table({ underscored: true })
 export default class UserSkill extends Model {
   [x: string]: any;
+
   @Field(() => ID)
   @AllowNull(false)
   @AutoIncrement
@@ -71,9 +67,31 @@ export default class UserSkill extends Model {
   @HasMany(() => UserTool)
   userToolItems: UserTool[];
 
+  @HasMany(() => UserJob)
+  userJobItems: UserJob[];
+
   @Field(() => [UserTool])
   async userTools() {
     return await this.getUserToolItems();
+  }
+
+  @Field(() => [UserJob])
+  async userJobs() {
+    return await this.getUserJobItems();
+  }
+
+  @Field(() => ExperienceResponse)
+  async experience(): Promise<ExperienceResponse> {
+    const jobs: UserJob[] = await this.userJobs();
+    const exp: ExperienceResponse = { years: 0, months: 0 };
+
+    jobs.map((job) => {
+      const jobExp = job.experience();
+      exp.years += jobExp.years;
+      exp.months += jobExp.months;
+    });
+
+    return exp;
   }
 
   @Field()
@@ -81,6 +99,11 @@ export default class UserSkill extends Model {
   @Default(true)
   @Column
   isDraft: boolean;
+
+  @Field()
+  @AllowNull(false)
+  @Column
+  viewMode: UserSkillViewModeEnum;
 
   @Field(() => ID, { nullable: true })
   @Column
