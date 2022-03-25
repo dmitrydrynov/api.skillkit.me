@@ -101,7 +101,7 @@ export default class UserSkill extends Model {
 
   @Field()
   @AllowNull(false)
-  @Column
+  @Column({ defaultValue: UserSkillViewModeEnum.ONLY_ME })
   viewMode: UserSkillViewModeEnum;
 
   @Field(() => ID, { nullable: true })
