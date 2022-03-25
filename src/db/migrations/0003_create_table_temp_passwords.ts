@@ -1,8 +1,8 @@
 import { DATE, INTEGER, QueryInterface, STRING, fn, literal } from 'sequelize';
 import { MigrationParams } from 'umzug';
 
-export async function up({ context: sequelize }: MigrationParams<QueryInterface>): Promise<void> {
-  await sequelize.createTable('temp_passwords', {
+export async function up({ context: queryInterface }: MigrationParams<QueryInterface>): Promise<void> {
+  await queryInterface.createTable('temp_passwords', {
     id: {
       type: INTEGER,
       allowNull: false,
@@ -40,6 +40,6 @@ export async function up({ context: sequelize }: MigrationParams<QueryInterface>
   });
 }
 
-export async function down({ context: sequelize }: MigrationParams<QueryInterface>): Promise<void> {
-  await sequelize.dropTable('temp_passwords');
+export async function down({ context: queryInterface }: MigrationParams<QueryInterface>): Promise<void> {
+  await queryInterface.dropTable('temp_passwords');
 }

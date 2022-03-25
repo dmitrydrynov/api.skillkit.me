@@ -2,8 +2,8 @@ import { UserSkillLevelEnum } from '@entities/user-skill/user-skill.types';
 import { BOOLEAN, DATE, ENUM, INTEGER, QueryInterface, TEXT, fn } from 'sequelize';
 import { MigrationParams } from 'umzug';
 
-export async function up({ context: sequelize }: MigrationParams<QueryInterface>): Promise<void> {
-  await sequelize.createTable('user_skills', {
+export async function up({ context: queryInterface }: MigrationParams<QueryInterface>): Promise<void> {
+  await queryInterface.createTable('user_skills', {
     id: {
       type: INTEGER,
       allowNull: false,
@@ -62,6 +62,7 @@ export async function up({ context: sequelize }: MigrationParams<QueryInterface>
   });
 }
 
-export async function down({ context: sequelize }: MigrationParams<QueryInterface>): Promise<void> {
-  await sequelize.dropTable('user_skills');
+export async function down({ context: queryInterface }: MigrationParams<QueryInterface>): Promise<void> {
+  await queryInterface.dropTable('user_skills');
+  await queryInterface.sequelize.query(`DROP TYPE enum_user_skills_level`);
 }

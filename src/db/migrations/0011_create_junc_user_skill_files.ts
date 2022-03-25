@@ -1,8 +1,8 @@
 import { INTEGER, QueryInterface } from 'sequelize';
 import { MigrationParams } from 'umzug';
 
-export async function up({ context: sequelize }: MigrationParams<QueryInterface>): Promise<void> {
-  await sequelize.createTable('_user_skill_files', {
+export async function up({ context: queryInterface }: MigrationParams<QueryInterface>): Promise<void> {
+  await queryInterface.createTable('_user_skill_files', {
     user_skill_id: {
       type: INTEGER,
       allowNull: false,
@@ -24,6 +24,6 @@ export async function up({ context: sequelize }: MigrationParams<QueryInterface>
   });
 }
 
-export async function down({ context: sequelize }: MigrationParams<QueryInterface>): Promise<void> {
-  await sequelize.dropTable('_user_skill_files');
+export async function down({ context: queryInterface }: MigrationParams<QueryInterface>): Promise<void> {
+  await queryInterface.dropTable('_user_skill_files');
 }

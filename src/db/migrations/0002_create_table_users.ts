@@ -1,8 +1,8 @@
 import { BOOLEAN, DATE, INTEGER, QueryInterface, STRING, fn } from 'sequelize';
 import { MigrationParams } from 'umzug';
 
-export async function up({ context: sequelize }: MigrationParams<QueryInterface>): Promise<void> {
-  await sequelize.createTable('users', {
+export async function up({ context: queryInterface }: MigrationParams<QueryInterface>): Promise<void> {
+  await queryInterface.createTable('users', {
     id: {
       type: INTEGER,
       allowNull: false,
@@ -45,13 +45,13 @@ export async function up({ context: sequelize }: MigrationParams<QueryInterface>
     },
   });
 
-  await sequelize.sequelize.query(
+  await queryInterface.sequelize.query(
     `ALTER TABLE users ADD COLUMN full_name text GENERATED ALWAYS AS (
       trim(coalesce(first_name, '') || ' ' || coalesce(last_name, ''))
     ) STORED;`,
   );
 }
 
-export async function down({ context: sequelize }: MigrationParams<QueryInterface>): Promise<void> {
-  await sequelize.dropTable('users');
+export async function down({ context: queryInterface }: MigrationParams<QueryInterface>): Promise<void> {
+  await queryInterface.dropTable('users');
 }

@@ -2,8 +2,8 @@ import { UserRole } from '@entities/user/user.model';
 import { ENUM, INTEGER, QueryInterface } from 'sequelize';
 import { MigrationParams } from 'umzug';
 
-export async function up({ context: sequelize }: MigrationParams<QueryInterface>): Promise<void> {
-  await sequelize.createTable('roles', {
+export async function up({ context: queryInterface }: MigrationParams<QueryInterface>): Promise<void> {
+  await queryInterface.createTable('roles', {
     id: {
       type: INTEGER,
       allowNull: false,
@@ -18,6 +18,7 @@ export async function up({ context: sequelize }: MigrationParams<QueryInterface>
   });
 }
 
-export async function down({ context: sequelize }: MigrationParams<QueryInterface>): Promise<void> {
-  await sequelize.dropTable('roles');
+export async function down({ context: queryInterface }: MigrationParams<QueryInterface>): Promise<void> {
+  await queryInterface.dropTable('roles');
+  await queryInterface.sequelize.query(`DROP TYPE enum_roles_name`);
 }

@@ -2,8 +2,8 @@ import { UserFileType } from '@entities/user-file/user-file.model';
 import { DATE, ENUM, INTEGER, QueryInterface, STRING, TEXT, fn } from 'sequelize';
 import { MigrationParams } from 'umzug';
 
-export async function up({ context: sequelize }: MigrationParams<QueryInterface>): Promise<void> {
-  await sequelize.createTable('user_files', {
+export async function up({ context: queryInterface }: MigrationParams<QueryInterface>): Promise<void> {
+  await queryInterface.createTable('user_files', {
     id: {
       type: INTEGER,
       allowNull: false,
@@ -46,6 +46,7 @@ export async function up({ context: sequelize }: MigrationParams<QueryInterface>
   });
 }
 
-export async function down({ context: sequelize }: MigrationParams<QueryInterface>): Promise<void> {
-  await sequelize.dropTable('user_files');
+export async function down({ context: queryInterface }: MigrationParams<QueryInterface>): Promise<void> {
+  await queryInterface.dropTable('user_files');
+  await queryInterface.sequelize.query(`DROP TYPE enum_user_files_type`);
 }
