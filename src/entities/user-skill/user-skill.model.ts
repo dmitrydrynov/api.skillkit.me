@@ -3,7 +3,7 @@ import Skill from '@entities/skill/skill.model';
 import UserFile from '@entities/user-file/user-file.model';
 import UserJob from '@entities/user-job/user-job.model';
 import { ExperienceResponse } from '@entities/user-job/user-job.types';
-import { UserSkillViewModeEnum } from '@entities/user-skill/user-skill.types';
+import { UserSkillLevelEnum, UserSkillViewModeEnum } from '@entities/user-skill/user-skill.types';
 import UserTool from '@entities/user-tool/user-tool.model';
 import User from '@entities/user/user.model';
 import {
@@ -22,7 +22,6 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript';
 import { Field, ID, ObjectType } from 'type-graphql';
-import { UserSkillLevelEnum } from './user-skill.types';
 
 @ObjectType('UserSkill')
 @Table({ underscored: true })
