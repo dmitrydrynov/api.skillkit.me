@@ -1,4 +1,5 @@
 import CurrentUser from '@entities/auth/current-user.decorator';
+import Skill from '@entities/skill/skill.model';
 import User, { UserRole } from '@entities/user/user.model';
 import { prepareFindOptions } from '@helpers/prepare';
 import { WhereUniqueInput } from '@plugins/graphql/types/common.types';
@@ -63,16 +64,39 @@ export class UserSkillResolver {
   @Authorized([UserRole.MEMBER, UserRole.EXPERT, UserRole.OPERATOR, UserRole.ADMIN])
   @Mutation(() => UserSkill)
   async createUserSkill(
-    @Arg('skillId', () => ID) skillId: number,
+    @Arg('skillId', () => ID, { nullable: true }) skillId: number,
+    @Arg('skillName', { nullable: true }) skillName: string,
     @Arg('level', () => UserSkillLevelEnum) level: UserSkillLevelEnum,
     @CurrentUser() authUser: User,
   ): Promise<UserSkill> {
     try {
-      const userSkill: UserSkill = await UserSkill.create({
-        userId: authUser.id,
-        skillId,
-        level,
+      let _skillId = skillId || null;
+
+      if (!_skillId && skillName) {
+        const [skill] = await Skill.findOrCreate({
+          where: {
+            name: skillName.trim().toLowerCase(),
+          },
+          defaults: {
+            name: skillName.trim().toLowerCase(),
+          },
+        });
+
+        _skillId = skill.id;
+      }
+
+      const [userSkill, created] = await UserSkill.findOrCreate({
+        where: { skillId: _skillId },
+        defaults: {
+          userId: authUser.id,
+          skillId: _skillId,
+          level,
+        },
       });
+
+      if (!created) {
+        throw Error('You have this skill already.');
+      }
 
       return userSkill;
     } catch (error) {
