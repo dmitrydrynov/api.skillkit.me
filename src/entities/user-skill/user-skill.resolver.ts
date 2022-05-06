@@ -3,6 +3,7 @@ import Skill from '@entities/skill/skill.model';
 import User, { UserRole } from '@entities/user/user.model';
 import { prepareFindOptions } from '@helpers/prepare';
 import { WhereUniqueInput } from '@plugins/graphql/types/common.types';
+import { DateTime } from 'luxon';
 import { Arg, Authorized, ID, Mutation, Query, Resolver } from 'type-graphql';
 import UserSkill from './user-skill.model';
 import {
@@ -51,6 +52,31 @@ export class UserSkillResolver {
   async userSkill(@Arg('where', { nullable: true }) where: WhereUniqueInput): Promise<UserSkill> {
     try {
       const userSkill: UserSkill = await UserSkill.findByPk(where.id);
+
+      return userSkill;
+    } catch (error) {
+      throw Error(error.message);
+    }
+  }
+
+  /**
+   * A user skill by hash
+   */
+  @Authorized([UserRole.MEMBER, UserRole.EXPERT, UserRole.OPERATOR, UserRole.ADMIN])
+  @Query(() => UserSkill)
+  async userSkillByHash(@Arg('hash') hash: string): Promise<UserSkill> {
+    try {
+      if (!hash) {
+        throw Error('Something wrong');
+      }
+
+      const [id] = UserSkill.decodeShareLink(hash);
+
+      if (!id) {
+        throw Error('Something wrong');
+      }
+
+      const userSkill: UserSkill = await UserSkill.findByPk(id);
 
       return userSkill;
     } catch (error) {
@@ -159,6 +185,34 @@ export class UserSkillResolver {
 
       return await userSkill.update(data);
     } catch (error) {
+      throw Error(error.message);
+    }
+  }
+
+  /**
+   * Publish use skill
+   */
+  @Authorized([UserRole.MEMBER, UserRole.EXPERT, UserRole.OPERATOR, UserRole.ADMIN])
+  @Mutation(() => UserSkill)
+  async publishUserSkill(
+    @Arg('id', () => ID) recordId: number,
+    @Arg('host') hostname: string,
+    @CurrentUser() authUser: User,
+  ): Promise<UserSkill> {
+    try {
+      const publishedAt = DateTime.now();
+      const [effectedCount, userSkills] = await UserSkill.update(
+        {
+          isDraft: false,
+          shareLink: UserSkill.generateShareLink(hostname, recordId, authUser.id, publishedAt.toUnixInteger()),
+          publishedAt: publishedAt.toISO(),
+        },
+        { where: { id: recordId, userId: authUser.id }, returning: true },
+      );
+
+      return effectedCount > 0 ? userSkills[0] : null;
+    } catch (error) {
+      console.log(error);
       throw Error(error.message);
     }
   }

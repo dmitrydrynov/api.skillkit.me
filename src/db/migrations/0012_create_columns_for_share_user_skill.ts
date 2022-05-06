@@ -1,5 +1,5 @@
 import { UserSkillViewModeEnum } from '@entities/user-skill/user-skill.types';
-import { ENUM, QueryInterface, STRING } from 'sequelize';
+import { ENUM, QueryInterface } from 'sequelize';
 import { MigrationParams } from 'umzug';
 
 export async function up({ context: queryInterface }: MigrationParams<QueryInterface>): Promise<void> {
@@ -7,7 +7,7 @@ export async function up({ context: queryInterface }: MigrationParams<QueryInter
     type: ENUM,
     values: Object.values(UserSkillViewModeEnum),
     allowNull: false,
-    defaultValue: UserSkillViewModeEnum.ONLY_ME,
+    defaultValue: UserSkillViewModeEnum.BY_LINK,
   });
 }
 

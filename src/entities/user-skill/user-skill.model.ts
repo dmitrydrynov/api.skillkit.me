@@ -1,3 +1,4 @@
+import { env } from 'process';
 import JuncUserSkillFile from '@entities/junc-user-skill-file/junc-user-skill-file.model';
 import Skill from '@entities/skill/skill.model';
 import UserFile from '@entities/user-file/user-file.model';
@@ -6,6 +7,7 @@ import { ExperienceResponse } from '@entities/user-job/user-job.types';
 import { UserSkillLevelEnum, UserSkillViewModeEnum } from '@entities/user-skill/user-skill.types';
 import UserTool from '@entities/user-tool/user-tool.model';
 import User from '@entities/user/user.model';
+import Hashids from 'hashids';
 import {
   AllowNull,
   AutoIncrement,
@@ -22,6 +24,8 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript';
 import { Field, ID, ObjectType } from 'type-graphql';
+
+const hashids = new Hashids(env.HASH_SALT, 16);
 
 @ObjectType('UserSkill')
 @Table({ underscored: true })
@@ -134,4 +138,14 @@ export default class UserSkill extends Model {
 
   @BelongsToMany(() => UserFile, () => JuncUserSkillFile)
   userFiles: UserFile[];
+
+  static generateShareLink = (hostname: string, ...args: number[]) => {
+    const linkHash = hashids.encode(args);
+
+    return `${hostname}/s/${linkHash}`;
+  };
+
+  static decodeShareLink = (hash: string) => {
+    return hashids.decode(hash) as number[];
+  };
 }
