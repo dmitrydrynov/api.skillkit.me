@@ -119,12 +119,43 @@ export class UserSkillResolver {
     @CurrentUser() authUser: User,
   ): Promise<UserSkill> {
     try {
+      const { skillId, skillName } = data;
+      const _skillName = skillName ? skillName.trim().toLowerCase() : null;
+
       const userSkill: UserSkill = await UserSkill.findOne({
         where: {
           userId: authUser.id,
           id: where.id,
         },
       });
+
+      if (!skillId && _skillName) {
+        let _skillId = skillId || null;
+
+        const [skill] = await Skill.findOrCreate({
+          where: {
+            name: _skillName,
+          },
+          defaults: {
+            name: _skillName,
+          },
+        });
+
+        _skillId = skill.id;
+
+        const existedUserSkill: UserSkill = await UserSkill.findOne({
+          where: {
+            userId: authUser.id,
+            skillId: _skillId,
+          },
+        });
+
+        if (existedUserSkill && existedUserSkill.id !== userSkill.id) {
+          throw Error('You have a skill with this name already.');
+        }
+
+        data.skillId = _skillId;
+      }
 
       return await userSkill.update(data);
     } catch (error) {

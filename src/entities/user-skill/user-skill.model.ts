@@ -104,6 +104,10 @@ export default class UserSkill extends Model {
   @Column({ defaultValue: UserSkillViewModeEnum.ONLY_ME })
   viewMode: UserSkillViewModeEnum;
 
+  @Field({ nullable: true })
+  @Column
+  shareLink: string;
+
   @Field(() => ID, { nullable: true })
   @Column
   initialId: number;

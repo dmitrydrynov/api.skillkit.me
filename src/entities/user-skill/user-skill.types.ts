@@ -61,6 +61,9 @@ export class UserSkillUpdateInput {
   @Field({ nullable: true })
   skillId?: number;
 
+  @Field({ nullable: true })
+  skillName?: string;
+
   @Field(() => UserSkillViewModeEnum, { nullable: true })
   viewMode?: UserSkillViewModeEnum;
 }

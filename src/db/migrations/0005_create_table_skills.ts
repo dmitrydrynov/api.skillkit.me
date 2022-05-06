@@ -12,6 +12,7 @@ export async function up({ context: queryInterface }: MigrationParams<QueryInter
     name: {
       type: STRING,
       allowNull: false,
+      unique: true,
     },
     created_at: {
       type: DATE,
