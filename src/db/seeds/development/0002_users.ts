@@ -6,7 +6,7 @@ import { Op, QueryInterface, Sequelize } from 'sequelize';
 import { MigrationParams } from 'umzug';
 import usersData from './data/users.json';
 
-const { address, datatype, internet, name, random } = faker;
+const { address, datatype, internet, name, random, image, lorem } = faker;
 
 const USERS_COUNT = 100;
 
@@ -15,7 +15,7 @@ export async function up({ context: sequelize }: MigrationParams<QueryInterface>
 
   const data = usersData.map((user) => ({
     ...user,
-    role_id: roles.find((r) => r.name.toString() === user.role_id).id,
+    roleId: roles.find((r) => r.name.toString() === user.roleId).id,
     password: encryptPassword(sequelize.sequelize, user.password),
   }));
 
@@ -26,12 +26,14 @@ export async function up({ context: sequelize }: MigrationParams<QueryInterface>
         id: data.length + index + 1,
         email: internet.email(null, null, 'example.com'),
         password: random.arrayElement([null, encryptPassword(sequelize.sequelize, internet.password(8))]),
-        first_name: name.firstName(),
-        last_name: name.lastName(),
+        firstName: name.firstName(),
+        lastName: name.lastName(),
         country: random.arrayElement([null, address.countryCode()]),
         blocked: datatype.boolean(),
-        role_id: random.arrayElement(roles.map((r) => r.id)),
-        birthday_date: datatype.datetime({ max: Date.now() }),
+        roleId: random.arrayElement(roles.map((r) => r.id)),
+        birthdayDate: datatype.datetime({ max: Date.now() }),
+        avatar: image.avatar(),
+        about: lorem.paragraphs(),
       };
     });
 

@@ -4,29 +4,29 @@
     "email": "admingamelab@alilot.com",
     "password": "admingamelab",
     "blocked": false,
-    "first_name": "Super",
-    "last_name": "Admin",
+    "firstName": "Super",
+    "lastName": "Admin",
     "country": "us",
-    "role_id": "admin"
+    "roleId": "admin"
   },
   {
     "id": 2,
     "email": "usergamelab@alilot.com",
     "password": "user.gamelab",
     "blocked": false,
-    "first_name": "First",
-    "last_name": "User",
+    "firstName": "First",
+    "lastName": "User",
     "country": "us",
-    "role_id": "member"
+    "roleId": "member"
   },
   {
     "id": 3,
     "email": "user2gamelab@alilot.com",
     "password": "user2gamelab",
     "blocked": false,
-    "first_name": "Second",
-    "last_name": "User",
+    "firstName": "Second",
+    "lastName": "User",
     "country": "us",
-    "role_id": "expert"
+    "roleId": "expert"
   }
 ]

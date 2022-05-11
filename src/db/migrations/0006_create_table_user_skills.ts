@@ -1,5 +1,5 @@
 import { UserSkillLevelEnum } from '@entities/user-skill/user-skill.types';
-import { BOOLEAN, DATE, ENUM, INTEGER, QueryInterface, TEXT, fn } from 'sequelize';
+import { BOOLEAN, DATE, ENUM, INTEGER, QueryInterface, STRING, TEXT, fn } from 'sequelize';
 import { MigrationParams } from 'umzug';
 
 export async function up({ context: queryInterface }: MigrationParams<QueryInterface>): Promise<void> {
@@ -48,6 +48,7 @@ export async function up({ context: queryInterface }: MigrationParams<QueryInter
       defaultValue: true,
     },
     description: TEXT,
+    share_link: STRING,
     published_at: DATE,
     created_at: {
       type: DATE,

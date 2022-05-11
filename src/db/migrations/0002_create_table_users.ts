@@ -1,4 +1,4 @@
-import { BOOLEAN, DATE, INTEGER, QueryInterface, STRING, fn } from 'sequelize';
+import { BOOLEAN, DATE, INTEGER, QueryInterface, STRING, TEXT, fn } from 'sequelize';
 import { MigrationParams } from 'umzug';
 
 export async function up({ context: queryInterface }: MigrationParams<QueryInterface>): Promise<void> {
@@ -32,7 +32,7 @@ export async function up({ context: queryInterface }: MigrationParams<QueryInter
       allowNull: false,
       defaultValue: 5,
     },
-    about: STRING,
+    about: TEXT,
     created_at: {
       type: DATE,
       allowNull: false,
