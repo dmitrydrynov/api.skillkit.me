@@ -6,6 +6,7 @@ import UserTool from '@entities/user-tool/user-tool.model';
 import { encryptPassword } from '@helpers/encrypt';
 import { sendOneTimePassword } from '@services/mailgun';
 import { generate as generatePassword } from 'generate-password';
+import { DateTime } from 'luxon';
 import {
   AllowNull,
   AutoIncrement,
@@ -134,6 +135,13 @@ export default class User extends Model {
   @Field({ defaultValue: false })
   useOTP(): boolean {
     return this.password === null;
+  }
+
+  @Field({ defaultValue: null, nullable: true })
+  age(): number {
+    if (!this.birthdayDate) return null;
+
+    return Math.abs(Math.round(DateTime.fromJSDate(this.birthdayDate).diffNow('years').years));
   }
 
   @BeforeCreate
