@@ -4,6 +4,7 @@ import Skill from '@entities/skill/skill.model';
 import UserFile from '@entities/user-file/user-file.model';
 import UserJob from '@entities/user-job/user-job.model';
 import { ExperienceResponse } from '@entities/user-job/user-job.types';
+import UserSchool from '@entities/user-school/user-school.model';
 import { UserSkillLevelEnum, UserSkillViewModeEnum } from '@entities/user-skill/user-skill.types';
 import UserTool from '@entities/user-tool/user-tool.model';
 import User from '@entities/user/user.model';
@@ -70,22 +71,38 @@ export default class UserSkill extends Model {
   @HasMany(() => UserTool)
   userToolItems: UserTool[];
 
+  @HasMany(() => UserSchool)
+  userSchoolItems: UserSchool[];
+
   @HasMany(() => UserJob)
   userJobItems: UserJob[];
 
+  @BelongsToMany(() => UserFile, () => JuncUserSkillFile)
+  userFileItems: UserFile[];
+
   @Field(() => [UserTool])
-  async userTools() {
+  async tools() {
     return await this.getUserToolItems();
   }
 
+  @Field(() => [UserSchool])
+  async schools() {
+    return await this.getUserSchoolItems();
+  }
+
   @Field(() => [UserJob])
-  async userJobs() {
+  async jobs() {
     return await this.getUserJobItems();
+  }
+
+  @Field(() => [UserFile])
+  async files() {
+    return await this.getUserFileItems();
   }
 
   @Field(() => ExperienceResponse)
   async experience(): Promise<ExperienceResponse> {
-    const jobs: UserJob[] = await this.userJobs();
+    const jobs: UserJob[] = await this.getUserJobItems();
     const exp: ExperienceResponse = { years: 0, months: 0 };
 
     jobs.map((job) => {
@@ -135,9 +152,6 @@ export default class UserSkill extends Model {
   @UpdatedAt
   @Column
   updatedAt: Date;
-
-  @BelongsToMany(() => UserFile, () => JuncUserSkillFile)
-  userFiles: UserFile[];
 
   static generateShareLink = (hostname: string, ...args: number[]) => {
     const linkHash = hashids.encode(args);

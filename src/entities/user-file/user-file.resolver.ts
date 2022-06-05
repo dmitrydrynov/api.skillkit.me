@@ -34,7 +34,7 @@ export class UserFileResolver {
     try {
       if (attachType === 'UserSkill') {
         const userSkill = await UserSkill.findByPk(attachId);
-        userFiles = await userSkill.getUserFiles();
+        userFiles = await userSkill.getUserFileItems();
       } else {
         const findOptions: any = prepareFindOptions(where, take, skip, orderBy);
 

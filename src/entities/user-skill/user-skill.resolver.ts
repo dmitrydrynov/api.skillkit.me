@@ -7,9 +7,11 @@ import { DateTime } from 'luxon';
 import { Arg, Authorized, ID, Mutation, Query, Resolver } from 'type-graphql';
 import UserSkill from './user-skill.model';
 import {
+  UserSkillForShareResponseType,
   UserSkillLevelEnum,
   UserSkillOrderByInput,
   UserSkillUpdateInput,
+  UserSkillViewModeEnum,
   UserSkillWhereInput,
 } from './user-skill.types';
 
@@ -79,6 +81,48 @@ export class UserSkillResolver {
       const userSkill: UserSkill = await UserSkill.findByPk(id);
 
       return userSkill;
+    } catch (error) {
+      throw Error(error.message);
+    }
+  }
+
+  /**
+   * A user skill by hash for share
+   */
+  @Query(() => UserSkillForShareResponseType)
+  async userSkillForShare(
+    @Arg('hash') hash: string,
+    @CurrentUser() authUser: User,
+  ): Promise<UserSkillForShareResponseType> {
+    try {
+      let viewer = authUser ? 'user' : 'guest';
+
+      if (!hash) {
+        throw Error('Not actual link');
+      }
+
+      const [id] = UserSkill.decodeShareLink(hash);
+
+      if (!id) {
+        throw Error('Not actual link');
+      }
+
+      const userSkill: UserSkill = await UserSkill.findByPk(id, { include: [User] });
+
+      if (!userSkill) {
+        throw Error('Not actual link');
+      }
+
+      if (authUser && authUser?.id === userSkill.userId) {
+        viewer = 'me';
+      }
+
+      // If set mode only me then send user skill data only for owner
+      if (viewer !== 'me' && userSkill.viewMode === UserSkillViewModeEnum.ONLY_ME) {
+        throw Error('Access denied');
+      }
+
+      return { skill: userSkill, user: userSkill.userItem, viewer };
     } catch (error) {
       throw Error(error.message);
     }

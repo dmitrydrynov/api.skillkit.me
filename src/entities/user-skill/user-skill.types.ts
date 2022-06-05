@@ -1,5 +1,7 @@
+import User from '@entities/user/user.model';
 import { IDFilter, OrderDirection } from '@plugins/graphql/types/common.types';
-import { Field, InputType, registerEnumType } from 'type-graphql';
+import { Field, InputType, ObjectType, registerEnumType } from 'type-graphql';
+import UserSkill from './user-skill.model';
 
 export enum UserSkillLevelEnum {
   NOVICE = 'novice',
@@ -66,4 +68,16 @@ export class UserSkillUpdateInput {
 
   @Field(() => UserSkillViewModeEnum, { nullable: true })
   viewMode?: UserSkillViewModeEnum;
+}
+
+@ObjectType('UserSkillForShareResponse')
+export class UserSkillForShareResponseType {
+  @Field(() => UserSkill)
+  skill: UserSkill;
+
+  @Field()
+  viewer: string;
+
+  @Field(() => User)
+  user: User;
 }
