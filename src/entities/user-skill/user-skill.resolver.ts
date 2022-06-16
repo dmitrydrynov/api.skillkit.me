@@ -2,7 +2,8 @@ import CurrentUser from '@entities/auth/current-user.decorator';
 import Skill from '@entities/skill/skill.model';
 import User, { UserRole } from '@entities/user/user.model';
 import { prepareFindOptions } from '@helpers/prepare';
-import { WhereUniqueInput } from '@plugins/graphql/types/common.types';
+import { DefaultResponseType, WhereUniqueInput } from '@plugins/graphql/types/common.types';
+import { send } from '@services/mailgun';
 import { DateTime } from 'luxon';
 import { Arg, Authorized, ID, Mutation, Query, Resolver } from 'type-graphql';
 import UserSkill from './user-skill.model';
@@ -274,6 +275,46 @@ export class UserSkillResolver {
       return await UserSkill.destroy({ where: { id: where.id, userId: authUser.id } });
     } catch (error) {
       console.log(error);
+      throw Error(error.message);
+    }
+  }
+
+  /**
+   * Send email to user
+   */
+  @Mutation(() => DefaultResponseType)
+  async sendEmailByHash(
+    @Arg('name') name: string,
+    @Arg('email') email: string,
+    @Arg('content') content: string,
+    @Arg('hash') hash: string,
+  ): Promise<DefaultResponseType> {
+    try {
+      if (!hash) {
+        throw Error('Something wrong');
+      }
+
+      const [userSkillId] = UserSkill.decodeShareLink(hash);
+      const userSkill = await UserSkill.findByPk(userSkillId, {
+        include: [User, Skill],
+      });
+      const user = userSkill.userItem;
+
+      await send({
+        from: `${name} <${email}>`,
+        to: `${user.fullName} <${user.email}>`,
+        subject: 'New Letter at Skillkit.me',
+        body: content,
+      });
+
+      await send({
+        to: `${name} <${email}>`,
+        subject: 'Your email has been successfully sent | Skillkit.me',
+        body: `Your email has been sent the letter for owner this skill<br>Interested skill: ${userSkill.skillItem.name}<br>Text your letter:<br>${content}`,
+      });
+
+      return { result: true };
+    } catch (error) {
       throw Error(error.message);
     }
   }

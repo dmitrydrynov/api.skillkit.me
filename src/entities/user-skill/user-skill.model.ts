@@ -9,6 +9,7 @@ import { UserSkillLevelEnum, UserSkillViewModeEnum } from '@entities/user-skill/
 import UserTool from '@entities/user-tool/user-tool.model';
 import User from '@entities/user/user.model';
 import Hashids from 'hashids';
+import { DateTime } from 'luxon';
 import {
   AllowNull,
   AutoIncrement,
@@ -103,15 +104,38 @@ export default class UserSkill extends Model {
   @Field(() => ExperienceResponse)
   async experience(): Promise<ExperienceResponse> {
     const jobs: UserJob[] = await this.getUserJobItems();
-    const exp: ExperienceResponse = { years: 0, months: 0 };
+    let minDate = null;
+    let maxDate = null;
 
     jobs.map((job) => {
-      const jobExp = job.experience();
-      exp.years += jobExp.years;
-      exp.months += jobExp.months;
+      const startedAt = DateTime.fromJSDate(job.startedAt);
+      const finishedAt = job.finishedAt ? DateTime.fromJSDate(job.finishedAt) : DateTime.now();
+
+      if (!minDate) {
+        minDate = startedAt;
+      }
+
+      if (!maxDate) {
+        maxDate = finishedAt;
+      }
+
+      if (minDate && maxDate) {
+        // const minDiff = minDate.diff(startedAt, ['months']).toObject();
+        // const maxDiff = maxDate.diff(finishedAt, ['months']).toObject();
+
+        if (minDate.toMillis() > startedAt.toMillis()) {
+          minDate = startedAt;
+        }
+
+        if (maxDate.toMillis() < finishedAt.toMillis()) {
+          maxDate = finishedAt;
+        }
+      }
     });
 
-    return exp;
+    const diff = maxDate.diff(minDate, ['years', 'months']).toObject();
+
+    return { years: Math.round(diff.years), months: Math.round(diff.months) };
   }
 
   @Field()
