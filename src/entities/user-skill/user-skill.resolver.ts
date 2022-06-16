@@ -156,7 +156,7 @@ export class UserSkillResolver {
       }
 
       const [userSkill, created] = await UserSkill.findOrCreate({
-        where: { skillId: _skillId },
+        where: { skillId: _skillId, userId: authUser.id },
         defaults: {
           userId: authUser.id,
           skillId: _skillId,
