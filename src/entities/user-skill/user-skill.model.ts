@@ -120,9 +120,6 @@ export default class UserSkill extends Model {
       }
 
       if (minDate && maxDate) {
-        // const minDiff = minDate.diff(startedAt, ['months']).toObject();
-        // const maxDiff = maxDate.diff(finishedAt, ['months']).toObject();
-
         if (minDate.toMillis() > startedAt.toMillis()) {
           minDate = startedAt;
         }
@@ -132,6 +129,10 @@ export default class UserSkill extends Model {
         }
       }
     });
+
+    if (!maxDate || !minDate) {
+      return { years: 0, months: 0 };
+    }
 
     const diff = maxDate.diff(minDate, ['years', 'months']).toObject();
 
