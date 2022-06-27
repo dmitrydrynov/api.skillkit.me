@@ -58,8 +58,8 @@ services:
     restart: unless-stopped
     command: yarn dev
     volumes:
-      - .:/app
-      - ./node_modules:/app/node_modules
+      - .:/app:rw
+      - /app/node_modules
 
   prod:
     build:

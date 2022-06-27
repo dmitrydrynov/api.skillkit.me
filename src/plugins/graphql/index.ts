@@ -1,6 +1,7 @@
 import { env } from '@config/env';
 import { authChecker } from '@entities/auth/auth.checker';
 import { AuthResolver } from '@entities/auth/auth.resolver';
+import { ServerResolver } from '@entities/server/server.resolver';
 import { SkillResolver } from '@entities/skill/skill.resolver';
 import { UserFileResolver } from '@entities/user-file/user-file.resolver';
 import { UserJobResolver } from '@entities/user-job/user-job.resolver';
@@ -29,6 +30,7 @@ export default fp(
         UserSchoolResolver,
         UserJobResolver,
         UserFileResolver,
+        ServerResolver,
       ],
       authChecker,
     });
