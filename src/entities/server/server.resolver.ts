@@ -8,7 +8,10 @@ export class ServerResolver {
     try {
       return { healthy: true };
     } catch (error) {
-      throw Error(error.message);
+      return {
+        healthy: false,
+        error: error.message,
+      };
     }
   }
 }
