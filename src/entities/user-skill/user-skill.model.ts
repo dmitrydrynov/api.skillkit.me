@@ -65,6 +65,16 @@ export default class UserSkill extends Model {
     return await this.getSkillItem();
   }
 
+  @ForeignKey(() => UserSkill)
+  @Column({ hierarchy: true })
+  parentId: number;
+
+  @Column
+  hierarchyLevel: number;
+
+  @Field(() => [UserSkill], { nullable: true })
+  children?: UserSkill[];
+
   @Field(() => UserSkillLevelEnum)
   @Column
   level: UserSkillLevelEnum;
@@ -153,10 +163,6 @@ export default class UserSkill extends Model {
   @Field({ nullable: true })
   @Column
   shareLink: string;
-
-  @Field(() => ID, { nullable: true })
-  @Column
-  initialId: number;
 
   @Field({ nullable: true })
   @Column

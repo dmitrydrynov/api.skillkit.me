@@ -28,6 +28,7 @@ export class UserSkillResolver {
     @Arg('orderBy', () => [UserSkillOrderByInput], { nullable: true }) orderBy: UserSkillOrderByInput[],
     @Arg('take', { nullable: true }) take: number,
     @Arg('skip', { nullable: true }) skip: number,
+    @Arg('hierarchy', () => Boolean, { nullable: true }) hierarchy = false,
     @CurrentUser() authUser: User,
   ): Promise<Array<UserSkill>> {
     try {
@@ -35,6 +36,7 @@ export class UserSkillResolver {
 
       const userSkills: UserSkill[] = await UserSkill.findAll({
         ...findOptions,
+        hierarchy,
         where: {
           ...findOptions.where,
           userId: authUser.id,
