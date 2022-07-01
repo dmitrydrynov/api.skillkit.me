@@ -2,12 +2,7 @@ import { resolve as pathResolve } from 'path';
 import { env } from '@config/env';
 import fp from 'fastify-plugin';
 import { Client } from 'pg';
-import AddHierarchyForSequelize from 'sequelize-hierarchy-ts';
 import { Sequelize } from 'sequelize-typescript';
-import { Model } from 'sequelize-typescript/dist/model/model/model';
-import { ModelAttributeColumnOptions } from 'sequelize/types';
-
-AddHierarchyForSequelize(Sequelize);
 
 export default fp(
   async (fastify) => {
@@ -47,9 +42,4 @@ declare module 'fastify' {
   interface FastifyInstance {
     sequelize: Sequelize;
   }
-}
-
-declare module 'sequelize-typescript' {
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  export function Column(options: Partial<ModelAttributeColumnOptions & { hierarchy: boolean }>): Function;
 }
