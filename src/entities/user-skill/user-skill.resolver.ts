@@ -315,7 +315,7 @@ export class UserSkillResolver {
   @Mutation(() => UserSkill)
   async deleteSubSkill(
     @Arg('where') where: WhereUniqueInput,
-    @Arg('subSkillId') subSkillId: number,
+    @Arg('subSkillId', () => ID) subSkillId: number,
     @CurrentUser() authUser: User,
   ): Promise<UserSkill> {
     try {
@@ -326,7 +326,7 @@ export class UserSkillResolver {
         },
       });
 
-      await userSkill.removeSubSkill(subSkillId);
+      await userSkill.removeSubSkillItems([subSkillId]);
 
       return userSkill;
     } catch (error) {
