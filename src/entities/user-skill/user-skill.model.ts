@@ -1,5 +1,6 @@
 import { env } from 'process';
-import JuncUserSkillFile from '@entities/junc-user-skill-file/junc-user-skill-file.model';
+import JuncUserSkillFile from '@entities/juncs/junc-user-skill-file.model';
+import JuncUserSkillSubSkill from '@entities/juncs/junc-user-skill-subskill.model';
 import Skill from '@entities/skill/skill.model';
 import UserFile from '@entities/user-file/user-file.model';
 import UserJob from '@entities/user-job/user-job.model';
@@ -81,6 +82,9 @@ export default class UserSkill extends Model {
   @BelongsToMany(() => UserFile, () => JuncUserSkillFile)
   userFileItems: UserFile[];
 
+  @BelongsToMany(() => UserSkill, () => JuncUserSkillSubSkill, 'parent_id', 'child_id')
+  subSkillItems: UserSkill[];
+
   @Field(() => [UserTool])
   async tools() {
     return await this.getUserToolItems();
@@ -99,6 +103,16 @@ export default class UserSkill extends Model {
   @Field(() => [UserFile])
   async files() {
     return await this.getUserFileItems();
+  }
+
+  @Field(() => [UserSkill])
+  async subSkills() {
+    return await this.getSubSkillItems();
+  }
+
+  @Field(() => Boolean)
+  async isComplexSkill() {
+    return (await this.countSubSkillItems()) != 0;
   }
 
   @Field(() => ExperienceResponse)

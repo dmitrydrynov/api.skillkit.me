@@ -1,4 +1,4 @@
-import JuncUserSkillFile from '@entities/junc-user-skill-file/junc-user-skill-file.model';
+import JuncUserSkillFile from '@entities/juncs/junc-user-skill-file.model';
 import UserSkill from '@entities/user-skill/user-skill.model';
 import User from '@entities/user/user.model';
 import {

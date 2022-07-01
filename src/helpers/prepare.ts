@@ -30,6 +30,12 @@ export const prepareFindOptions = (
           case 'in':
             sequelizeWhere[key] = { [Op.in]: v };
             break;
+          case 'not':
+            sequelizeWhere[key] = { [Op.not]: v };
+            break;
+          case 'notIn':
+            sequelizeWhere[key] = { [Op.notIn]: v };
+            break;
           case 'contains':
             sequelizeWhere[key] = insensitive ? { [Op.iLike]: `%${v}%` } : { [Op.like]: `%${v}%` };
             break;

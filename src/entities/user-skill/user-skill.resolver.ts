@@ -5,6 +5,7 @@ import { prepareFindOptions } from '@helpers/prepare';
 import { DefaultResponseType, WhereUniqueInput } from '@plugins/graphql/types/common.types';
 import { send } from '@services/mailgun';
 import { DateTime } from 'luxon';
+import { Op } from 'sequelize';
 import { Arg, Authorized, ID, Mutation, Query, Resolver } from 'type-graphql';
 import UserSkill from './user-skill.model';
 import {
@@ -39,6 +40,7 @@ export class UserSkillResolver {
           ...findOptions.where,
           userId: authUser.id,
         },
+        include: [UserSkill],
       });
 
       return userSkills;
@@ -273,6 +275,60 @@ export class UserSkillResolver {
   ): Promise<number> {
     try {
       return await UserSkill.destroy({ where: { id: where.id, userId: authUser.id } });
+    } catch (error) {
+      console.log(error);
+      throw Error(error.message);
+    }
+  }
+
+  /**
+   * Add subskills for user skill
+   */
+  @Authorized([UserRole.MEMBER, UserRole.EXPERT, UserRole.OPERATOR, UserRole.ADMIN])
+  @Mutation(() => UserSkill)
+  async addSubSkills(
+    @Arg('where') where: WhereUniqueInput,
+    @Arg('subSkills', () => [ID], { nullable: true }) subSkills: number[] | null,
+    @CurrentUser() authUser: User,
+  ): Promise<UserSkill> {
+    try {
+      const userSkill: UserSkill = await UserSkill.findOne({
+        where: {
+          userId: authUser.id,
+          id: where.id,
+        },
+      });
+
+      await userSkill.addSubSkillItems(subSkills);
+
+      return userSkill;
+    } catch (error) {
+      console.log(error);
+      throw Error(error.message);
+    }
+  }
+
+  /**
+   * Delete subskill
+   */
+  @Authorized([UserRole.MEMBER, UserRole.EXPERT, UserRole.OPERATOR, UserRole.ADMIN])
+  @Mutation(() => UserSkill)
+  async deleteSubSkill(
+    @Arg('where') where: WhereUniqueInput,
+    @Arg('subSkillId') subSkillId: number,
+    @CurrentUser() authUser: User,
+  ): Promise<UserSkill> {
+    try {
+      const userSkill = await UserSkill.findOne({
+        where: {
+          userId: authUser.id,
+          id: where.id,
+        },
+      });
+
+      await userSkill.removeSubSkill(subSkillId);
+
+      return userSkill;
     } catch (error) {
       console.log(error);
       throw Error(error.message);
