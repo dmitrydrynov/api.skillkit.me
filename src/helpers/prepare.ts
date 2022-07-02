@@ -17,6 +17,12 @@ export const prepareFindOptions = (
     Object.entries(where).map(([key, value]) => {
       let insensitive = false;
 
+      if(typeof value === 'boolean') {
+        sequelizeWhere[key] = value;
+
+        return sequelizeWhere;
+      }
+
       if ('mode' in value) {
         insensitive = value.mode === 1;
         delete value['mode'];
