@@ -30,6 +30,9 @@ export class UserSkillWhereInput {
   @Field(() => IDFilter, { nullable: true })
   id?: IDFilter;
 
+  @Field({ nullable: true })
+  isDraft?: boolean;
+
   // @Field(() => SkillWhereInput, { nullable: true })
   // AND?: SkillWhereInput;
 
