@@ -18,7 +18,7 @@ export class UserResolver {
   /**
    * Users list
    */
-  @Authorized([UserRole.MEMBER])
+  @Authorized([UserRole.ADMIN])
   @Query(() => [User])
   async users(): Promise<Array<User>> {
     const users: User[] = await User.findAll({ include: [Role] });

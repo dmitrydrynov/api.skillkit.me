@@ -291,7 +291,7 @@ export class AuthResolver {
    */
   @Query(() => User)
   async authenticatedUser(@CurrentUser() currentUser: User, @Ctx() ctx: MercuriusContext): Promise<User> {
-    const user = await User.findByPk(currentUser.id);
+    const user = await User.findByPk(currentUser.id, { include: [Role] });
 
     if (!user || user.blocked) {
       throw Error('Authenticated User not found or blocked');
