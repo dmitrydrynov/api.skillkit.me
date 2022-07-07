@@ -1,5 +1,6 @@
 import { env } from '@config/env';
 import ConnectedUser from '@entities/connected-users/connected-user.model';
+import Post from '@entities/post/post.model';
 import Role from '@entities/role/role.model';
 import UserSkill from '@entities/user-skill/user-skill.model';
 import UserTool from '@entities/user-tool/user-tool.model';
@@ -135,6 +136,14 @@ export default class User extends Model {
   @Field({ defaultValue: false })
   useOTP(): boolean {
     return this.password === null;
+  }
+
+  @HasMany(() => Post, { foreignKey: 'author_id' })
+  postItems: Post[];
+
+  @Field(() => [Post], { nullable: true })
+  async posts() {
+    return this.getPostItems();
   }
 
   @Field({ defaultValue: null, nullable: true })

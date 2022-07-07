@@ -291,6 +291,10 @@ export class AuthResolver {
    */
   @Query(() => User)
   async authenticatedUser(@CurrentUser() currentUser: User, @Ctx() ctx: MercuriusContext): Promise<User> {
+    if (!currentUser) {
+      throw Error('Authorization failed');
+    }
+
     const user = await User.findByPk(currentUser.id, { include: [Role] });
 
     if (!user || user.blocked) {

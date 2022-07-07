@@ -1,6 +1,8 @@
 import { env } from '@config/env';
 import { authChecker } from '@entities/auth/auth.checker';
 import { AuthResolver } from '@entities/auth/auth.resolver';
+import { PostCategoryResolver } from '@entities/post-category/post-category.resolver';
+import { PostResolver } from '@entities/post/post.resolver';
 import { ServerResolver } from '@entities/server/server.resolver';
 import { SkillResolver } from '@entities/skill/skill.resolver';
 import { UserFileResolver } from '@entities/user-file/user-file.resolver';
@@ -31,6 +33,8 @@ export default fp(
         UserJobResolver,
         UserFileResolver,
         ServerResolver,
+        PostResolver,
+        PostCategoryResolver,
       ],
       authChecker,
     });
