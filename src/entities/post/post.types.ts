@@ -2,6 +2,12 @@
 import { IDFilter, OrderDirection, StringFilter } from '@plugins/graphql/types/common.types';
 import { Field, ID, InputType, ObjectType } from 'type-graphql';
 
+export enum PostViewModeEnum {
+  ONLY_ME = 'only_me',
+  BY_LINK = 'by_link',
+  EVERYONE = 'everyone',
+}
+
 @InputType('PostWhereInput')
 export class PostWhereInput {
   @Field(() => IDFilter, { nullable: true })
@@ -37,8 +43,8 @@ export class PostOrderByInput {
 
 @InputType('PostCreateInput')
 export class PostCreateInput {
-  @Field()
-  slug: string;
+  @Field({ nullable: true })
+  slug?: string;
 
   @Field()
   title: string;
@@ -51,6 +57,27 @@ export class PostCreateInput {
 
   @Field({ nullable: true })
   categoryId?: number;
+}
+
+@InputType('PostUpdateInput')
+export class PostUpdateInput {
+  @Field({ nullable: true })
+  slug?: string;
+
+  @Field({ nullable: true })
+  title?: string;
+
+  @Field({ nullable: true })
+  content?: string;
+
+  @Field(() => ID, { nullable: true })
+  authorId?: number;
+
+  @Field({ nullable: true })
+  categoryId?: number;
+
+  @Field({ nullable: true })
+  viewMode?: string;
 }
 
 @ObjectType('PostAuthorField')
@@ -69,4 +96,10 @@ export class PostAuthorField {
 
   @Field()
   email?: string;
+}
+
+@InputType('PostWhereUniqueInput')
+export class PostWhereUniqueInput {
+  @Field(() => ID)
+  id: number;
 }

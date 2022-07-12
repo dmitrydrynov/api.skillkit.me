@@ -7,14 +7,13 @@ import {
   Column,
   CreatedAt,
   ForeignKey,
-  HasOne,
   Model,
   PrimaryKey,
   Table,
   UpdatedAt,
 } from 'sequelize-typescript';
-import { Field, ID, ObjectType } from 'type-graphql';
-import { PostAuthorField } from './post.types';
+import { Field, ObjectType } from 'type-graphql';
+import { PostAuthorField, PostViewModeEnum } from './post.types';
 
 @ObjectType('Post')
 @Table({ underscored: true })
@@ -76,13 +75,10 @@ export default class Post extends Model {
   @BelongsTo(() => PostCategory)
   category: PostCategory;
 
-  // @HasOne(() => PostCategory, { foreignKey: 'id' })
-  // categoryItem: PostCategory;
-
-  // @Field(() => PostCategory)
-  // async category() {
-  //   return this.getCategoryItem();
-  // }
+  @Field()
+  @AllowNull(false)
+  @Column({ defaultValue: PostViewModeEnum.ONLY_ME })
+  viewMode: PostViewModeEnum;
 
   @Field({ nullable: true })
   @Column

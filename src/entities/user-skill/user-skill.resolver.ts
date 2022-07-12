@@ -5,7 +5,6 @@ import { prepareFindOptions } from '@helpers/prepare';
 import { DefaultResponseType, WhereUniqueInput } from '@plugins/graphql/types/common.types';
 import { send } from '@services/mailgun';
 import { DateTime } from 'luxon';
-import { Op } from 'sequelize';
 import { Arg, Authorized, ID, Mutation, Query, Resolver } from 'type-graphql';
 import UserSkill from './user-skill.model';
 import {
@@ -253,6 +252,7 @@ export class UserSkillResolver {
           isDraft: false,
           shareLink: UserSkill.generateShareLink(hostname, recordId, authUser.id, publishedAt.toUnixInteger()),
           publishedAt: publishedAt.toISO(),
+          viewMode: UserSkillViewModeEnum.BY_LINK,
         },
         { where: { id: recordId, userId: authUser.id }, returning: true },
       );
