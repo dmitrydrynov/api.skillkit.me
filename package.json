@@ -15,7 +15,6 @@
     "@discordjs/builders": "^0.11.0",
     "@discordjs/rest": "^0.2.0-canary.0",
     "@sanity/client": "^3.1.0",
-    "antd-img-crop": "^4.1.0",
     "class-validator": "^0.13.2",
     "close-with-grace": "^1.1.0",
     "cross-fetch": "^3.1.4",

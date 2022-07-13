@@ -1,3 +1,4 @@
+import { PostWhereInput } from '@entities/post/post.types';
 import { SkillWhereInput } from '@entities/skill/skill.types';
 import { UserJobWhereInput } from '@entities/user-job/user-job.types';
 import { UserSchoolWhereInput } from '@entities/user-school/user-school.types';
@@ -11,7 +12,8 @@ export type CommonWhere =
   | UserToolWhereInput
   | UserSchoolWhereInput
   | UserJobWhereInput
-  | UserSkillWhereInput;
+  | UserSkillWhereInput
+  | PostWhereInput;
 
 @ObjectType('DefaultResponseType')
 export class DefaultResponseType {

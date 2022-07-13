@@ -19,6 +19,9 @@ export class PostWhereInput {
   @Field(() => StringFilter, { nullable: true })
   title?: StringFilter;
 
+  @Field(() => StringFilter, { nullable: true })
+  viewMode?: StringFilter;
+
   // @Field(() => PostWhereInput, { nullable: true })
   // AND?: PostWhereInput;
 
@@ -100,6 +103,15 @@ export class PostAuthorField {
 
 @InputType('PostWhereUniqueInput')
 export class PostWhereUniqueInput {
-  @Field(() => ID)
-  id: number;
+  @Field(() => ID, { nullable: true })
+  id?: number;
+
+  @Field({ nullable: true })
+  slug?: string;
+}
+
+@ObjectType('UploadPostImageResponse')
+export class UploadPostImageResponse {
+  @Field()
+  url: string;
 }

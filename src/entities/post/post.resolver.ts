@@ -1,11 +1,16 @@
+import { env } from '@config/env';
 import CurrentUser from '@entities/auth/current-user.decorator';
 import PostCategory from '@entities/post-category/post-category.model';
 import User, { UserRole } from '@entities/user/user.model';
+import { removeFile, uploadFile } from '@helpers/file';
 import { prepareFindOptions } from '@helpers/prepare';
 import { slugify } from '@helpers/text';
-import { WhereUniqueInput } from '@plugins/graphql/types/common.types';
+import { DefaultResponseType } from '@plugins/graphql/types/common.types';
+import { FileUpload, GraphQLUpload } from 'graphql-upload';
+import Hashids from 'hashids';
 import { DateTime } from 'luxon';
-import { Arg, Authorized, ID, Mutation, Query, Resolver } from 'type-graphql';
+import { MercuriusContext } from 'mercurius';
+import { Arg, Authorized, Ctx, ID, Mutation, Query, Resolver } from 'type-graphql';
 import Post from './post.model';
 import {
   PostCreateInput,
@@ -14,7 +19,10 @@ import {
   PostViewModeEnum,
   PostWhereInput,
   PostWhereUniqueInput,
+  UploadPostImageResponse,
 } from './post.types';
+
+const hashids = new Hashids(env.HASH_SALT, 16);
 
 @Resolver()
 export class PostResolver {
@@ -43,9 +51,10 @@ export class PostResolver {
    * Read a post
    */
   @Query(() => Post, { nullable: true })
-  async post(@Arg('where', { nullable: true }) where: WhereUniqueInput): Promise<Post> {
+  async post(@Arg('where', { nullable: true }) where: PostWhereInput): Promise<Post> {
     try {
-      const post = await Post.findByPk(where.id, { include: [User, PostCategory] });
+      const findOptions: any = prepareFindOptions(where);
+      const post = await Post.findOne({ ...findOptions, include: [User, PostCategory] });
 
       return post;
     } catch (error) {
@@ -130,6 +139,43 @@ export class PostResolver {
       );
 
       return effectedCount > 0 ? userSkills[0] : null;
+    } catch (error) {
+      console.log(error);
+      throw Error(error.message);
+    }
+  }
+
+  /**
+   * Upload image
+   */
+  @Authorized([UserRole.ADMIN])
+  @Mutation(() => UploadPostImageResponse)
+  async uploadImage(
+    @Arg('image', () => GraphQLUpload) image: FileUpload,
+    @CurrentUser() authUser: User,
+    @Ctx() ctx: MercuriusContext,
+  ): Promise<UploadPostImageResponse> {
+    try {
+      const fileName = 'post-image-' + hashids.encode(authUser.id, Date.now());
+      const fileUrl = await uploadFile(ctx.app, image, 'files', fileName);
+
+      return { url: fileUrl };
+    } catch (error) {
+      console.log(error);
+      throw Error(error.message);
+    }
+  }
+
+  /**
+   * Remove image
+   */
+  @Authorized([UserRole.ADMIN])
+  @Mutation(() => DefaultResponseType)
+  async removeImage(@Arg('imageUrl') imageUrl: string, @Ctx() ctx: MercuriusContext): Promise<DefaultResponseType> {
+    try {
+      await removeFile(ctx.app, imageUrl);
+
+      return { result: true };
     } catch (error) {
       console.log(error);
       throw Error(error.message);
