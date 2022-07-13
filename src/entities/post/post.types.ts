@@ -91,13 +91,13 @@ export class PostAuthorField {
   @Field()
   fullName: string;
 
-  @Field()
+  @Field({ nullable: true })
   age?: number;
 
-  @Field()
+  @Field({ nullable: true })
   avatar?: string;
 
-  @Field()
+  @Field({ nullable: true })
   email?: string;
 }
 
