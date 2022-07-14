@@ -22,6 +22,9 @@ export class PostWhereInput {
   @Field(() => StringFilter, { nullable: true })
   viewMode?: StringFilter;
 
+  @Field(() => Boolean, { nullable: true })
+  isDraft?: boolean;
+
   // @Field(() => PostWhereInput, { nullable: true })
   // AND?: PostWhereInput;
 

@@ -33,9 +33,10 @@ export class PostCategoryResolver {
    * Read a post category
    */
   @Query(() => PostCategory, { nullable: true })
-  async postCategory(@Arg('where', { nullable: true }) where: WhereUniqueInput): Promise<PostCategory> {
+  async postCategory(@Arg('where', { nullable: true }) where: PostCategoryWhereInput): Promise<PostCategory> {
     try {
-      const postCategory = await PostCategory.findByPk(where.id, { include: [Post] });
+      const findOptions: any = prepareFindOptions(where);
+      const postCategory = await PostCategory.findOne({ ...findOptions, include: [Post] });
 
       return postCategory;
     } catch (error) {
