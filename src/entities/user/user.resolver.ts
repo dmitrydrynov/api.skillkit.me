@@ -6,7 +6,7 @@ import { removeFile, uploadFile } from '@helpers/file';
 import Hashids from 'hashids';
 import { MercuriusContext } from 'mercurius';
 import { Op, Sequelize } from 'sequelize';
-import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from 'type-graphql';
+import { Arg, Args, Authorized, Ctx, Mutation, Query, Resolver, Root, Subscription } from 'type-graphql';
 import User, { UserRole } from './user.model';
 import { UserDataInput, UserWhereUniqueInput } from './user.types';
 import CurrentUser from '../auth/current-user.decorator';

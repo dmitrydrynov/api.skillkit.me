@@ -2,10 +2,15 @@ import CurrentUser from '@entities/auth/current-user.decorator';
 import Skill from '@entities/skill/skill.model';
 import User, { UserRole } from '@entities/user/user.model';
 import { prepareFindOptions } from '@helpers/prepare';
-import { DefaultResponseType, WhereUniqueInput } from '@plugins/graphql/types/common.types';
+import {
+  CustomNotification,
+  DefaultResponseType,
+  NotificationPayload,
+  WhereUniqueInput,
+} from '@plugins/graphql/types/common.types';
 import { send } from '@services/mailgun';
 import { DateTime } from 'luxon';
-import { Arg, Authorized, ID, Mutation, Query, Resolver } from 'type-graphql';
+import { Arg, Authorized, ID, Mutation, PubSub, PubSubEngine, Query, Resolver, Root, Subscription } from 'type-graphql';
 import UserSkill from './user-skill.model';
 import {
   UserSkillForShareResponseType,
@@ -140,6 +145,7 @@ export class UserSkillResolver {
     @Arg('skillName', { nullable: true }) skillName: string,
     @Arg('level', () => UserSkillLevelEnum) level: UserSkillLevelEnum,
     @CurrentUser() authUser: User,
+    @PubSub() pubSub: PubSubEngine,
   ): Promise<UserSkill> {
     try {
       let _skillId = skillId || null;
@@ -169,6 +175,10 @@ export class UserSkillResolver {
       if (!created) {
         throw Error('You have this skill already.');
       }
+
+      // Add notification for admin
+      const payload: NotificationPayload = { id: userSkill.id, message: `New user skill "${skillName}" added` };
+      await pubSub.publish('NOTIFICATIONS', payload);
 
       return userSkill;
     } catch (error) {
@@ -373,5 +383,10 @@ export class UserSkillResolver {
     } catch (error) {
       throw Error(error.message);
     }
+  }
+
+  @Subscription({ topics: 'NOTIFICATIONS' })
+  userSkillAdded(@Root() { id, message }: NotificationPayload): CustomNotification {
+    return { id, message, date: new Date() };
   }
 }

@@ -30,6 +30,8 @@ type Env = {
   MAILGUN_API_KEY: string;
   MAILGUN_FROM_EMAIL: string;
   MAILGUN_FROM_NAME: string;
+  REDIS_PORT: number;
+  REDIS_HOST: string;
   [key: string]: any;
 };
 

@@ -18,7 +18,13 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import fp from 'fastify-plugin';
 import Mercurius, { MercuriusContext } from 'mercurius';
 import MercuriusGQLUpload from 'mercurius-upload';
+import redis from 'mqemitter-redis';
 import { buildSchema } from 'type-graphql';
+
+const redisEmitter = redis({
+  port: env.REDIS_PORT,
+  host: env.REDIS_HOST,
+});
 
 export default fp(
   async (fastify) => {
@@ -47,6 +53,16 @@ export default fp(
       schema,
       graphiql: false,
       ide: false,
+      subscription: {
+        emitter: redisEmitter,
+        verifyClient: (info, next) => {
+          // if (!fastify.jwt.verify(info.req.headers['authorization'])) {
+          //   return next(false); // the connection is not allowed
+          // }
+
+          next(true); // the connection is allowed
+        },
+      },
       context: (request: FastifyRequest, reply: FastifyReply) => {
         const context: Partial<MercuriusContext> = { reply, user: null };
 

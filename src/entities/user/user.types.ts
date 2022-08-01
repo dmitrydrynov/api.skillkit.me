@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
-import { Field, InputType } from 'type-graphql';
+import { Field, InputType, ObjectType } from 'type-graphql';
 import { UserRole } from './user.model';
 
 export class JWTUserData {

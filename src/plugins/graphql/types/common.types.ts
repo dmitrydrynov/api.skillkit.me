@@ -110,3 +110,20 @@ export class WhereUniqueInput {
   @Field(() => ID)
   id: number;
 }
+
+@ObjectType()
+export class CustomNotification {
+  @Field(() => ID)
+  id: number;
+
+  @Field({ nullable: true })
+  message?: string;
+
+  @Field(() => Date)
+  date: Date;
+}
+
+export interface NotificationPayload {
+  id: number;
+  message?: string;
+}

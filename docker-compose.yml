@@ -53,6 +53,7 @@ services:
       - '9229:9229'
     depends_on:
       - db
+      - redis
     networks:
       - backend_network
     restart: unless-stopped
@@ -77,6 +78,17 @@ services:
     restart: unless-stopped
     networks:
       - backend_network
+  
+  redis:
+    image: redislabs/rejson:latest
+    container_name: skillkit_redis
+    ports:
+      - ${REDIS_PORT:-6379}:6379
+    restart: unless-stopped
+    volumes:
+      - redis-data:/var/lib/redis
+    networks:
+      - backend_network
 
 networks:
   backend_network:
@@ -84,3 +96,4 @@ networks:
 
 volumes:
   db-data:
+  redis-data:
