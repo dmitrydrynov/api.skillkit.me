@@ -53,6 +53,8 @@ services:
       - '9229:9229'
     depends_on:
       - db
+      - ghost
+      - mailhog
     networks:
       - backend_network
     restart: unless-stopped
@@ -73,10 +75,40 @@ services:
       - '${PORT:-8000}:${PORT:-8000}'
     depends_on:
       - db
+      - ghost
       - pgadmin
     restart: unless-stopped
     networks:
       - backend_network
+
+  ghost:
+    image: ghost:5-alpine
+    container_name: skillkit_ghost
+    restart: always
+    ports:
+      - 2368:2368
+    environment:
+      database__client: sqlite3
+      database__connection__filename: content/data/ghost-test.db
+      database__useNullAsDefault: true
+      database__debug: false
+      mail__from: no-reply@skillkit.loc
+      mail__transport: smtp
+      mail__options__service: smtp
+      mail__options__host: skillkit_maildev
+      mail__options__port: 1025
+    networks:
+      - backend_network
+
+  mailhog:
+    container_name: skillkit_maildev
+    image: mailhog/mailhog:latest
+    tty: true
+    ports:
+        - "1025:1025"
+        - "8025:8025"
+    networks:
+        - backend_network
 
 networks:
   backend_network:
