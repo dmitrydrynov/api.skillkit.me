@@ -90,8 +90,8 @@ services:
     environment:
       database__client: sqlite3
       database__connection__filename: content/data/ghost-test.db
-      database__useNullAsDefault: true
-      database__debug: false
+      database__useNullAsDefault: 1
+      database__debug: 0
       mail__from: '${MAILGUN_FROM_EMAIL}'
       mail__transport: smtp
       mail__options__service: smtp
@@ -110,7 +110,7 @@ services:
       database__client: sqlite3
       database__connection__filename: content/data/ghost-test.db
       database__useNullAsDefault: 1
-      database__debug: false
+      database__debug: 0
       mail__from: '${MAILGUN_FROM_EMAIL}'
       mail__transport: smtp
       mail__options__service: Mailgun
