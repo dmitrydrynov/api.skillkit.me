@@ -53,7 +53,7 @@ services:
       - '9229:9229'
     depends_on:
       - db
-      - ghost
+      - ghost-dev
       - mailhog
     networks:
       - backend_network
@@ -75,28 +75,49 @@ services:
       - '${PORT:-8000}:${PORT:-8000}'
     depends_on:
       - db
-      - ghost
+      - ghost-prod
       - pgadmin
     restart: unless-stopped
     networks:
       - backend_network
 
-  ghost:
+  ghost-dev:
     image: ghost:5-alpine
-    container_name: skillkit_ghost
+    container_name: skillkit_ghost_dev
     restart: always
     ports:
-      - 2368:2368
+      - '${GHOST_PORT:-2368}:2368'
     environment:
       database__client: sqlite3
       database__connection__filename: content/data/ghost-test.db
       database__useNullAsDefault: true
       database__debug: false
-      mail__from: no-reply@skillkit.loc
+      mail__from: '${MAILGUN_FROM_EMAIL}'
       mail__transport: smtp
       mail__options__service: smtp
       mail__options__host: skillkit_maildev
       mail__options__port: 1025
+    networks:
+      - backend_network
+
+  ghost-prod:
+    image: ghost:5-alpine
+    container_name: skillkit_ghost_prod
+    restart: always
+    ports:
+      - '${GHOST_PORT:-2368}:2368'
+    environment:
+      database__client: sqlite3
+      database__connection__filename: content/data/ghost-test.db
+      database__useNullAsDefault: true
+      database__debug: false
+      mail__from: '${MAILGUN_FROM_EMAIL}'
+      mail__transport: smtp
+      mail__options__service: Mailgun
+      mail__options__host: '${MAILGUN_DOMAIN}'
+      mail__options__port: 587
+      mail__options__auth__user: 'postmaster@${MAILGUN_DOMAIN}'
+      mail__options__auth__pass: '${MAILGUN_API_KEY}'
     networks:
       - backend_network
 
