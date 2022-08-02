@@ -107,6 +107,7 @@ services:
     ports:
       - '${GHOST_PORT:-2368}:2368'
     environment:
+      url: '${GHOST_URL}'
       database__client: sqlite3
       database__connection__filename: content/data/ghost-test.db
       database__useNullAsDefault: 1
