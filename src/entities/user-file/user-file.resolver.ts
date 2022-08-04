@@ -166,7 +166,8 @@ export class UserFileResolver {
         }
 
         const fileName = 'file-' + hashids.encode(userFile.id, authUser.id, Date.now());
-        userFile.url = await uploadFile(ctx.app, file, 'files', fileName);
+        const uploadedFile = await uploadFile(ctx.app, file, 'files', fileName);
+        userFile.url = uploadedFile.url;
       }
 
       // remove file

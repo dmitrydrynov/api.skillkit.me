@@ -71,7 +71,8 @@ export class UserResolver {
         }
 
         const avatarName = 'avatar-' + hashids.encode(user.id, Date.now());
-        user.avatar = await uploadFile(ctx.app, avatar, 'avatars', avatarName);
+        const uploadedFile = await uploadFile(ctx.app, avatar, 'avatars', avatarName);
+        user.avatar = uploadedFile.url;
       }
 
       // remove avatar
