@@ -173,7 +173,7 @@ export class PostResolver {
   @Mutation(() => DefaultResponseType)
   async removeImage(@Arg('imageUrl') imageUrl: string, @Ctx() ctx: MercuriusContext): Promise<DefaultResponseType> {
     try {
-      const response = await removeFile(ctx.app, imageUrl);
+      await removeFile(ctx.app, imageUrl);
 
       return { result: true };
     } catch (error) {

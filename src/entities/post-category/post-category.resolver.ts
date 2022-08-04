@@ -1,7 +1,6 @@
 import Post from '@entities/post/post.model';
 import { UserRole } from '@entities/user/user.model';
 import { prepareFindOptions } from '@helpers/prepare';
-import { WhereUniqueInput } from '@plugins/graphql/types/common.types';
 import { Arg, Authorized, Mutation, Query, Resolver } from 'type-graphql';
 import PostCategory from './post-category.model';
 import { PostCategoryOrderByInput, PostCategoryWhereInput } from './post-category.types';

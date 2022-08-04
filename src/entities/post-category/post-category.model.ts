@@ -5,7 +5,6 @@ import {
   Column,
   CreatedAt,
   HasMany,
-  IsNull,
   Model,
   PrimaryKey,
   Table,
