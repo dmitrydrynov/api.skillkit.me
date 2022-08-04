@@ -63,6 +63,12 @@ export class PostCreateInput {
 
   @Field({ nullable: true })
   categoryId?: number;
+
+  @Field({ nullable: true })
+  description?: string;
+
+  @Field({ nullable: true })
+  featureImage?: string;
 }
 
 @InputType('PostUpdateInput')
@@ -84,6 +90,12 @@ export class PostUpdateInput {
 
   @Field({ nullable: true })
   viewMode?: string;
+
+  @Field({ nullable: true })
+  description?: string;
+
+  @Field({ nullable: true })
+  featureImage?: string;
 }
 
 @ObjectType('PostAuthorField')

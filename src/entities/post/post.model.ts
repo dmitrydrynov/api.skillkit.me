@@ -82,6 +82,14 @@ export default class Post extends Model {
 
   @Field({ nullable: true })
   @Column
+  description: string;
+
+  @Field({ nullable: true })
+  @Column
+  featureImage: string;
+
+  @Field({ nullable: true })
+  @Column
   publishedAt?: Date;
 
   @Field()

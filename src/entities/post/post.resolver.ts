@@ -111,7 +111,7 @@ export class PostResolver {
       await post.update({
         ...data,
         viewMode: data.viewMode ? data.viewMode.toLowerCase() : post.viewMode,
-        slug: post.slug ? post.slug : slugify(post.title),
+        slug: data.slug ? data.slug : slugify(post.title),
       });
 
       return post;
