@@ -12,9 +12,12 @@ export default fp(
 
     try {
       await client.query(`CREATE DATABASE ${env.DB_NAME};`);
-      fastify.log.info(`A table "${env.DB_NAME}" created.`);
+      fastify.log.info(`A database "${env.DB_NAME}" created and ready.`);
     } catch (error) {
-      fastify.log.info(`A table "${env.DB_NAME}" already exists.`);
+      // If it is an error except "database already exist" show error
+      if (error.code != '42P04') {
+        fastify.log.error(`Database: ${error.message}`);
+      }
     }
 
     const _sequelize = new Sequelize(`${env.DB_URL}/${env.DB_NAME}`, {

@@ -129,4 +129,10 @@ export class PostWhereUniqueInput {
 export class UploadPostImageResponse {
   @Field()
   url: string;
+
+  @Field()
+  width: number;
+
+  @Field()
+  height: number;
 }

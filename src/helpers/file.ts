@@ -20,7 +20,13 @@ export const uploadFile = async (app: FastifyInstance, file: FileUpload, dirName
       filename: newFileName,
     });
 
-    return response.url;
+    return {
+      _id: response._id,
+      url: response.url,
+      originalFilename: response.originalFilename,
+      width: response.metadata.dimensions.width,
+      height: response.metadata.dimensions.height,
+    };
   } catch (error) {
     console.error(`File ${filename} didn't load`, error);
 
@@ -30,7 +36,7 @@ export const uploadFile = async (app: FastifyInstance, file: FileUpload, dirName
 
 export const removeFile = async (app: FastifyInstance, filePath: string) => {
   try {
-    const response = await app.sanity.delete(basename(filePath));
+    const response = await app.sanity.delete({ query: `*[_path == "${basename(filePath)}"][0]` });
 
     console.log('[Remove File]', response);
 

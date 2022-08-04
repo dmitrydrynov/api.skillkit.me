@@ -157,9 +157,9 @@ export class PostResolver {
   ): Promise<UploadPostImageResponse> {
     try {
       const fileName = 'post-image-' + hashids.encode(authUser.id, Date.now());
-      const fileUrl = await uploadFile(ctx.app, image, 'files', fileName);
+      const { url, width, height } = await uploadFile(ctx.app, image, 'files', fileName);
 
-      return { url: fileUrl };
+      return { url, width, height };
     } catch (error) {
       console.log(error);
       throw Error(error.message);
@@ -173,7 +173,7 @@ export class PostResolver {
   @Mutation(() => DefaultResponseType)
   async removeImage(@Arg('imageUrl') imageUrl: string, @Ctx() ctx: MercuriusContext): Promise<DefaultResponseType> {
     try {
-      await removeFile(ctx.app, imageUrl);
+      const response = await removeFile(ctx.app, imageUrl);
 
       return { result: true };
     } catch (error) {
