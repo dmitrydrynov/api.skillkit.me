@@ -5,7 +5,7 @@ import User, { UserRole } from '@entities/user/user.model';
 import { removeFile, uploadFile } from '@helpers/file';
 import { prepareFindOptions } from '@helpers/prepare';
 import { slugify } from '@helpers/text';
-import { DefaultResponseType } from '@plugins/graphql/types/common.types';
+import { DefaultResponseType, WhereUniqueInput } from '@plugins/graphql/types/common.types';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import Hashids from 'hashids';
 import { DateTime } from 'luxon';
@@ -176,6 +176,20 @@ export class PostResolver {
       await removeFile(ctx.app, imageUrl);
 
       return { result: true };
+    } catch (error) {
+      console.log(error);
+      throw Error(error.message);
+    }
+  }
+
+  /**
+   * Delete post
+   */
+  @Authorized([UserRole.ADMIN])
+  @Mutation(() => Number)
+  async deletePost(@Arg('where', { nullable: true }) where: WhereUniqueInput): Promise<number> {
+    try {
+      return await Post.destroy({ where: { id: where.id } });
     } catch (error) {
       console.log(error);
       throw Error(error.message);
