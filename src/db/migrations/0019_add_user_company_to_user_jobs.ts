@@ -19,7 +19,7 @@ export async function up({ context: queryInterface }: MigrationParams<QueryInter
   }
 
   await queryInterface.changeColumn('user_jobs', 'title', {
-    type: INTEGER,
+    type: STRING,
     allowNull: true,
     comment: 'Deprecated column. Will be deleted in the future.',
   });
