@@ -5,6 +5,7 @@ import { PostCategoryResolver } from '@entities/post-category/post-category.reso
 import { PostResolver } from '@entities/post/post.resolver';
 import { ServerResolver } from '@entities/server/server.resolver';
 import { SkillResolver } from '@entities/skill/skill.resolver';
+import { UserCompanyResolver } from '@entities/user-company/user-company.resolver';
 import { UserFileResolver } from '@entities/user-file/user-file.resolver';
 import { UserJobResolver } from '@entities/user-job/user-job.resolver';
 import { UserSchoolResolver } from '@entities/user-school/user-school.resolver';
@@ -35,6 +36,7 @@ export default fp(
         ServerResolver,
         PostResolver,
         PostCategoryResolver,
+        UserCompanyResolver,
       ],
       authChecker,
     });

@@ -7,6 +7,9 @@ export class UserJobWhereInput {
   id?: IDFilter;
 
   @Field(() => IDFilter, { nullable: true })
+  userCompanyId?: IDFilter;
+
+  @Field(() => IDFilter, { nullable: true })
   userSkillId?: IDFilter;
 }
 
@@ -14,9 +17,6 @@ export class UserJobWhereInput {
 export class UserJobOrderByInput {
   @Field(() => OrderDirection, { nullable: true })
   id?: OrderDirection;
-
-  @Field(() => OrderDirection, { nullable: true })
-  title?: OrderDirection;
 
   @Field(() => OrderDirection, { nullable: true })
   startedAt?: OrderDirection;
@@ -28,7 +28,7 @@ export class UserJobOrderByInput {
 @InputType('UserJobUpdateInput')
 export class UserJobUpdateInput {
   @Field({ nullable: true })
-  title: string;
+  companyName: string;
 
   @Field({ nullable: true })
   position: string;
@@ -46,7 +46,7 @@ export class UserJobUpdateInput {
 @InputType('UserJobCreateInput')
 export class UserJobCreateInput {
   @Field()
-  title: string;
+  companyName: string;
 
   @Field()
   position: string;

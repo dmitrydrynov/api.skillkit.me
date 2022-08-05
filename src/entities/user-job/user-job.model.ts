@@ -1,3 +1,4 @@
+import UserCompany from '@entities/user-company/user-company.model';
 import UserSkill from '@entities/user-skill/user-skill.model';
 import User from '@entities/user/user.model';
 import { DateTime } from 'luxon';
@@ -51,9 +52,24 @@ export default class UserJob extends Model {
     return await this.getUserSkillItem();
   }
 
-  @Field()
+  @ForeignKey(() => UserCompany)
   @Column
-  title: string;
+  userCompanyId: number;
+
+  @BelongsTo(() => UserCompany)
+  userCompanyItem: UserCompany;
+
+  @Field(() => UserCompany)
+  async userCompany() {
+    return await this.getUserCompanyItem();
+  }
+
+  @Field(() => String)
+  async title() {
+    const uc = await this.getUserCompanyItem();
+
+    return uc.name;
+  }
 
   @Field()
   @Column

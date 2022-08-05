@@ -1,13 +1,18 @@
-import { DATE, INTEGER, QueryInterface, STRING, TEXT, fn } from 'sequelize';
+import { DATE, INTEGER, QueryInterface, STRING, fn } from 'sequelize';
 import { MigrationParams } from 'umzug';
 
 export async function up({ context: queryInterface }: MigrationParams<QueryInterface>): Promise<void> {
-  await queryInterface.createTable('user_jobs', {
+  await queryInterface.createTable('user_companies', {
     id: {
       type: INTEGER,
       allowNull: false,
       autoIncrement: true,
       primaryKey: true,
+    },
+    name: {
+      type: STRING,
+      allowNull: false,
+      unique: true,
     },
     user_id: {
       type: INTEGER,
@@ -17,23 +22,6 @@ export async function up({ context: queryInterface }: MigrationParams<QueryInter
         model: 'users',
         key: 'id',
       },
-    },
-    title: {
-      type: STRING,
-      allowNull: false,
-    },
-    position: {
-      type: STRING,
-      allowNull: false,
-    },
-    description: TEXT,
-    started_at: {
-      type: DATE,
-      allowNull: false,
-    },
-    finished_at: {
-      type: DATE,
-      allowNull: true,
     },
     created_at: {
       type: DATE,
@@ -49,5 +37,5 @@ export async function up({ context: queryInterface }: MigrationParams<QueryInter
 }
 
 export async function down({ context: queryInterface }: MigrationParams<QueryInterface>): Promise<void> {
-  await queryInterface.dropTable('user_jobs');
+  await queryInterface.dropTable('user_companies');
 }

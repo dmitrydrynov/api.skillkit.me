@@ -1,4 +1,5 @@
 import CurrentUser from '@entities/auth/current-user.decorator';
+import UserCompany from '@entities/user-company/user-company.model';
 import User, { UserRole } from '@entities/user/user.model';
 import { prepareFindOptions } from '@helpers/prepare';
 import { WhereUniqueInput } from '@plugins/graphql/types/common.types';
@@ -67,27 +68,22 @@ export class UserJobResolver {
   @Mutation(() => UserJob)
   async createUserJob(@Arg('data') data: UserJobCreateInput, @CurrentUser() authUser: User): Promise<UserJob> {
     try {
-      const { title, position, description, userSkillId, startedAt, finishedAt } = data;
+      const { companyName, position, description, userSkillId, startedAt, finishedAt } = data;
 
-      const [userJob, created] = await UserJob.findOrCreate({
-        where: {
-          userId: authUser.id,
-          title,
-        },
-        defaults: {
-          userId: authUser.id,
-          userSkillId,
-          title,
-          position,
-          description,
-          startedAt,
-          finishedAt,
-        },
+      const [userCompany] = await UserCompany.findOrCreate({
+        where: { name: companyName },
+        defaults: { name: companyName, userId: authUser.id },
       });
 
-      if (!created) {
-        throw Error('You have this job already. Select it from jobs list.');
-      }
+      const userJob = await UserJob.create({
+        userId: authUser.id,
+        userSkillId,
+        userCompanyId: userCompany.id,
+        position,
+        description,
+        startedAt,
+        finishedAt,
+      });
 
       return userJob;
     } catch (error) {
