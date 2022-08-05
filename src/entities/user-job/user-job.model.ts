@@ -64,13 +64,6 @@ export default class UserJob extends Model {
     return await this.getUserCompanyItem();
   }
 
-  @Field(() => String)
-  async title() {
-    const uc = await this.getUserCompanyItem();
-
-    return uc.name;
-  }
-
   @Field()
   @Column
   position: string;

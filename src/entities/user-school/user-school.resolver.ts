@@ -74,24 +74,14 @@ export class UserSchoolResolver {
     try {
       const { title, description, userSkillId, startedAt, finishedAt } = data;
 
-      const [userSchool, created] = await UserSchool.findOrCreate({
-        where: {
-          userId: authUser.id,
-          title,
-        },
-        defaults: {
-          userId: authUser.id,
-          userSkillId,
-          title,
-          description,
-          startedAt,
-          finishedAt,
-        },
+      const userSchool = await UserSchool.create({
+        userId: authUser.id,
+        userSkillId,
+        title,
+        description,
+        startedAt,
+        finishedAt,
       });
-
-      if (!created) {
-        throw Error('You have this school already. Select it from schools list.');
-      }
 
       return userSchool;
     } catch (error) {

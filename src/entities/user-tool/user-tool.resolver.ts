@@ -69,22 +69,12 @@ export class UserToolResolver {
     try {
       const { title, description, userSkillId } = data;
 
-      const [userTool, created] = await UserTool.findOrCreate({
-        where: {
-          userId: authUser.id,
-          title,
-        },
-        defaults: {
-          userId: authUser.id,
-          userSkillId,
-          title,
-          description,
-        },
+      const userTool = await UserTool.create({
+        userId: authUser.id,
+        userSkillId,
+        title,
+        description,
       });
-
-      if (!created) {
-        throw Error('You have this tool already. Select it from tools list.');
-      }
 
       return userTool;
     } catch (error) {
