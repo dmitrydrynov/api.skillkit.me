@@ -18,6 +18,12 @@ export async function up({ context: queryInterface }: MigrationParams<QueryInter
     });
   }
 
+  await queryInterface.changeColumn('user_jobs', 'title', {
+    type: INTEGER,
+    allowNull: true,
+    comment: 'Deprecated column. Will be deleted in the future.',
+  });
+
   /** Update user jobs items */
   const userJobs = await UserJob.findAll();
 
@@ -33,6 +39,7 @@ export async function up({ context: queryInterface }: MigrationParams<QueryInter
         });
 
         await userJob.update({ userCompanyId: uc.id });
+        await userJob.update({ title: null });
       }),
     );
   }
@@ -41,10 +48,6 @@ export async function up({ context: queryInterface }: MigrationParams<QueryInter
     type: INTEGER,
     allowNull: false,
   });
-
-  if (tableDefinition.title) {
-    await queryInterface.removeColumn('user_jobs', 'title');
-  }
 }
 
 export async function down({ context: queryInterface }: MigrationParams<QueryInterface>): Promise<void> {
@@ -69,11 +72,6 @@ export async function down({ context: queryInterface }: MigrationParams<QueryInt
       }),
     );
   }
-
-  await queryInterface.changeColumn('user_jobs', 'title', {
-    type: STRING,
-    allowNull: false,
-  });
 
   if (tableDefinition.user_company_id) {
     await queryInterface.removeColumn('user_jobs', 'user_company_id');

@@ -68,6 +68,9 @@ export default class UserJob extends Model {
   @Column
   position: string;
 
+  @Column({ allowNull: true, comment: 'Deprecated column. Will be deleted in the future.' })
+  title?: string;
+
   @Field({ nullable: true })
   @Column
   description?: string;
