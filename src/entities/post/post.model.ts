@@ -1,5 +1,7 @@
 import PostCategory from '@entities/post-category/post-category.model';
 import User from '@entities/user/user.model';
+import { calculateReadingTime } from '@helpers/text';
+import { INTEGER } from 'sequelize';
 import {
   AllowNull,
   AutoIncrement,
@@ -103,4 +105,19 @@ export default class Post extends Model {
   @UpdatedAt
   @Column
   updatedAt: Date;
+
+  @Field(() => Number)
+  readingTime() {
+    const content = JSON.parse(this.content);
+    let words = '';
+
+    if (content && content.blocks)
+      content.blocks.map((block) => {
+        if (block.type === 'paragraph') {
+          words += block.data.text;
+        }
+      });
+
+    return calculateReadingTime(words);
+  }
 }
