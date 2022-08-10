@@ -1,10 +1,10 @@
 import { join } from 'path';
 import { env } from '@config/env';
 import { HomePageRoute } from '@routes/home';
-import fastifyJWT from '@fastify/jwt';
 import { FastifyPluginAsync } from 'fastify';
 import AutoLoad, { AutoloadPluginOptions } from 'fastify-autoload';
 import Cors from 'fastify-cors';
+import fastifyJWT from 'fastify-jwt';
 import oauth2 from 'fastify-oauth2';
 
 export type AppOptions = {
