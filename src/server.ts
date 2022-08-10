@@ -7,7 +7,16 @@ export const app: FastifyInstance = Fastify({
   trustProxy: true,
   logger: {
     level: env.LOG_LEVEL,
-    prettyPrint: env.LOG_PRETTY_PRINT,
+    transport: env.LOG_PRETTY_PRINT
+      ? {
+          target: 'pino-pretty',
+          options: {
+            translateTime: 'HH:MM:ss Z',
+            ignore: 'pid,hostname',
+            colorize: true,
+          },
+        }
+      : undefined,
   },
 });
 
@@ -28,7 +37,7 @@ app.addHook('onClose', async (instance, done) => {
 
 const start = async () => {
   try {
-    await app.listen(env.PORT, env.HOST);
+    await app.listen({ port: env.PORT, host: env.HOST });
     app.log.info('Fastify v' + app.version + ' started');
   } catch (err: any) {
     app.log.error(err);
