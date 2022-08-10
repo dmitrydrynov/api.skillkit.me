@@ -1,27 +1,31 @@
 {
   "compilerOptions": {
-    "baseUrl": "src/",
+    "allowJs": true,
+    "baseUrl": "src",
     "emitDecoratorMetadata": true,
     "esModuleInterop": true,
     "experimentalDecorators": true,
+    "useDefineForClassFields": false,
     "module": "commonjs",
+    "moduleResolution": "node",
     "outDir": "build/",
     "paths": {
       "@entities/*": ["entities/*"],
       "@helpers/*": ["helpers/*"],
-      "@router/*": ["router/*"],
+      "@routes/*": ["routes/*"],
       "@services/*": ["services/*"],
       "@plugins/*": ["plugins/*"],
       "@config/*": ["config/*"]
     },
     "resolveJsonModule": true,
     "skipLibCheck": true,
-    "target": "ES2019"
+    "target": "ESNext"
   },
   "exclude": ["node_modules"],
-  "include": ["src/**/*", ".eslintrc.js"],
+  "include": ["src/**/*.ts"],
   "ts-node": {
     "files": true,
+    "esm": true,
     "require": ["tsconfig-paths/register"]
-  }
+  },
 }

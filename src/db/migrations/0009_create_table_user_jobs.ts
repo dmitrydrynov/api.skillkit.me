@@ -18,6 +18,15 @@ export async function up({ context: queryInterface }: MigrationParams<QueryInter
         key: 'id',
       },
     },
+    user_skill_id: {
+      type: INTEGER,
+      allowNull: false,
+      onDelete: 'cascade',
+      references: {
+        model: 'user_skills',
+        key: 'id',
+      },
+    },
     title: {
       type: STRING,
       allowNull: false,

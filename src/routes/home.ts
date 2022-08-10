@@ -1,10 +1,12 @@
-import { Route } from 'fastify-file-routes';
+import { RouteOptions } from 'fastify';
 
-export const routes: Route = {
-  get: {
-    handler: async (_request, reply) => {
-      reply.type('text/html; charset=utf-8');
-      await reply.send(`
+export const HomePageRoute: RouteOptions = {
+  method: 'GET',
+  url: '/',
+  handler: async (_request, reply) => {
+    reply.type('text/html; charset=utf-8');
+
+    await reply.send(`
         <html>
         <head>
           <title>Skillkit⚡API</title>
@@ -16,6 +18,5 @@ export const routes: Route = {
         </body>
         </html>
       `);
-    },
   },
 };
