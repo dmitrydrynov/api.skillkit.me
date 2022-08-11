@@ -14,6 +14,7 @@ import {
   UserSkillUpdateInput,
   UserSkillViewModeEnum,
   UserSkillWhereInput,
+  UserSkillsForShareResponseType,
 } from './user-skill.types';
 
 @Resolver()
@@ -125,6 +126,33 @@ export class UserSkillResolver {
       }
 
       return { skill: userSkill, user: userSkill.userItem, viewer };
+    } catch (error) {
+      throw Error(error.message);
+    }
+  }
+
+  /**
+   * Get user skills for share
+   */
+  @Query(() => [UserSkillsForShareResponseType])
+  async userSkillsForShare(): Promise<UserSkillsForShareResponseType[]> {
+    try {
+      const userSkills: UserSkill[] = await UserSkill.findAll({
+        where: { viewMode: UserSkillViewModeEnum.EVERYONE },
+        include: [User, Skill],
+      });
+
+      if (!userSkills) {
+        throw Error('Not found public user skills');
+      }
+
+      return userSkills.map((userSkill) => ({
+        url: userSkill.shareLink,
+        skillName: userSkill.skillItem.name,
+        userName: userSkill.userItem.fullName,
+        level: userSkill.level,
+        updatedAt: userSkill.updatedAt,
+      }));
     } catch (error) {
       throw Error(error.message);
     }

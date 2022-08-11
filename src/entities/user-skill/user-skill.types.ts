@@ -84,3 +84,21 @@ export class UserSkillForShareResponseType {
   @Field(() => User)
   user: User;
 }
+
+@ObjectType('UserSkillsForShareResponse')
+export class UserSkillsForShareResponseType {
+  @Field()
+  url: string;
+
+  @Field({ nullable: true })
+  skillName?: string;
+
+  @Field(() => UserSkillLevelEnum)
+  level?: UserSkillLevelEnum;
+
+  @Field()
+  userName: string;
+
+  @Field()
+  updatedAt: Date;
+}
