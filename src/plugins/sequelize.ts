@@ -44,5 +44,6 @@ export default fp(
 declare module 'fastify' {
   interface FastifyInstance {
     sequelize: Sequelize;
+    jwt: any;
   }
 }
