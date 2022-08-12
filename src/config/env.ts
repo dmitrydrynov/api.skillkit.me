@@ -13,6 +13,7 @@ export const env = dotEnv.env as Env;
 type Env = {
   NODE_ENV: string;
   ALTAIR_ENABLED: boolean;
+  IS_VERCEL_DEPLOY: boolean;
   PORT: number;
   HOST: string;
   LOG_PRETTY_PRINT: boolean;
