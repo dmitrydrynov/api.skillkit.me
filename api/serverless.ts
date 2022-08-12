@@ -26,7 +26,13 @@ app.addHook('onClose', async (instance, done) => {
   done();
 });
 
-export default async (req, res) => {
-  await app.ready();
-  app.server.emit('request', req, res);
+const start = async () => {
+  try {
+    await app.listen(env.PORT, env.HOST);
+    app.log.info('Fastify v' + app.version + ' started');
+  } catch (err: any) {
+    app.log.error(err);
+    process.exit(1);
+  }
 };
+start();
