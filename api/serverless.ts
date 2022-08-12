@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 // Require the framework
 import Fastify from 'fastify';
 // Read the .env file.
@@ -11,7 +12,8 @@ const app = Fastify({
 });
 
 // Register your application as a normal plugin.
-app.register(import('../src/server.ts'));
+// @ts-ignore
+app.register(import('../src/server'));
 
 export default async (req, res) => {
   await app.ready();
