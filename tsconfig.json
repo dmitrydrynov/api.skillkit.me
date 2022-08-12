@@ -22,7 +22,7 @@
     "target": "ESNext"
   },
   "exclude": ["node_modules"],
-  "include": ["src/**/*.ts", ".vercel/**/*", "vercel.json"],
+  "include": ["src/**/*.ts", "vercel.json"],
   "ts-node": {
     "files": true,
     "esm": true,

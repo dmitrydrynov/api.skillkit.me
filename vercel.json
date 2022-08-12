@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "/.vercel/serverless.js"
+      "destination": "/src/server.js"
     }
   ]
 }
