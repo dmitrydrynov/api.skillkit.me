@@ -1,3 +1,4 @@
+import { SkillWhereInput } from '@entities/skill/skill.types';
 import User from '@entities/user/user.model';
 import { IDFilter, OrderDirection } from '@plugins/graphql/types/common.types';
 import { Field, InputType, ObjectType, registerEnumType } from 'type-graphql';
@@ -32,6 +33,9 @@ export class UserSkillWhereInput {
 
   @Field({ nullable: true })
   isDraft?: boolean;
+
+  @Field(() => SkillWhereInput, { nullable: true })
+  skill?: SkillWhereInput;
 
   // @Field(() => SkillWhereInput, { nullable: true })
   // AND?: SkillWhereInput;

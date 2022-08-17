@@ -12,10 +12,14 @@ export const prepareFindOptions = (
 
   // prepare Where for Sequelize
   if (where) {
-    const sequelizeWhere = {};
+    let sequelizeWhere = {};
 
     Object.entries(where).map(([key, value]) => {
-      let insensitive = false;
+      if (key === 'skill' && 'name' in value) {
+        sequelizeWhere[`$skillItem.name$`] = prepareForSequilize(value.name);
+
+        return sequelizeWhere;
+      }
 
       if (typeof value === 'boolean') {
         sequelizeWhere[key] = value;
@@ -23,32 +27,7 @@ export const prepareFindOptions = (
         return sequelizeWhere;
       }
 
-      if ('mode' in value) {
-        insensitive = value.mode === 1;
-        delete value['mode'];
-      }
-
-      Object.entries(value).map(([k, v]) => {
-        switch (k) {
-          case 'equals':
-            sequelizeWhere[key] = v;
-            break;
-          case 'in':
-            sequelizeWhere[key] = { [Op.in]: v };
-            break;
-          case 'not':
-            sequelizeWhere[key] = { [Op.not]: v };
-            break;
-          case 'notIn':
-            sequelizeWhere[key] = { [Op.notIn]: v };
-            break;
-          case 'contains':
-            sequelizeWhere[key] = insensitive ? { [Op.iLike]: `%${v}%` } : { [Op.like]: `%${v}%` };
-            break;
-          default:
-            sequelizeWhere[key][k] = v;
-        }
-      });
+      sequelizeWhere = prepareForSequilize(value);
     });
 
     findOptions.where = sequelizeWhere;
@@ -71,4 +50,37 @@ export const prepareFindOptions = (
   });
 
   return findOptions;
+};
+
+const prepareForSequilize = (value: any, insensitive = false) => {
+  let response: any = {};
+
+  if ('mode' in value) {
+    insensitive = value.mode === 1;
+    delete value['mode'];
+  }
+
+  Object.entries(value).map(([k, v]) => {
+    switch (k) {
+      case 'equals':
+        response = v;
+        break;
+      case 'in':
+        response = { [Op.in]: v };
+        break;
+      case 'not':
+        response = { [Op.not]: v };
+        break;
+      case 'notIn':
+        response = { [Op.notIn]: v };
+        break;
+      case 'contains':
+        response = insensitive ? { [Op.iLike]: `%${v}%` } : { [Op.like]: `%${v}%` };
+        break;
+      default:
+        response[k] = v;
+    }
+  });
+
+  return response;
 };

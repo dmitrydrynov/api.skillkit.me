@@ -40,7 +40,7 @@ export class UserSkillResolver {
           ...findOptions.where,
           userId: authUser.id,
         },
-        include: [UserSkill],
+        include: [Skill],
       });
 
       return userSkills;
