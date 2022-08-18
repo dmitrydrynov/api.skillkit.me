@@ -1,7 +1,6 @@
 import PostCategory from '@entities/post-category/post-category.model';
 import User from '@entities/user/user.model';
 import { calculateReadingTime } from '@helpers/text';
-import { INTEGER } from 'sequelize';
 import {
   AllowNull,
   AutoIncrement,
