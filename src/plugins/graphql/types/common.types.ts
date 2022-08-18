@@ -4,7 +4,7 @@ import { UserJobWhereInput } from '@entities/user-job/user-job.types';
 import { UserSchoolWhereInput } from '@entities/user-school/user-school.types';
 import { UserSkillWhereInput } from '@entities/user-skill/user-skill.types';
 import { UserToolWhereInput } from '@entities/user-tool/user-tool.types';
-import { Field, ID, InputType, ObjectType, registerEnumType } from 'type-graphql';
+import { Field, GraphQLISODateTime, ID, InputType, ObjectType, registerEnumType } from 'type-graphql';
 
 export type CommonWhere =
   | WhereUniqueInput
@@ -85,6 +85,33 @@ export class StringFilter {
 
   @Field(() => String, { nullable: true })
   not?: string;
+}
+
+@InputType('DateTimeFilter')
+export class DateTimeFilter {
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  equals?: Date;
+
+  @Field(() => [GraphQLISODateTime], { nullable: true })
+  in?: Date[];
+
+  @Field(() => [GraphQLISODateTime], { nullable: true })
+  notIn?: Date[];
+
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  lt?: Date;
+
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  lte?: Date;
+
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  gt?: Date;
+
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  gte?: Date;
+
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  not?: Date;
 }
 
 export enum QueryMode {

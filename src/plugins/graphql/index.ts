@@ -3,11 +3,13 @@ import { authChecker } from '@entities/auth/auth.checker';
 import { AuthResolver } from '@entities/auth/auth.resolver';
 import { PostCategoryResolver } from '@entities/post-category/post-category.resolver';
 import { PostResolver } from '@entities/post/post.resolver';
+import { ProfessionResolver } from '@entities/profession/profession.resolver';
 import { ServerResolver } from '@entities/server/server.resolver';
 import { SkillResolver } from '@entities/skill/skill.resolver';
 import { UserCompanyResolver } from '@entities/user-company/user-company.resolver';
 import { UserFileResolver } from '@entities/user-file/user-file.resolver';
 import { UserJobResolver } from '@entities/user-job/user-job.resolver';
+import { UserKitResolver } from '@entities/user-kit/user-kit.resolver';
 import { UserSchoolResolver } from '@entities/user-school/user-school.resolver';
 import { UserSkillResolver } from '@entities/user-skill/user-skill.resolver';
 import { UserToolResolver } from '@entities/user-tool/user-tool.resolver';
@@ -37,6 +39,8 @@ export default fp(
         PostResolver,
         PostCategoryResolver,
         UserCompanyResolver,
+        ProfessionResolver,
+        UserKitResolver,
       ],
       authChecker,
     });
