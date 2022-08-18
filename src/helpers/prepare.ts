@@ -12,7 +12,7 @@ export const prepareFindOptions = (
 
   // prepare Where for Sequelize
   if (where) {
-    let sequelizeWhere = {};
+    const sequelizeWhere = {};
 
     Object.entries(where).map(([key, value]) => {
       if (key === 'skill' && 'name' in value) {
@@ -27,7 +27,7 @@ export const prepareFindOptions = (
         return sequelizeWhere;
       }
 
-      sequelizeWhere = prepareForSequilize(value);
+      sequelizeWhere[key] = prepareForSequilize(value);
     });
 
     findOptions.where = sequelizeWhere;
