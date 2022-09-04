@@ -1,0 +1,12 @@
+#!/bin/sh
+
+CURRENT_DIRECTORY=$(dirname "$0")
+ROOT_DIRECTORY=$(dirname "${CURRENT_DIRECTORY}")
+
+. "${CURRENT_DIRECTORY}/_/husky.sh"
+
+cd "${ROOT_DIRECTORY}" || exit 1
+
+npx prettier --check "src/**/*.{js,ts,jsx,tsx,json}"
+npx eslint "src/**/*.{js,ts,jsx,tsx}"
+
