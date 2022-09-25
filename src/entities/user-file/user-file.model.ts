@@ -1,4 +1,6 @@
+import JuncUserKitFile from '@entities/juncs/junc-user-kit-file.model';
 import JuncUserSkillFile from '@entities/juncs/junc-user-skill-file.model';
+import UserKit from '@entities/user-kit/user-kit.model';
 import UserSkill from '@entities/user-skill/user-skill.model';
 import User from '@entities/user/user.model';
 import {
@@ -83,4 +85,7 @@ export default class UserFile extends Model {
 
   @BelongsToMany(() => UserSkill, () => JuncUserSkillFile)
   userSkills: UserSkill[];
+
+  @BelongsToMany(() => UserKit, () => JuncUserKitFile)
+  userKits: UserKit[];
 }

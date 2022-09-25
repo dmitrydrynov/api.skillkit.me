@@ -1,5 +1,6 @@
 import { env } from '@config/env';
 import CurrentUser from '@entities/auth/current-user.decorator';
+import UserKit from '@entities/user-kit/user-kit.model';
 import UserSkill from '@entities/user-skill/user-skill.model';
 import User, { UserRole } from '@entities/user/user.model';
 import { removeFile, uploadFile } from '@helpers/file';
@@ -35,6 +36,9 @@ export class UserFileResolver {
       if (attachType === 'UserSkill') {
         const userSkill = await UserSkill.findByPk(attachId);
         userFiles = await userSkill.getUserFileItems();
+      } else if (attachType === 'UserKit') {
+        const userKit = await UserKit.findByPk(attachId);
+        userFiles = await userKit.getUserFileItems();
       } else {
         const findOptions: any = prepareFindOptions(where, take, skip, orderBy);
 
@@ -101,10 +105,10 @@ export class UserFileResolver {
         }
 
         const fileName = 'file-' + hashids.encode(authUser.id, Date.now());
-        const fileUrl = await uploadFile(ctx.app, file, 'files', fileName);
+        const uploadedFile = await uploadFile(ctx.app, file, 'files', fileName);
 
         createData.type = UserFileType.FILE;
-        createData.url = fileUrl;
+        createData.url = uploadedFile.url;
       }
 
       if (type == UserFileType.LINK) {
@@ -122,10 +126,16 @@ export class UserFileResolver {
         throw Error(`The ${type} wasn't loaded. Something wrong!`);
       }
 
-      if (attachTo === 'userSkill') {
+      if (attachTo === 'UserSkill') {
         const userSkill = await UserSkill.findOne({ where: { id: attachId } });
 
         userFile.addUserSkill(userSkill);
+      }
+
+      if (attachTo === 'UserKit') {
+        const userKit = await UserKit.findOne({ where: { id: attachId } });
+
+        userFile.addUserKit(userKit);
       }
 
       return userFile;

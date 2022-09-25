@@ -1,6 +1,8 @@
 import { env } from 'process';
+import JuncUserKitFile from '@entities/juncs/junc-user-kit-file.model';
 import JuncUserKitSkills from '@entities/juncs/junc-user-kit-skills.model';
 import Profession from '@entities/profession/profession.model';
+import UserFile from '@entities/user-file/user-file.model';
 import UserSkill from '@entities/user-skill/user-skill.model';
 import User from '@entities/user/user.model';
 import Hashids from 'hashids';
@@ -85,6 +87,14 @@ export default class UserKit extends Model {
   @Field({ nullable: true })
   @Column
   description?: string;
+
+  @BelongsToMany(() => UserFile, () => JuncUserKitFile)
+  userFileItems: UserFile[];
+
+  @Field(() => [UserFile])
+  async files() {
+    return await this.getUserFileItems();
+  }
 
   @Field({ nullable: true })
   @Column
