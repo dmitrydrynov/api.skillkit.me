@@ -115,7 +115,7 @@ export default class UserKit extends Model {
   static generateShareLink = (hostname: string, ...args: number[]) => {
     const linkHash = hashids.encode(args);
 
-    return `${hostname}/s/${linkHash}`;
+    return `${hostname}/sk/${linkHash}`;
   };
 
   static decodeShareLink = (hash: string) => {
