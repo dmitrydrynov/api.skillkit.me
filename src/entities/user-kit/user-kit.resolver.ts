@@ -1,10 +1,12 @@
 import CurrentUser from '@entities/auth/current-user.decorator';
 import Profession from '@entities/profession/profession.model';
+import UserTool from '@entities/user-tool/user-tool.model';
 import User, { UserRole } from '@entities/user/user.model';
 import { prepareFindOptions } from '@helpers/prepare';
 import { DefaultResponseType, WhereUniqueInput } from '@plugins/graphql/types/common.types';
 import { send } from '@services/mailgun';
 import { DateTime } from 'luxon';
+import { Op } from 'sequelize';
 import { Arg, Authorized, ID, Mutation, Query, Resolver } from 'type-graphql';
 import UserKit from './user-kit.model';
 import {
@@ -388,6 +390,34 @@ export class UserKitResolver {
       });
 
       return { result: true };
+    } catch (error) {
+      throw Error(error.message);
+    }
+  }
+
+  /**
+   * Get skill kit tools
+   */
+  @Authorized([UserRole.MEMBER, UserRole.EXPERT, UserRole.OPERATOR, UserRole.ADMIN])
+  @Query(() => [UserTool])
+  async getUserToolsForKit(
+    @Arg('where', { nullable: true }) where: WhereUniqueInput,
+    @CurrentUser() authUser: User,
+  ): Promise<Array<UserTool>> {
+    try {
+      const userKit = await UserKit.findByPk(where.id);
+      const userSkills = await userKit.getUserSkillItems();
+      const ids: number[] = userSkills.map((userSkill) => userSkill.id);
+      const userSkillTools = await UserTool.findAll({
+        where: {
+          userId: authUser.id,
+          userSkillId: {
+            [Op.in]: ids,
+          },
+        },
+      });
+
+      return userSkillTools;
     } catch (error) {
       throw Error(error.message);
     }
