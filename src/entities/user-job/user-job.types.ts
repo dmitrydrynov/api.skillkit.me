@@ -7,7 +7,7 @@ export class UserJobWhereInput {
   id?: IDFilter;
 
   @Field(() => IDFilter, { nullable: true })
-  userCompanyId?: IDFilter;
+  workPlaceId?: IDFilter;
 
   @Field(() => IDFilter, { nullable: true })
   userSkillId?: IDFilter;

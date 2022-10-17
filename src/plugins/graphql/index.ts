@@ -4,9 +4,9 @@ import { AuthResolver } from '@entities/auth/auth.resolver';
 import { PostCategoryResolver } from '@entities/post-category/post-category.resolver';
 import { PostResolver } from '@entities/post/post.resolver';
 import { ProfessionResolver } from '@entities/profession/profession.resolver';
+import { SchoolResolver } from '@entities/school/school.resolver';
 import { ServerResolver } from '@entities/server/server.resolver';
 import { SkillResolver } from '@entities/skill/skill.resolver';
-import { UserCompanyResolver } from '@entities/user-company/user-company.resolver';
 import { UserFileResolver } from '@entities/user-file/user-file.resolver';
 import { UserJobResolver } from '@entities/user-job/user-job.resolver';
 import { UserKitResolver } from '@entities/user-kit/user-kit.resolver';
@@ -16,6 +16,8 @@ import { UserToolResolver } from '@entities/user-tool/user-tool.resolver';
 import { UserRole } from '@entities/user/user.model';
 import { UserResolver } from '@entities/user/user.resolver';
 import { JWTUserData } from '@entities/user/user.types';
+import { WorkPlaceResolver } from '@entities/work-place/work-place.resolver';
+import { WorkToolResolver } from '@entities/work-tool/work-tool.resolver';
 import AltairFastify from 'altair-fastify-plugin';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import fp from 'fastify-plugin';
@@ -38,9 +40,11 @@ export default fp(
         ServerResolver,
         PostResolver,
         PostCategoryResolver,
-        UserCompanyResolver,
+        WorkPlaceResolver,
         ProfessionResolver,
         UserKitResolver,
+        SchoolResolver,
+        WorkToolResolver,
       ],
       authChecker,
     });

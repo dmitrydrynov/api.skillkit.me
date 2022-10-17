@@ -1,6 +1,6 @@
-import UserCompany from '@entities/user-company/user-company.model';
 import UserSkill from '@entities/user-skill/user-skill.model';
 import User from '@entities/user/user.model';
+import WorkPlace from '@entities/work-place/work-place.model';
 import { DateTime } from 'luxon';
 import {
   AllowNull,
@@ -52,24 +52,24 @@ export default class UserJob extends Model {
     return await this.getUserSkillItem();
   }
 
-  @ForeignKey(() => UserCompany)
+  @Column({ allowNull: true, comment: 'Deprecated column. Will be deleted in the future.' })
+  title?: string;
+
+  @ForeignKey(() => WorkPlace)
   @Column
-  userCompanyId: number;
+  workPlaceId: number;
 
-  @BelongsTo(() => UserCompany)
-  userCompanyItem: UserCompany;
+  @BelongsTo(() => WorkPlace)
+  workPlaceItem: WorkPlace;
 
-  @Field(() => UserCompany)
-  async userCompany() {
-    return await this.getUserCompanyItem();
+  @Field(() => WorkPlace)
+  async workPlace() {
+    return await this.getWorkPlaceItem();
   }
 
   @Field()
   @Column
   position: string;
-
-  @Column({ allowNull: true, comment: 'Deprecated column. Will be deleted in the future.' })
-  title?: string;
 
   @Field({ nullable: true })
   @Column

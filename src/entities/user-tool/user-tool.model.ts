@@ -1,5 +1,6 @@
 import UserSkill from '@entities/user-skill/user-skill.model';
 import User from '@entities/user/user.model';
+import WorkTool from '@entities/work-tool/work-tool.model';
 import {
   AllowNull,
   AutoIncrement,
@@ -49,9 +50,20 @@ export default class UserTool extends Model {
     return await this.getUserSkillItem();
   }
 
-  @Field()
+  @Column({ allowNull: true, comment: 'Deprecated column. Will be deleted in the future.' })
+  title?: string;
+
+  @ForeignKey(() => WorkTool)
   @Column
-  title: string;
+  workToolId: number;
+
+  @BelongsTo(() => WorkTool)
+  workToolItem: WorkTool;
+
+  @Field(() => WorkTool)
+  async workTool() {
+    return await this.getWorkToolItem();
+  }
 
   @Field({ nullable: true })
   @Column

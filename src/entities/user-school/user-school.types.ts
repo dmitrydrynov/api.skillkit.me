@@ -28,7 +28,10 @@ export class UserSchoolOrderByInput {
 @InputType('UserSchoolUpdateInput')
 export class UserSchoolUpdateInput {
   @Field({ nullable: true })
-  title: string;
+  title?: string;
+
+  @Field(() => ID, { nullable: true })
+  schoolId?: number;
 
   @Field({ nullable: true })
   description?: string;
@@ -42,8 +45,11 @@ export class UserSchoolUpdateInput {
 
 @InputType('UserSchoolCreateInput')
 export class UserSchoolCreateInput {
-  @Field()
-  title: string;
+  @Field({ nullable: true })
+  title?: string;
+
+  @Field(() => ID, { nullable: true })
+  schoolId?: number;
 
   @Field({ nullable: true })
   description?: string;

@@ -2,7 +2,7 @@ import { DATE, INTEGER, QueryInterface, STRING, fn } from 'sequelize';
 import { MigrationParams } from 'umzug';
 
 export async function up({ context: queryInterface }: MigrationParams<QueryInterface>): Promise<void> {
-  await queryInterface.createTable('user_companies', {
+  await queryInterface.createTable('work_tools', {
     id: {
       type: INTEGER,
       allowNull: false,
@@ -13,15 +13,6 @@ export async function up({ context: queryInterface }: MigrationParams<QueryInter
       type: STRING,
       allowNull: false,
       unique: true,
-    },
-    user_id: {
-      type: INTEGER,
-      allowNull: false,
-      onDelete: 'cascade',
-      references: {
-        model: 'users',
-        key: 'id',
-      },
     },
     created_at: {
       type: DATE,
@@ -37,5 +28,5 @@ export async function up({ context: queryInterface }: MigrationParams<QueryInter
 }
 
 export async function down({ context: queryInterface }: MigrationParams<QueryInterface>): Promise<void> {
-  await queryInterface.dropTable('user_companies');
+  await queryInterface.dropTable('work_tools');
 }

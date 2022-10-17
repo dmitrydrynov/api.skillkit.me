@@ -1,6 +1,6 @@
 import CurrentUser from '@entities/auth/current-user.decorator';
-import UserCompany from '@entities/user-company/user-company.model';
 import User, { UserRole } from '@entities/user/user.model';
+import WorkPlace from '@entities/work-place/work-place.model';
 import { prepareFindOptions } from '@helpers/prepare';
 import { WhereUniqueInput } from '@plugins/graphql/types/common.types';
 import { Arg, Authorized, Mutation, Query, Resolver } from 'type-graphql';
@@ -70,7 +70,7 @@ export class UserJobResolver {
     try {
       const { companyName, position, description, userSkillId, startedAt, finishedAt } = data;
 
-      const [userCompany] = await UserCompany.findOrCreate({
+      const [workPlace] = await WorkPlace.findOrCreate({
         where: { name: companyName },
         defaults: { name: companyName, userId: authUser.id },
       });
@@ -78,7 +78,7 @@ export class UserJobResolver {
       const userJob = await UserJob.create({
         userId: authUser.id,
         userSkillId,
-        userCompanyId: userCompany.id,
+        workPlaceId: workPlace.id,
         position,
         description,
         startedAt,

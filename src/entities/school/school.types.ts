@@ -2,26 +2,26 @@
 import { IDFilter, OrderDirection, StringFilter, WhereUniqueInput } from '@plugins/graphql/types/common.types';
 import { Field, InputType, registerEnumType } from 'type-graphql';
 
-@InputType('UserCompanyWhereInput')
-export class UserCompanyWhereInput {
+@InputType('SchoolWhereInput')
+export class SchoolWhereInput {
   @Field(() => IDFilter, { nullable: true })
   id?: IDFilter;
 
   @Field(() => StringFilter, { nullable: true })
   name?: StringFilter;
 
-  // @Field(() => SkillWhereInput, { nullable: true })
-  // AND?: SkillWhereInput;
+  // @Field(() => SchoolWhereInput, { nullable: true })
+  // AND?: SchoolWhereInput;
 
-  // @Field(() => SkillWhereInput, { nullable: true })
-  // OR?: SkillWhereInput;
+  // @Field(() => SchoolWhereInput, { nullable: true })
+  // OR?: SchoolWhereInput;
 
-  // @Field(() => SkillWhereInput, { nullable: true })
-  // NOT?: SkillWhereInput;
+  // @Field(() => SchoolWhereInput, { nullable: true })
+  // NOT?: SchoolWhereInput;
 }
 
-@InputType('UserCompanyOrderByInput')
-export class UserCompanyOrderByInput {
+@InputType('SchoolOrderByInput')
+export class SchoolOrderByInput {
   @Field(() => OrderDirection, { nullable: true })
   id?: OrderDirection;
 

@@ -1,18 +1,18 @@
-import UserCompany from '@entities/user-company/user-company.model';
 import UserJob from '@entities/user-job/user-job.model';
+import WorkPlace from '@entities/work-place/work-place.model';
 import { INTEGER, QueryInterface, STRING } from 'sequelize';
 import { MigrationParams } from 'umzug';
 
 export async function up({ context: queryInterface }: MigrationParams<QueryInterface>): Promise<void> {
   const tableDefinition = await queryInterface.describeTable('user_jobs');
 
-  if (!tableDefinition.user_company_id) {
-    await queryInterface.addColumn('user_jobs', 'user_company_id', {
+  if (!tableDefinition.work_place_id) {
+    await queryInterface.addColumn('user_jobs', 'work_place_id', {
       type: INTEGER,
       allowNull: true,
       onDelete: 'cascade',
       references: {
-        model: 'user_companies',
+        model: 'work_places',
         key: 'id',
       },
     });
@@ -30,21 +30,20 @@ export async function up({ context: queryInterface }: MigrationParams<QueryInter
   if (userJobs) {
     await Promise.all(
       userJobs.map(async (userJob) => {
-        const [uc] = await UserCompany.findOrCreate({
+        const [wp] = await WorkPlace.findOrCreate({
           where: { name: userJob.title },
           defaults: {
-            userId: userJob.userId,
             name: userJob.title,
           },
         });
 
-        await userJob.update({ userCompanyId: uc.id });
+        await userJob.update({ workPlaceId: wp.id });
         await userJob.update({ title: null });
       }),
     );
   }
 
-  await queryInterface.changeColumn('user_jobs', 'user_company_id', {
+  await queryInterface.changeColumn('user_jobs', 'work_place_id', {
     type: INTEGER,
     allowNull: false,
   });
@@ -66,14 +65,14 @@ export async function down({ context: queryInterface }: MigrationParams<QueryInt
   if (userJobs) {
     await Promise.all(
       userJobs.map(async (userJob) => {
-        const uc: UserCompany = await userJob.getUserCompanyItem();
-        await userJob.update({ title: uc.name });
-        await uc.destroy();
+        const wp: WorkPlace = await userJob.getWorkPlaceItem();
+        await userJob.update({ title: wp.name });
+        await wp.destroy();
       }),
     );
   }
 
-  if (tableDefinition.user_company_id) {
-    await queryInterface.removeColumn('user_jobs', 'user_company_id');
+  if (tableDefinition.work_place_id) {
+    await queryInterface.removeColumn('user_jobs', 'work_place_id');
   }
 }

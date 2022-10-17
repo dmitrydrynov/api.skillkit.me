@@ -1,3 +1,4 @@
+import School from '@entities/school/school.model';
 import UserSkill from '@entities/user-skill/user-skill.model';
 import User from '@entities/user/user.model';
 import {
@@ -49,9 +50,20 @@ export default class UserSchool extends Model {
     return await this.getUserSkillItem();
   }
 
-  @Field()
+  @Column({ allowNull: true, comment: 'Deprecated column. Will be deleted in the future.' })
+  title?: string;
+
+  @ForeignKey(() => School)
   @Column
-  title: string;
+  schoolId: number;
+
+  @BelongsTo(() => School)
+  schoolItem: School;
+
+  @Field(() => School)
+  async school() {
+    return await this.getSchoolItem();
+  }
 
   @Field({ nullable: true })
   @Column
