@@ -72,7 +72,7 @@ export class UserJobResolver {
 
       const [workPlace] = await WorkPlace.findOrCreate({
         where: { name: companyName },
-        defaults: { name: companyName, userId: authUser.id },
+        defaults: { name: companyName },
       });
 
       const userJob = await UserJob.create({

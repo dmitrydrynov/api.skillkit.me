@@ -1,5 +1,6 @@
 import CurrentUser from '@entities/auth/current-user.decorator';
 import User, { UserRole } from '@entities/user/user.model';
+import WorkTool from '@entities/work-tool/work-tool.model';
 import { prepareFindOptions } from '@helpers/prepare';
 import { WhereUniqueInput } from '@plugins/graphql/types/common.types';
 import { Arg, Authorized, Mutation, Query, Resolver } from 'type-graphql';
@@ -69,10 +70,15 @@ export class UserToolResolver {
     try {
       const { title, description, userSkillId } = data;
 
+      const [workTool] = await WorkTool.findOrCreate({
+        where: { name: title },
+        defaults: { name: title },
+      });
+
       const userTool = await UserTool.create({
         userId: authUser.id,
         userSkillId,
-        title,
+        workToolId: workTool.id,
         description,
       });
 

@@ -1,4 +1,5 @@
 import CurrentUser from '@entities/auth/current-user.decorator';
+import School from '@entities/school/school.model';
 import User, { UserRole } from '@entities/user/user.model';
 import { prepareFindOptions } from '@helpers/prepare';
 import { WhereUniqueInput } from '@plugins/graphql/types/common.types';
@@ -74,10 +75,15 @@ export class UserSchoolResolver {
     try {
       const { title, description, userSkillId, startedAt, finishedAt } = data;
 
+      const [school] = await School.findOrCreate({
+        where: { name: title },
+        defaults: { name: title },
+      });
+
       const userSchool = await UserSchool.create({
         userId: authUser.id,
         userSkillId,
-        title,
+        schoolId: school.id,
         description,
         startedAt,
         finishedAt,

@@ -1,8 +1,10 @@
 import { ProfessionWhereInput } from '@entities/profession/profession.types';
 import { SkillWhereInput } from '@entities/skill/skill.types';
+import UserJob from '@entities/user-job/user-job.model';
+import UserSchool from '@entities/user-school/user-school.model';
 import User from '@entities/user/user.model';
 import { DateTimeFilter, IDFilter, OrderDirection } from '@plugins/graphql/types/common.types';
-import { Field, InputType, ObjectType, registerEnumType } from 'type-graphql';
+import { Field, ID, InputType, ObjectType, registerEnumType } from 'type-graphql';
 import UserKit from './user-kit.model';
 
 export enum UserKitViewModeEnum {
@@ -88,4 +90,31 @@ export class UserKitsForShareResponseType {
 
   @Field()
   updatedAt: Date;
+}
+
+@ObjectType('UserSchoolsForKitResponse')
+export class UserSchoolsForKitResponseType {
+  @Field(() => ID)
+  schoolId: number;
+
+  @Field()
+  name: string;
+
+  @Field(() => [UserSchool])
+  userSchools: UserSchool[];
+}
+
+@ObjectType('UserJobsForKitResponse')
+export class UserJobsForKitResponseType {
+  @Field(() => ID)
+  workPlaceId: number;
+
+  @Field()
+  name: string;
+
+  @Field()
+  experience: number;
+
+  @Field(() => [UserJob])
+  userJobs: UserJob[];
 }

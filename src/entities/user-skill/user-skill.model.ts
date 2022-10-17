@@ -14,6 +14,7 @@ import { DateTime } from 'luxon';
 import {
   AllowNull,
   AutoIncrement,
+  BeforeUpdate,
   BelongsTo,
   BelongsToMany,
   Column,
@@ -197,4 +198,18 @@ export default class UserSkill extends Model {
   static decodeShareLink = (hash: string) => {
     return hashids.decode(hash) as number[];
   };
+
+  @BeforeUpdate
+  static async beforeUpdateHook(userSkill: UserSkill): Promise<void> {
+    if (userSkill.viewMode !== UserSkillViewModeEnum.ONLY_ME && userSkill.isDraft == false && !userSkill.shareLink) {
+      const publishedAt = DateTime.now();
+
+      userSkill.shareLink = UserSkill.generateShareLink(
+        env.FRONTEND_URL,
+        userSkill.id,
+        userSkill.userId,
+        publishedAt.toUnixInteger(),
+      );
+    }
+  }
 }
