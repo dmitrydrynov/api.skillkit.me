@@ -2,6 +2,7 @@ import { ProfessionWhereInput } from '@entities/profession/profession.types';
 import { SkillWhereInput } from '@entities/skill/skill.types';
 import UserJob from '@entities/user-job/user-job.model';
 import UserSchool from '@entities/user-school/user-school.model';
+import UserTool from '@entities/user-tool/user-tool.model';
 import User from '@entities/user/user.model';
 import { DateTimeFilter, IDFilter, OrderDirection } from '@plugins/graphql/types/common.types';
 import { Field, ID, InputType, ObjectType, registerEnumType } from 'type-graphql';
@@ -75,6 +76,18 @@ export class UserKitForShareResponseType {
 
   @Field(() => User)
   user: User;
+}
+
+@ObjectType('CollectedUserJobResponse')
+export class CollectedUserJobResponseType {
+  @Field(() => ID)
+  workPlaceId: number;
+
+  @Field()
+  name: string;
+
+  @Field(() => [UserJob])
+  userJobs: UserJob[];
 }
 
 @ObjectType('UserKitsForShareResponse')

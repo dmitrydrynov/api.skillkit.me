@@ -1,14 +1,10 @@
 import CurrentUser from '@entities/auth/current-user.decorator';
 import Profession from '@entities/profession/profession.model';
-import School from '@entities/school/school.model';
 import UserFile from '@entities/user-file/user-file.model';
-import UserJob from '@entities/user-job/user-job.model';
-import UserSchool from '@entities/user-school/user-school.model';
 import UserSkill from '@entities/user-skill/user-skill.model';
 import { UserSkillViewModeEnum } from '@entities/user-skill/user-skill.types';
 import UserTool from '@entities/user-tool/user-tool.model';
 import User, { UserRole } from '@entities/user/user.model';
-import WorkPlace from '@entities/work-place/work-place.model';
 import { prepareFindOptions } from '@helpers/prepare';
 import { DefaultResponseType, WhereUniqueInput } from '@plugins/graphql/types/common.types';
 import { send } from '@services/mailgun';
@@ -120,7 +116,7 @@ export class UserKitResolver {
         throw Error('Not actual link');
       }
 
-      const userKit: UserKit = await UserKit.findByPk(id, { include: [User] });
+      const userKit: UserKit = await UserKit.findByPk(id, { include: [User, UserSkill, Profession] });
 
       if (!userKit) {
         throw Error('Not actual link');
@@ -135,7 +131,7 @@ export class UserKitResolver {
         throw Error('Access denied');
       }
 
-      return { userKit: userKit, user: userKit.userItem, viewer };
+      return { userKit, user: userKit.userItem, viewer };
     } catch (error) {
       throw Error(error.message);
     }
@@ -425,26 +421,11 @@ export class UserKitResolver {
    */
   @Authorized([UserRole.MEMBER, UserRole.EXPERT, UserRole.OPERATOR, UserRole.ADMIN])
   @Query(() => [UserTool])
-  async getUserToolsForKit(
-    @Arg('where', { nullable: true }) where: WhereUniqueInput,
-    @CurrentUser() authUser: User,
-  ): Promise<Array<UserTool>> {
+  async getUserToolsForKit(@Arg('where', { nullable: true }) where: WhereUniqueInput): Promise<Array<UserTool>> {
     try {
       const userKit = await UserKit.findByPk(where.id);
-      const userSkills = await userKit.getUserSkillItems();
-      const ids: number[] = userSkills
-        .filter((us) => us.viewMode !== UserSkillViewModeEnum.ONLY_ME)
-        .map((userSkill) => userSkill.id);
-      const userSkillTools = await UserTool.findAll({
-        where: {
-          userId: authUser.id,
-          userSkillId: {
-            [Op.in]: ids,
-          },
-        },
-      });
 
-      return userSkillTools;
+      return await userKit.getUserTools();
     } catch (error) {
       throw Error(error.message);
     }
@@ -455,39 +436,11 @@ export class UserKitResolver {
    */
   @Authorized([UserRole.MEMBER, UserRole.EXPERT, UserRole.OPERATOR, UserRole.ADMIN])
   @Query(() => [UserFile])
-  async getUserFilesForKit(
-    @Arg('where', { nullable: true }) where: WhereUniqueInput,
-    @CurrentUser() authUser: User,
-  ): Promise<Array<UserFile>> {
+  async getUserFilesForKit(@Arg('where', { nullable: true }) where: WhereUniqueInput): Promise<Array<UserFile>> {
     try {
       const userKit = await UserKit.findByPk(where.id);
-      const userSkills: UserSkill[] = await userKit.getUserSkillItems();
 
-      const promises = await Promise.all(
-        userSkills
-          .filter((us) => us.viewMode !== UserSkillViewModeEnum.ONLY_ME)
-          .map(async (userSkill) => {
-            const userSkillFiles: UserFile[] = await userSkill.getUserFileItems();
-            const ids: number[] = userSkillFiles.map((userFile) => userFile.id);
-
-            return ids;
-          }),
-      );
-
-      let userFileIds: number[] = [].concat(...promises);
-      /** remove duplucates */
-      userFileIds = userFileIds.filter((item, index) => userFileIds.indexOf(item) === index);
-
-      const userSkillFiles = await UserFile.findAll({
-        where: {
-          userId: authUser.id,
-          id: {
-            [Op.in]: userFileIds,
-          },
-        },
-      });
-
-      return userSkillFiles;
+      return await userKit.userFiles();
     } catch (error) {
       throw Error(error.message);
     }
@@ -500,39 +453,11 @@ export class UserKitResolver {
   @Query(() => [UserSchoolsForKitResponseType])
   async userSchoolsForKit(
     @Arg('where', { nullable: true }) where: WhereUniqueInput,
-    @CurrentUser() authUser: User,
   ): Promise<Array<UserSchoolsForKitResponseType>> {
     try {
       const userKit = await UserKit.findByPk(where.id);
-      const userSkills = await userKit.getUserSkillItems();
-      const ids: number[] = userSkills
-        .filter((us) => us.viewMode !== UserSkillViewModeEnum.ONLY_ME)
-        .map((userSkill) => userSkill.id);
-      const userSkillSchools = await UserSchool.findAll({
-        include: [School],
-        where: {
-          userId: authUser.id,
-          userSkillId: {
-            [Op.in]: ids,
-          },
-        },
-      });
 
-      const collectedUserSchools = [];
-
-      userSkillSchools.map((userSkillSchool: UserSchool) => {
-        const duplicates = userSkillSchools.filter((uss) => uss.schoolId === userSkillSchool.schoolId);
-
-        if (collectedUserSchools.filter((cos) => cos.schoolId === userSkillSchool.schoolId).length === 0) {
-          collectedUserSchools.push({
-            schoolId: userSkillSchool.schoolId,
-            name: userSkillSchool.schoolItem.name,
-            userSchools: duplicates,
-          });
-        }
-      });
-
-      return collectedUserSchools;
+      return await userKit.userSchools();
     } catch (error) {
       throw Error(error.message);
     }
@@ -545,38 +470,11 @@ export class UserKitResolver {
   @Query(() => [UserJobsForKitResponseType])
   async userJobsForKit(
     @Arg('where', { nullable: true }) where: WhereUniqueInput,
-    @CurrentUser() authUser: User,
   ): Promise<Array<UserJobsForKitResponseType>> {
     try {
-      const collectedUserJobs = [];
       const userKit = await UserKit.findByPk(where.id);
-      const userSkills: UserSkill[] = await userKit.getUserSkillItems();
-      const ids: number[] = userSkills
-        .filter((us) => us.viewMode !== UserSkillViewModeEnum.ONLY_ME)
-        .map((userSkill) => userSkill.id);
-      const userSkillJobs = await UserJob.findAll({
-        include: [WorkPlace],
-        where: {
-          userId: authUser.id,
-          userSkillId: {
-            [Op.in]: ids,
-          },
-        },
-      });
 
-      userSkillJobs.map((userSkillJob: UserJob) => {
-        const duplicates = userSkillJobs.filter((uss) => uss.workPlaceId === userSkillJob.workPlaceId);
-
-        if (collectedUserJobs.filter((cos) => cos.workPlaceId === userSkillJob.workPlaceId).length === 0) {
-          collectedUserJobs.push({
-            workPlaceId: userSkillJob.workPlaceId,
-            name: userSkillJob.workPlaceItem.name,
-            userJobs: duplicates,
-          });
-        }
-      });
-
-      return collectedUserJobs;
+      return await userKit.userJobs();
     } catch (error) {
       throw Error(error.message);
     }
